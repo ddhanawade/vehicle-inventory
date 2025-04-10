@@ -1,16 +1,27 @@
-        body {
+        /* body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        }
+        } */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            background-color: #f7f7f7;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+          }
 
-        .container {
+        /* .container {
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-        }
-
+        } */
+        
         .content {
             flex-grow: 1;
             display: flex;
@@ -21,6 +32,8 @@
             flex-grow: 1;
             padding: 2rem;
             background: #f4f4f4;
+            width: 600px;
+            margin-top: 5rem;
         }
 
         h2 {

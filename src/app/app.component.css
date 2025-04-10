@@ -2,7 +2,9 @@ html, body {
     margin: 0;
     font-family: Arial, sans-serif;
     overflow-x: hidden;
-    height: 100%;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
 }
 
 header {
@@ -13,7 +15,7 @@ header {
     background-color: #3f51b5;
     color: #fff;
     height: 80px;
-    position: sticky;
+    position: fixed;
     top: 0;
     width: 100%;
     z-index: 1000;
@@ -78,6 +80,9 @@ nav ul li a.active {
         flex-direction: column;
         width: 100%;
     }
+    nav ul.show {
+        display: flex;
+    }
     nav ul li {
         margin: 10px 0;
     }
@@ -86,18 +91,21 @@ nav ul li a.active {
     }
 }
 
-footer {
-    background: #3f51b5;
+main {
+    flex: 1;
+}
+
+.footer {
+    width: 100%;
+    background-color: #3f51b5;
     color: white;
     text-align: center;
     padding: 1em;
     position: relative;
     bottom: 0;
-    width: 100%;
 }
 
-.footer-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 10px;
+/* Right-align the links if needed */
+nav ul li.right {
+    margin-left: auto;
 }
