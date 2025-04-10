@@ -1,5 +1,6 @@
  // Mobile menu toggle
  document.getElementById('mobile-menu').addEventListener('click', function() {
+    alert("s");
     var navUl = document.querySelector('nav ul');
     navUl.classList.toggle('show');
 });

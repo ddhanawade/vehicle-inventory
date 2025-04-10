@@ -30,21 +30,25 @@ header {
 nav {
     flex-grow: 1;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
 }
 
-nav ul {
+.center-nav, .right-nav {
     display: flex;
     list-style: none;
     margin: 0;
     padding: 0;
 }
 
-nav ul li {
+.center-nav {
+    margin: 0 auto;
+}
+
+.center-nav li, .right-nav li {
     margin: 0 10px;
 }
 
-nav ul li a {
+.center-nav li a, .right-nav li a {
     text-decoration: none;
     padding: 10px 15px;
     background-color: #3f51b5;
@@ -53,11 +57,11 @@ nav ul li a {
     transition: background-color 0.3s;
 }
 
-nav ul li a:hover {
+.center-nav li a:hover, .right-nav li a:hover {
     background-color: #666;
 }
 
-nav ul li a.active {
+.center-nav li a.active {
     background-color: #00f;
 }
 
@@ -75,17 +79,24 @@ nav ul li a.active {
 }
 
 @media (max-width: 768px) {
-    nav ul {
+    nav {
+        flex-direction: column;
+    }
+    
+    .center-nav, .right-nav {
         display: none;
         flex-direction: column;
         width: 100%;
     }
-    nav ul.show {
+    
+    .center-nav.show, .right-nav.show {
         display: flex;
     }
-    nav ul li {
+
+    .center-nav li, .right-nav li {
         margin: 10px 0;
     }
+    
     .menu-toggle {
         display: flex;
     }
