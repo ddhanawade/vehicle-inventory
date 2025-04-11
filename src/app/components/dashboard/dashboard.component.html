@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Us - Vehicle Inventory Management</title>
-    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
 <div class="dashboard-container">
@@ -17,9 +17,9 @@
         </div>
     
         <div class="slider">
-            <div class="summary-card card" *ngFor="let city of cities">
-                <h2 style="text-align: left;">{{ city }}</h2>
-                <p style="text-align: left;"><b>{{ getCarsAvailableInCity(city) }}</b></p> 
+            <div class="summary-card card" *ngFor="let cityData of getCityWiseModelCounts()">
+                <h2 style="text-align: left;">{{ cityData.city  }}</h2>
+                <p style="text-align: left;"><b>{{ cityData.count }}</b></p> 
                 <p style="text-align: left;">Vehicles in stock</p>
             </div>
         </div>
@@ -35,12 +35,12 @@
     <div class="filter-section">
         <select [(ngModel)]="selectedCity" (change)="selectedModel=''">
             <!-- <option value="" disabled selected>Select City</option> -->
-            <option value="" disabled selected>Select City</option>
-            <option *ngFor="let city of cities" [value]="city">{{ city }}</option>
+            <option value=""  selected>Select City</option>
+            <option *ngFor="let city of distinctCityList" [value]="city">{{ city }}</option>
         </select>
 
         <select [(ngModel)]="selectedModel" [disabled]="!selectedCity">
-            <option value="" disabled selected>Select Model</option>
+            <option value=""  selected>Select Model</option>
             <option *ngFor="let model of getCarModels(selectedCity)" [value]="model">{{ model }}</option>
         </select>
     </div>
@@ -48,11 +48,13 @@
     <div class="stock-list">
         <div class="stock-item" *ngFor="let stock of filteredStocks()" class="card-container">
             <div class="card">
-                <h2>{{ stock.name }}</h2>
-                <p>Location: {{ stock.location }}</p>
-                <p>Available: {{ stock.available }}</p>
+                <h3 style="color: royalblue;"><i class="fas fa-car"></i> {{ stock.make }}</h3>
+                <p>Model: {{ stock.model }}</p>
+                <p>Location: {{ stock.city }}</p>
+                <p>Date: {{ stock.vehicleYear | date:'dd-MM-yyyy' }}</p>
+                <!-- <p>Available: {{ stock.available }}</p> -->
                 <!-- <button class="button edit" (click)="openEditVehiclePopup(stock)">Edit</button> -->
-                <button class="button edit" (click)="openAddVehiclePopup()">Edit</button>
+                <button class="button edit" (click)="openEditVehiclePopup(stock)">Edit</button>
 
                 <!-- <button class="button edit">Edit</button> -->
             </div>
@@ -61,41 +63,56 @@
 
     <div *ngIf="showPopup" class="popup">
         <div class="popup-content">
-            <span class="close" (click)="closePopup()">&times;</span>
-            <h2>Add Vehicle</h2>
-            <form (ngSubmit)="onSubmit()">
-                <label for="vehicleName">Vehicle Name:</label>
-                <input type="text" id="vehicleName" [(ngModel)]="newVehicle.name" name="name" required>
-
-                <label for="vehicleLocation">Location:</label>
-                <input type="text" id="vehicleLocation" [(ngModel)]="newVehicle.location" name="location" required>
-
-                <label for="vehicleAvailable">Availability:</label>
-                <input type="number" id="vehicleAvailable" [(ngModel)]="newVehicle.available" name="available" required>
-
-                <button type="submit" class="button">Add Vehicle</button>
-            </form>
+          <span class="close" (click)="closePopup()">&times;</span>
+          <h2>Add Vehicle</h2>
+      
+          <!-- Success message -->
+          <div *ngIf="successMessage" class="success-message">
+            <p>{{ successMessage }}</p>
+          </div>
+      
+          <form [formGroup]="vehicleForm" (ngSubmit)="onSubmit()">
+            <label for="make">Make:</label>
+            <input id="make" formControlName="make">
+      
+            <label for="model">Model:</label>
+            <input id="model" formControlName="model">
+      
+            <label for="city">City:</label>
+            <input id="city" formControlName="city">
+      
+            <label for="vehicleYear">Vehicle Year:</label>
+            <input id="vehicleYear" formControlName="vehicleYear" type="date">
+      
+            <button type="submit">Submit</button>
+          </form>
         </div>
-    </div>
+      </div>
 
     <div *ngIf="showEditPopup" class="popup">
         <div class="popup-content">
-            <span class="close" (click)="closeEditPopup()">&times;</span>
-            <h2>Edit Vehicle</h2>
-            <form (ngSubmit)="onUpdate()">
-                <label for="editVehicleName">Vehicle Name:</label>
-                <input type="text" id="editVehicleName" [(ngModel)]="editVehicle.name" name="name" required>
-
-                <label for="editVehicleLocation">Location:</label>
-                <input type="text" id="editVehicleLocation" [(ngModel)]="editVehicle.location" name="location" required>
-
-                <label for="editVehicleAvailable">Availability:</label>
-                <input type="number" id="editVehicleAvailable" [(ngModel)]="editVehicle.available" name="available" required>
-
-                <button type="submit" class="button">Update Vehicle</button>
-            </form>
+          <span class="close" (click)="closeEditPopup()">&times;</span>
+          <h2>Edit Vehicle</h2>
+          <form (ngSubmit)="onUpdate()">
+            <label for="editVehicleMake">Make:</label>
+            <input type="text" id="editVehicleMake" [(ngModel)]="editVehicleData.make" name="make" required>
+      
+            <label for="editVehicleModel">Model:</label>
+            <input type="text" id="editVehicleModel" [(ngModel)]="editVehicleData.model" name="model" required>
+      
+            <label for="editVehicleCity">City:</label>
+            <input type="text" id="editVehicleCity" [(ngModel)]="editVehicleData.city" name="city" required>
+      
+            <label for="editVehicleYear">Vehicle Year:</label>
+            <input type="date" id="editVehicleYear" [(ngModel)]="editVehicleData.vehicleYear" name="vehicleYear" required>
+      
+            <!-- <label for="editVehicleAvailable">Availability:</label>
+            <input type="number" id="editVehicleAvailable" [(ngModel)]="editVehicle.available" name="available" required> -->
+      
+            <button type="submit" class="button">Update Vehicle</button>
+          </form>
         </div>
-    </div>
+      </div>
 </div>
 </body>
 </html>

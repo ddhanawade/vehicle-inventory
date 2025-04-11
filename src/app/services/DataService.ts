@@ -14,4 +14,9 @@ export class DataService {
   getData(){
     return this.http.get(this.baseUrl);
   }
+
+  addVehicle(vehicle: any): Observable<any> {
+    return this.http.post<any>(this.baseUrl, vehicle);
+  }
+
 }

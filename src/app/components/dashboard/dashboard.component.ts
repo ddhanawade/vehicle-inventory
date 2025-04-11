@@ -1,8 +1,12 @@
-import { Component, NgModule } from '@angular/core';
+import { Component, NgModule, OnInit } from '@angular/core';
 import { Vehicle } from '../../models/vehicle.model';
 import { VehicleService } from '../../services/vehicle.service';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
+import { CommonModule, DatePipe } from '@angular/common';
+import { DataService } from '../../services/DataService';
+import { VehicleModel } from '../../models/VehicleModel';
+import { distinct } from 'rxjs';
 
 interface Stock {
   name: string;
@@ -12,45 +16,42 @@ interface Stock {
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule,FormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, DatePipe],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
 
+  vehicleForm!: FormGroup;
+
+  constructor(
+    private fb: FormBuilder,
+    private vehicleService: DataService
+  ) {
+    this.vehicleForm = this.fb.group({
+      make: [''],
+      model: [''],
+      city: [''],
+      vehicleYear: ['']
+    });
+  }
+  stocks: any[] = [];
   searchTerm: string = '';
   showPopup: boolean = false;
   showEditPopup: boolean = false; // or set to true as needed
+  successMessage: string = '';
 
   newVehicle: { name: string, location: String, available: number } = { name: '', location: '', available: 0 };
 
-  cities = ['Mumbai', 'Gwalior', 'Chennai', 'Bengaluru', 'Pune'];
   selectedCity: string = '';
-  carModels: { city: string, models: string[] }[] = [
-    { city: 'Mumbai', models: ['Toyota Camry', 'Honda Accord', 'Ford Focus'] },
-    { city: 'Gwalior', models: ['Chevrolet Malibu', 'Tesla Model S', 'Nissan Leaf'] },
-    { city: 'Chennai', models: ['Jeep Grand Cherokee', 'Chrysler 300', 'Dodge Charger'] },
-    { city: 'Bengaluru', models: ['Ford F-150', 'Chevrolet Silverado', 'Toyota Tundra'] },
-    { city: 'Pune', models: ['Ford F-150', 'Chevrolet Silverado', 'Toyota Tundra'] }
-  ];
   selectedModel: string = '';
-  stocks: any[] = [
-    { name: 'Toyota Camry', location: 'Mumbai', available: 10 },
-    { name: 'Honda Accord', location: 'Mumbai', available: 5 },
-    { name: 'Chevrolet Malibu', location: 'Gwalior', available: 8 },
-    { name: 'Tesla Model S', location: 'Gwalior', available: 2 },
-    { name: 'Jeep Grand Cherokee', location: 'Chicago', available: 3 },
-    { name: 'Chrysler 300', location: 'Chennai', available: 4 },
-    { name: 'Ford F-150', location: 'Bengaluru', available: 6 },
-    { name: 'Chevrolet Silverado', location: 'Bengaluru', available: 7 },
-    { name: 'Chevrolet Silverado', location: 'Pune', available: 7 }
-  ];
 
-  filteredStocks() {
-    return this.stocks.filter(stock => 
-      (this.selectedCity ? stock.location === this.selectedCity : true) &&
-      (this.selectedModel ? stock.name === this.selectedModel : true) &&
-      (this.searchTerm ? stock.name.toLowerCase().includes(this.searchTerm.toLowerCase()) : true)
+
+  filteredStocks(): any[] {
+    return this.carDetailsList.filter(stock =>
+      (this.selectedCity ? stock.city === this.selectedCity : true) &&
+      (this.selectedModel ? stock.model === this.selectedModel : true)&&
+      (this.searchTerm ? stock.model.toLowerCase().includes(this.searchTerm.toLowerCase()) : true)
     );
   }
 
@@ -67,22 +68,21 @@ export class DashboardComponent {
     this.showEditPopup = false;
   }
 
-  onSubmit() {
-    console.log('Adding vehicle:', this.newVehicle);
-    // Here, you would typically send the newVehicle to your backend API
-    this.newVehicle = { name: '', location: '', available: 0 }; // Reset the form
-    this.closePopup();
+  getCarModels(city: string): string[] {
+    // Filter carDetailsList for the selected city
+    const cityCars = this.carDetailsList.filter((item: any) => item.city === city);
+  
+    // Extract and return the models for the selected city
+    return cityCars.map((item: any) => item.model);
   }
 
-  getCarModels(city: string) {
-    const selectedCityModels = this.carModels.find(c => c.city === city);
-    return selectedCityModels ? selectedCityModels.models : [];
-  }
-
-  // Assuming stock is some type, make sure to define it accordingly
-  openEditVehiclePopup(stock: any) {
-    // Your logic to open the edit vehicle popup goes here
-    console.log('Opening edit popup for: ', stock);
+  openEditVehiclePopup(stock: any): void {
+    this.editVehicleData = { ...stock };
+    // Ensure vehicleYear is in YYYY-MM-DD format
+    if (this.editVehicleData.vehicleYear) {
+      this.editVehicleData.vehicleYear = new Date(this.editVehicleData.vehicleYear).toISOString().split('T')[0];
+    }
+    this.showEditPopup = true;
   }
 
   onUpdate(): void {
@@ -96,17 +96,89 @@ export class DashboardComponent {
     location: '',
     available: 0,
     id: 0,
-    status: '' 
+    status: ''
     // Initialize other properties if needed
   };
 
-  getTotalCarsAvailable() {
-    return this.stocks.reduce((total, stock) => total + stock.available, 0);
-}
+  editVehicleData: any = {}; // Object to hold the selected vehicle data
 
-getCarsAvailableInCity(city: string) {
-    const cityStocks = this.stocks.filter(stock => stock.location === city);
-    return cityStocks.reduce((total, stock) => total + stock.available, 0);
-}
+  getTotalCarsAvailable() {
+    return this.carDetailsList.length;
+  }
+
+  getCarsAvailableInCity(city: string): number {
+    // Filter the carDetailsList for the selected city
+    const cityStocks = this.carDetailsList.filter(stock => stock.city === city);
+    // Sum up the available cars in the filtered stocks
+    return cityStocks.reduce((total, stock) => total + stock.availableCars, 0);
+  }
+
+  getCityWiseModelCounts(): { city: string, count: number }[] {
+    // Create a map to store city-wise model counts
+    const cityModelCounts: { [key: string]: number } = {};
+  
+    // Iterate through the carDetailsList and calculate model counts for each city
+    this.carDetailsList.forEach(stock => {
+      if (cityModelCounts[stock.city]) {
+        cityModelCounts[stock.city] += 1; // Increment the count for the city
+      } else {
+        cityModelCounts[stock.city] = 1; // Initialize the count for the city
+      }
+    });
+  
+    // Convert the map into an array of objects with city and model count
+    return Object.keys(cityModelCounts).map(city => ({
+      city,
+      count: cityModelCounts[city]
+    }));
+  }
+
+  distinctCityList: any[] = [];
+  getDistinctCities() {
+    this.vehicleService.getData().subscribe((result: any) => {
+      this.carDetailsList = result; // Assuming result contains the full car details list
+      this.distinctCityList = [...new Set(this.carDetailsList.map((item: any) => item.city))];
+    });
+  }
+
+  onSubmit() {
+    this.vehicleService.addVehicle(this.vehicleForm.value).subscribe(
+      response => {
+        console.log('Vehicle added:', response);
+        this.successMessage = 'Vehicle details added successfully!';
+  
+        // Display the success message for 2 seconds before closing the popup
+        setTimeout(() => {
+          this.successMessage = '';
+          this.closePopup(); // Close the popup after the message disappears
+        }, 2000);
+  
+        this.getCarDetails(); // Refresh the data
+      },
+      error => {
+        console.error('Error adding vehicle:', error);
+        this.closePopup();
+      }
+    );
+  }
+  cityWiseCounts: { city: string, count: number }[] = [];
+
+  ngOnInit(): void {
+    this.vehicleService.getData().subscribe((data: any) => {
+      this.carDetailsList = data;
+      console.log('Car Details List:', this.carDetailsList); // Log the carDetailsList
+      this.cityWiseCounts = this.getCityWiseModelCounts(); // Store the result
+      console.log('City-wise counts:', this.cityWiseCounts); // Log the result
+    });
+    this.getDistinctCities();
+  }
+
+  carDetailsList: VehicleModel[] = [];
+
+  getCarDetails() {
+    this.vehicleService.getData().subscribe((result: any) => {
+      this.carDetailsList = result;
+    })
+  }
 
 }
