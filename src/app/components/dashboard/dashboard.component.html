@@ -44,8 +44,11 @@
             <option *ngFor="let model of getCarModels(selectedCity)" [value]="model">{{ model }}</option>
         </select>
     </div>
-
+    <div *ngIf="successMessage" class="small-success-message">
+        <p>{{ successMessage }}</p>
+      </div>
     <div class="stock-list">
+        <!-- Success message -->
         <div class="stock-item" *ngFor="let stock of filteredStocks()" class="card-container">
             <div class="card">
                 <h3 style="color: royalblue;"><i class="fas fa-car"></i> {{ stock.make }}</h3>
@@ -54,7 +57,7 @@
                 <p>Date: {{ stock.vehicleYear | date:'dd-MM-yyyy' }}</p>
                 <!-- <p>Available: {{ stock.available }}</p> -->
                 <button class="button edit" (click)="openEditVehiclePopup(stock)">Edit</button>
-
+                <button class="button btn-danger" (click)="onDelete(stock)" style="background-color: red;">Delete</button>
                 <!-- <button class="button edit">Edit</button> -->
             </div>
         </div>

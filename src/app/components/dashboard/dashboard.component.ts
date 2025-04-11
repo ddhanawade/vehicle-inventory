@@ -110,6 +110,9 @@ export class DashboardComponent implements OnInit {
         }, 2000);
   
         this.getCarDetails(); // Refresh the data
+        this.getTotalCarsAvailable();
+        this.getCityWiseModelCounts();
+        this.getDistinctCities();
       },
       error => {
         console.error('Error adding vehicle:', error);
@@ -157,6 +160,30 @@ export class DashboardComponent implements OnInit {
       },
       error => {
         console.error('Error updating vehicle:', error);
+      }
+    );
+  }
+
+  onDelete(stock : any): void {
+    this.vehicleService.deleteVehicleDetails(stock.id).subscribe(
+      response => {
+        console.log('Vehicle deleted:', response);
+        this.successMessage = 'Vehicle details deleted successfully!';
+        
+         // Display the success message for 2 seconds before closing the popup
+         setTimeout(() => {
+          this.successMessage = '';
+          this.closePopup(); // Close the popup after the message disappears
+        }, 2000);
+
+        // Refresh the data and close the popup
+        this.getCarDetails();
+       // this.closeEditPopup();
+       this.getTotalCarsAvailable();
+       this.getCityWiseModelCounts();
+      },
+      error => {
+        console.error('Error deleting vehicle:', error);
       }
     );
   }

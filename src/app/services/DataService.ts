@@ -24,4 +24,7 @@ export class DataService {
     return this.http.put(`${this.baseUrl}/${vehicleData.id}`, vehicleData);
   }
 
+  deleteVehicleDetails(id : number){
+    return this.http.delete(`${this.baseUrl}/${id}`);
+  }
 }
