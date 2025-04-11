@@ -50,7 +50,7 @@ export class DashboardComponent implements OnInit {
   filteredStocks(): any[] {
     return this.carDetailsList.filter(stock =>
       (this.selectedCity ? stock.city === this.selectedCity : true) &&
-      (this.selectedModel ? stock.model === this.selectedModel : true)&&
+      (this.selectedModel ? stock.model === this.selectedModel : true) &&
       (this.searchTerm ? stock.model.toLowerCase().includes(this.searchTerm.toLowerCase()) : true)
     );
   }
@@ -85,11 +85,6 @@ export class DashboardComponent implements OnInit {
     this.showEditPopup = true;
   }
 
-  onUpdate(): void {
-    // Your update logic goes here
-    console.log('Update method called');
-  }
-
   // Declare the editVehicle property with the Vehicle interface type
   editVehicle: Vehicle = {
     name: '',
@@ -101,45 +96,6 @@ export class DashboardComponent implements OnInit {
   };
 
   editVehicleData: any = {}; // Object to hold the selected vehicle data
-
-  getTotalCarsAvailable() {
-    return this.carDetailsList.length;
-  }
-
-  getCarsAvailableInCity(city: string): number {
-    // Filter the carDetailsList for the selected city
-    const cityStocks = this.carDetailsList.filter(stock => stock.city === city);
-    // Sum up the available cars in the filtered stocks
-    return cityStocks.reduce((total, stock) => total + stock.availableCars, 0);
-  }
-
-  getCityWiseModelCounts(): { city: string, count: number }[] {
-    // Create a map to store city-wise model counts
-    const cityModelCounts: { [key: string]: number } = {};
-  
-    // Iterate through the carDetailsList and calculate model counts for each city
-    this.carDetailsList.forEach(stock => {
-      if (cityModelCounts[stock.city]) {
-        cityModelCounts[stock.city] += 1; // Increment the count for the city
-      } else {
-        cityModelCounts[stock.city] = 1; // Initialize the count for the city
-      }
-    });
-  
-    // Convert the map into an array of objects with city and model count
-    return Object.keys(cityModelCounts).map(city => ({
-      city,
-      count: cityModelCounts[city]
-    }));
-  }
-
-  distinctCityList: any[] = [];
-  getDistinctCities() {
-    this.vehicleService.getData().subscribe((result: any) => {
-      this.carDetailsList = result; // Assuming result contains the full car details list
-      this.distinctCityList = [...new Set(this.carDetailsList.map((item: any) => item.city))];
-    });
-  }
 
   onSubmit() {
     this.vehicleService.addVehicle(this.vehicleForm.value).subscribe(
@@ -181,4 +137,66 @@ export class DashboardComponent implements OnInit {
     })
   }
 
+  onUpdate(): void {
+    this.vehicleService.updateVehicleDetails(this.editVehicleData).subscribe(
+      response => {
+        console.log('Vehicle updated:', response);
+        this.successMessage = 'Vehicle details updated successfully!';
+        
+         // Display the success message for 2 seconds before closing the popup
+         setTimeout(() => {
+          this.successMessage = '';
+          this.closePopup(); // Close the popup after the message disappears
+        }, 2000);
+
+        // Refresh the data and close the popup
+        this.getCarDetails();
+       // this.closeEditPopup();
+       this.getTotalCarsAvailable();
+       this.getCityWiseModelCounts();
+      },
+      error => {
+        console.error('Error updating vehicle:', error);
+      }
+    );
+  }
+
+  getTotalCarsAvailable() {
+    return this.carDetailsList.length;
+  }
+
+  getCarsAvailableInCity(city: string): number {
+    // Filter the carDetailsList for the selected city
+    const cityStocks = this.carDetailsList.filter(stock => stock.city === city);
+    // Sum up the available cars in the filtered stocks
+    return cityStocks.reduce((total, stock) => total + stock.availableCars, 0);
+  }
+
+  getCityWiseModelCounts(): { city: string, count: number }[] {
+    // Create a map to store city-wise model counts
+    const cityModelCounts: { [key: string]: number } = {};
+  
+    // Iterate through the carDetailsList and calculate model counts for each city
+    this.carDetailsList.forEach(stock => {
+      if (cityModelCounts[stock.city]) {
+        cityModelCounts[stock.city] += 1; // Increment the count for the city
+      } else {
+        cityModelCounts[stock.city] = 1; // Initialize the count for the city
+      }
+    });
+  
+    // Convert the map into an array of objects with city and model count
+    return Object.keys(cityModelCounts).map(city => ({
+      city,
+      count: cityModelCounts[city]
+    }));
+  }
+
+  distinctCityList: any[] = [];
+  getDistinctCities() {
+    this.vehicleService.getData().subscribe((result: any) => {
+      this.carDetailsList = result; // Assuming result contains the full car details list
+      this.distinctCityList = [...new Set(this.carDetailsList.map((item: any) => item.city))];
+    });
+  }
 }

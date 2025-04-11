@@ -53,7 +53,6 @@
                 <p>Location: {{ stock.city }}</p>
                 <p>Date: {{ stock.vehicleYear | date:'dd-MM-yyyy' }}</p>
                 <!-- <p>Available: {{ stock.available }}</p> -->
-                <!-- <button class="button edit" (click)="openEditVehiclePopup(stock)">Edit</button> -->
                 <button class="button edit" (click)="openEditVehiclePopup(stock)">Edit</button>
 
                 <!-- <button class="button edit">Edit</button> -->
@@ -93,6 +92,10 @@
         <div class="popup-content">
           <span class="close" (click)="closeEditPopup()">&times;</span>
           <h2>Edit Vehicle</h2>
+          <!-- Success message -->
+          <div *ngIf="successMessage" class="success-message">
+            <p>{{ successMessage }}</p>
+          </div>
           <form (ngSubmit)="onUpdate()">
             <label for="editVehicleMake">Make:</label>
             <input type="text" id="editVehicleMake" [(ngModel)]="editVehicleData.make" name="make" required>

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { VehicleModel } from '../models/VehicleModel';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,10 @@ export class DataService {
 
   addVehicle(vehicle: any): Observable<any> {
     return this.http.post<any>(this.baseUrl, vehicle);
+  }
+
+  updateVehicleDetails(vehicleData: any){
+    return this.http.put(`${this.baseUrl}/${vehicleData.id}`, vehicleData);
   }
 
 }
