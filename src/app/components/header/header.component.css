@@ -1,6 +1,6 @@
 /* Vertical Navigation Bar */
 .vertical-nav {
-    width: 200px; /* Medium width for the nav bar */
+    width: 200px; /* Full width when expanded */
     height: 100vh;
     background: linear-gradient(135deg, #3f51b5, #5c6bc0); /* Gradient background */
     color: white;
@@ -18,17 +18,7 @@
 }
 
 .vertical-nav.collapsed {
-    width: 80px; /* Collapse the nav bar */
-}
-
-.vertical-nav .logo {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 20px;
-    color: white;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    width: 80px; /* Reduced width when collapsed */
 }
 
 .vertical-nav ul {
@@ -53,6 +43,8 @@
     gap: 10px;
     border-radius: 4px;
     transition: background-color 0.3s, transform 0.2s;
+    white-space: nowrap; /* Prevent text wrapping */
+    overflow: hidden; /* Hide overflowing text */
 }
 
 .vertical-nav ul li a:hover {
@@ -64,6 +56,11 @@
     font-size: 18px;
 }
 
+/* Hide text when collapsed */
+.vertical-nav.collapsed ul li a span {
+    display: none; /* Hide the text */
+}
+
 /* Active Link Styling */
 .vertical-nav ul li a.active {
     background-color: #283593; /* Highlight active link */
@@ -71,40 +68,92 @@
     border-radius: 4px;
 }
 
+/* Logo Section */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Add spacing between the icon and text */
+    font-size: 1.5rem; /* Adjust font size */
+    font-weight: bold;
+    color: white;
+    padding: 15px;
+    background-color: #3f51b5; /* Primary color */
+    border-radius: 8px;
+    margin-bottom: 20px; /* Add spacing below the logo */
+    text-transform: uppercase; /* Make the text uppercase */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+}
+
+.logo i {
+    font-size: 2rem; /* Adjust icon size */
+    color: #ffeb3b; /* Yellow color for the icon */
+}
+
+/* Hide logo text when collapsed */
+.vertical-nav.collapsed .logo span {
+    display: none; /* Hide the text */
+}
+
+.vertical-nav.collapsed .logo {
+    justify-content: center; /* Center the icon when collapsed */
+}
+
 /* Toggle Button */
 .toggle-nav-button {
     background-color: #3f51b5;
     color: white;
     border: none;
-    padding: 10px;
-    cursor: pointer;
-    font-size: 18px;
-    margin-top: auto;
-    align-self: center;
+    padding: 6px 12px; /* Reduced padding for a smaller size */
     border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px; /* Smaller font size */
     transition: background-color 0.3s, transform 0.2s;
+    position: absolute; /* Position the button absolutely */
+    bottom: 15px; /* Adjust bottom spacing */
+    right: 15px; /* Adjust right spacing */
 }
 
 .toggle-nav-button:hover {
     background-color: #3548a5;
-    transform: scale(1.1);
+    transform: scale(1.05);
+}
+
+/* Logo Text */
+.logo-text {
+    font-size: 1.2rem; /* Slightly larger font size */
+    font-weight: bold;
+    background: linear-gradient(135deg, #f9f8f7, #ff8a50); /* Gradient text */
+    -webkit-background-clip: text; /* Clip the background to the text */
+    -webkit-text-fill-color: transparent; /* Make the text transparent to show the gradient */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Add a subtle shadow for depth */
+    letter-spacing: 1px; /* Add spacing between letters */
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
     .vertical-nav {
-        position: absolute;
-        z-index: 1000;
-        height: 100%;
-        transform: translateX(-100%);
-        transition: transform 0.3s ease;
+        width: 60px; /* Further reduce width for smaller screens */
     }
 
     .vertical-nav.collapsed {
-        transform: translateX(0);
+        width: 60px; /* Adjust collapsed width for smaller screens */
     }
 
+    .logo {
+        font-size: 1.2rem; /* Adjust font size for smaller screens */
+        padding: 10px;
+    }
+
+    .logo i {
+        font-size: 1.5rem; /* Adjust icon size for smaller screens */
+    }
+    .logo-text {
+        font-size: 1.2rem; /* Adjust text size for smaller screens */
+    }
     .toggle-nav-button {
-        font-size: 16px;
+        font-size: 10px; /* Even smaller font size for smaller screens */
+        padding: 5px 10px; /* Adjust padding for smaller screens */
+        bottom: 10px; /* Adjust bottom spacing */
+        right: 10px; /* Adjust right spacing */
     }
 }

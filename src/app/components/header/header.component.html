@@ -1,10 +1,42 @@
 <div class="vertical-nav" [class.collapsed]="isNavCollapsed">
-    <div class="logo">Fleet Manager</div>
+    <div class="logo">
+        <i class="fas fa-car"></i>
+        <span class="logo-text">Fleet Manager</span>
+    </div>
     <ul>
-        <li><a routerLink="/" routerLinkActive="active"><i class="fas fa-home"></i> Dashboard</a></li>
-        <li><a routerLink="/user-page" routerLinkActive="active"><i class="fas fa-user"></i> User Management</a></li>
-        <li><a routerLink="/login-page" routerLinkActive="active"><i class="fas fa-sign-in-alt"></i> Login</a></li>
-        <li><a routerLink="/service-page" routerLinkActive="active"><i class="fas fa-tools"></i> Services</a></li>
+        <li>
+            <a routerLink="/" routerLinkActive="active">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+        </li>
+        <li>
+            <a routerLink="/user-page" routerLinkActive="active">
+                <i class="fas fa-user"></i>
+                <span>User Management</span>
+            </a>
+        </li>
+        <li>
+            <a routerLink="/login-page" routerLinkActive="active">
+                <i class="fas fa-sign-in-alt"></i>
+                <span>Login</span>
+            </a>
+        </li>
+        <li>
+            <a routerLink="/add-vehicle" routerLinkActive="active">
+                <i class="fas fa-plus-circle"></i>
+                <span>Add Vehicle</span>
+            </a>
+        </li>
+        
+        <li>
+            <a routerLink="/service-page" routerLinkActive="active">
+                <i class="fas fa-tools"></i>
+                <span>Services</span>
+            </a>
+        </li>
     </ul>
-    <button class="toggle-nav-button" (click)="toggleNav()">☰</button>
+    <button class="toggle-nav-button" (click)="toggleNav()">
+        {{ isNavCollapsed ? '>>' : '<<' }}
+    </button>
 </div>
