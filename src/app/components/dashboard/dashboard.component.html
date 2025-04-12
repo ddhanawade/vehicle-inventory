@@ -102,11 +102,11 @@
 
     <!-- Edit Vehicle Popup -->
     <div *ngIf="showEditPopup" class="popup">
-      <!-- Success message -->
+      <div class="popup-content">
+        <!-- Success message -->
       <div *ngIf="successMessage" class="small-success-message">
         <p>{{ successMessage }}</p>
       </div>
-      <div class="popup-content">
         <span class="close" (click)="closeEditPopup()">&times;</span>
         <h2>Edit Vehicle</h2>
         <form (ngSubmit)="onUpdate()">
