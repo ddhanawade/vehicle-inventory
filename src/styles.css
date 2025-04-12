@@ -1,4 +1,51 @@
-/* You can add global styles to this file, and also import other style files */
+/* Reset styles for consistency */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+/* Global styles for html and body */
+html, body {
+    height: 100%;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+    overflow-x: hidden;
+    scroll-behavior: smooth; /* Enable smooth scrolling */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Main container to ensure footer behavior */
+.main-container {
+    flex: 1; /* Ensures the content area grows dynamically */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* Footer styles */
+footer {
+    background-color: #3f51b5;
+    color: white;
+    text-align: center;
+    padding: 10px 20px;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    font-size: 14px;
+}
+
+/* Smooth scrolling for horizontal scrollable elements */
+.scrollable {
+    overflow-x: auto;
+    scroll-behavior: smooth;
+}
+
+.scrollable::-webkit-scrollbar {
+    display: none; /* Hide scrollbar for webkit browsers */
+}
+
+.scrollable {
+    -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
+    scrollbar-width: none; /* Hide scrollbar for Firefox */
+}

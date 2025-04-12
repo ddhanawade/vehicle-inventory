@@ -1,11 +1,14 @@
-html, body {
+html,
+body {
     margin: 0;
     font-family: Arial, sans-serif;
     overflow-x: hidden;
     display: flex;
     flex-direction: column;
     height: 100vh;
+    scroll-behavior: smooth;
 }
+
 .dashboard-container {
     width: 95%;
     max-width: 1200px;
@@ -31,13 +34,14 @@ html, body {
     align-items: center;
 }
 
-.search-input {
+/* .search-input {
     margin-right: 25px;
     padding: 8px;
     border: none;
     border-radius: 4px;
-}
+} */
 
+/* Submit Button */
 .button {
     background-color: #4caf50;
     color: white;
@@ -45,11 +49,30 @@ html, body {
     padding: 10px 16px;
     border-radius: 4px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    font-size: 14px;
+    transition: background-color 0.3s, transform 0.2s;
+    width: 100%; /* Make the button full-width for better responsiveness */
 }
 
 .button:hover {
     background-color: #45a049;
+    transform: scale(1.05);
+}
+
+.btn-danger {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn-danger:hover {
+    background-color: #d32f2f;
+    transform: scale(1.05);
 }
 
 .filter-section {
@@ -63,67 +86,111 @@ html, body {
 }
 
 .stock-list {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 cards per row */
+    width: 100%;
+    margin: 20px 0;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: grid; /* Use grid layout */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* 3 cards per row */
     gap: 20px; /* Add spacing between cards */
-  }
-  
+    justify-content: start; /* Center the cards when there are fewer items */
+}
+
+
+.stock-list h2 {
+    font-size: 1.8rem;
+    color: #3f51b5;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.stock-item {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
 
 .card-container {
-    flex: 1 1 calc(33.333% - 16px);
-    margin: 8px;
+    max-width: 400px; /* Limit the width of each card */
+    width: 100%; /* Ensure cards take full width within their grid cell */
+    margin: 0; /* Center the card within its container */
 }
 
 .card {
-    padding: 15px;
+    padding: 20px;
     border: 1px solid #ddd;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     background-color: #fff;
-  }
+    transition: transform 0.3s, box-shadow 0.3s;
+}
 
 .card:hover {
     transform: scale(1.05);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
 }
 
+
+/* Popup Content */
 .popup-content {
     background: white;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     width: 90%;
-    max-width: 500px;
+    max-width: 500px; /* Limit the width for larger screens */
+    position: relative;
+    animation: fadeIn 0.3s ease-in-out; /* Add a fade-in animation */
 }
 
+/* Popup Overlay */
 .popup {
     position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1000; /* Make sure it is above other elements */
-    background: rgba(0,0,0,0.5);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it appears above other elements */
 }
 
+/* Close Button */
 .close {
-    cursor: pointer;
-    color: red; /* Make sure the color is visible */
-    font-size: 1.5em; /* Adjust size as needed */
-    position: absolute; /* Positioning for the close button */
+    position: absolute;
     top: 10px;
-    right: 10px; /* Top-right corner */
+    right: 10px;
+    font-size: 1.5rem;
+    color: red;
+    cursor: pointer;
+    transition: transform 0.2s;
 }
 
+/* label {
+    display: block;
+    margin-bottom: 5px;
+} */
+
+/* Form Labels */
 label {
     display: block;
     margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
 }
 
+/* Form Inputs */
 input {
-    width: calc(100% - 12px);
+    width: calc(100% - 16px);
     padding: 8px;
     border: 1px solid #ddd;
     border-radius: 4px;
     margin-bottom: 15px;
+    font-size: 14px;
 }
 
 .summary-cards {
@@ -135,7 +202,8 @@ input {
 }
 
 .total-stock-card {
-    flex: 0 0 20%; /* Adjust as needed */
+    flex: 0 0 20%;
+    /* Adjust as needed */
     background-color: #ffeb3b;
     color: #333;
 }
@@ -159,42 +227,165 @@ input {
 }
 
 .slider::-webkit-scrollbar {
-    display: none; /* Hide scrollbar for webkit */
+    display: none;
+    /* Hide scrollbar for webkit */
 }
 
 .slider {
-    -ms-overflow-style: none;  /* Hide scrollbar for IE and Edge */
-    scrollbar-width: none;  /* Hide scrollbar for Firefox */
+    -ms-overflow-style: none;
+    /* Hide scrollbar for IE and Edge */
+    scrollbar-width: none;
+    /* Hide scrollbar for Firefox */
 }
 
 .success-message {
-    background-color: #4caf50; /* Green background */
-    color: white; /* White text */
+    background-color: #4caf50;
+    /* Green background */
+    color: white;
+    /* White text */
     padding: 10px 15px;
     margin-bottom: 15px;
     border-radius: 5px;
     text-align: center;
     font-size: 16px;
     animation: fadeInOut 2s ease-in-out;
-  }
-  
-  @keyframes fadeInOut {
-    0% { opacity: 0; transform: translateY(-10px); }
-    10% { opacity: 1; transform: translateY(0); }
-    90% { opacity: 1; transform: translateY(0); }
-    100% { opacity: 0; transform: translateY(-10px); }
-  }
+}
 
-  .small-success-message {
-    background-color: #d4edda; /* Light green background */
-    color: #155724; /* Dark green text */
+/* Responsive Design */
+@media (max-width: 768px) {
+    .popup-content {
+        width: 95%; /* Adjust width for smaller screens */
+        padding: 15px;
+    }
+
+    .close {
+        font-size: 1.2rem; /* Adjust close button size */
+    }
+
+    input {
+        font-size: 13px; /* Adjust input font size */
+    }
+
+    .button {
+        font-size: 13px; /* Adjust button font size */
+    }
+}
+
+/* Fade-in Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.small-success-message {
+    background-color: #d4edda;
+    /* Light green background */
+    color: #155724;
+    /* Dark green text */
     padding: 5px 10px;
     margin: 10px 0;
-    border: 1px solid #c3e6cb; /* Light green border */
+    border: 1px solid #c3e6cb;
+    /* Light green border */
     border-radius: 4px;
-    font-size: 15px; /* Small font size */
+    font-size: 15px;
+    /* Small font size */
     text-align: center;
     width: fit-content;
     margin-left: auto;
     margin-right: auto;
-  }
+}
+
+.stock-title {
+    font-size: 1.5rem;
+    color: #3f51b5;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.card p {
+    font-size: 1rem;
+    color: #555;
+    margin: 5px 0;
+}
+
+.card-actions {
+    display: flex; /* Use flexbox to align buttons horizontally */
+    justify-content: space-between; /* Add space between the buttons */
+    gap: 10px; /* Add spacing between buttons */
+    margin-top: 15px; /* Add some margin above the buttons */
+}
+
+.close:hover {
+    transform: scale(1.2); /* Slightly enlarge on hover */
+}
+
+/* Search and Action Bar */
+.search-action-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f1f1f1;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 20px 0;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+}
+
+.search-input {
+    flex: 1;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.search-button {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.search-button:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+}
+
+.action-container {
+    margin-left: 20px;
+}
+
+.add-vehicle {
+    background-color: #3f51b5;
+    color: white;
+    border: none;
+    padding: 16px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.add-vehicle:hover {
+    background-color: #3548a5;
+    transform: scale(1.05);
+}

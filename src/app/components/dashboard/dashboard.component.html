@@ -1,124 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Us - Vehicle Inventory Management</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us - Vehicle Inventory Management</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
+
 <body>
-<div class="dashboard-container">
-</div>
-<div class="dashboard-container">
+  <div class="dashboard-container">
+  </div>
+  <div class="dashboard-container">
     <div class="summary-cards">
-        <div class="total-stock-card card">
-            <h2>Total Cars Available</h2>
-            <p>{{ getTotalCarsAvailable() }}</p>
+      <div class="total-stock-card card">
+        <h2>Total Cars Available</h2>
+        <p>{{ getTotalCarsAvailable() }}</p>
+      </div>
+
+      <div class="slider">
+        <div class="summary-card card" *ngFor="let cityData of getCityWiseModelCounts()">
+          <h2 style="text-align: left;">{{ cityData.city }}</h2>
+          <p style="text-align: left;"><b>{{ cityData.count }}</b></p>
+          <p style="text-align: left;">Vehicles in stock</p>
         </div>
-    
-        <div class="slider">
-            <div class="summary-card card" *ngFor="let cityData of getCityWiseModelCounts()">
-                <h2 style="text-align: left;">{{ cityData.city  }}</h2>
-                <p style="text-align: left;"><b>{{ cityData.count }}</b></p> 
-                <p style="text-align: left;">Vehicles in stock</p>
-            </div>
-        </div>
+      </div>
     </div>
-    <header class="dashboard-header">
+    <!-- <header class="dashboard-header">
         <h1>Stock Dashboard</h1>
         <div class="header-actions">
             <input type="text" placeholder="Search..." [(ngModel)]="searchTerm" class="search-input" />
             <button class="button add-vehicle" (click)="openAddVehiclePopup()">Add Vehicle</button>
         </div>
-    </header>
+    </header> -->
+    <div class="search-action-bar">
+      <div class="search-container">
+        <input type="text" placeholder="Search vehicles by make, model, or city..." [(ngModel)]="searchTerm"
+          class="search-input" />
+      </div>
+      <div class="action-container">
+        <button class="button add-vehicle" (click)="openAddVehiclePopup()">+ Add Vehicle</button>
+      </div>
+    </div>
 
     <div class="filter-section">
-        <select [(ngModel)]="selectedCity" (change)="selectedModel=''">
-            <!-- <option value="" disabled selected>Select City</option> -->
-            <option value=""  selected>Select City</option>
-            <option *ngFor="let city of distinctCityList" [value]="city">{{ city }}</option>
-        </select>
+      <select [(ngModel)]="selectedCity" (change)="selectedModel=''">
+        <!-- <option value="" disabled selected>Select City</option> -->
+        <option value="" selected>Select City</option>
+        <option *ngFor="let city of distinctCityList" [value]="city">{{ city }}</option>
+      </select>
 
-        <select [(ngModel)]="selectedModel" [disabled]="!selectedCity">
-            <option value=""  selected>Select Model</option>
-            <option *ngFor="let model of getCarModels(selectedCity)" [value]="model">{{ model }}</option>
-        </select>
+      <select [(ngModel)]="selectedModel" [disabled]="!selectedCity">
+        <option value="" selected>Select Model</option>
+        <option *ngFor="let model of getCarModels(selectedCity)" [value]="model">{{ model }}</option>
+      </select>
     </div>
     <div *ngIf="successMessage" class="small-success-message">
-        <p>{{ successMessage }}</p>
-      </div>
+      <p>{{ successMessage }}</p>
+    </div>
     <div class="stock-list">
-        <!-- Success message -->
-        <div class="stock-item" *ngFor="let stock of filteredStocks()" class="card-container">
-            <div class="card">
-                <h3 style="color: royalblue;"><i class="fas fa-car"></i> {{ stock.make }}</h3>
-                <p>Model: {{ stock.model }}</p>
-                <p>Location: {{ stock.city }}</p>
-                <p>Date: {{ stock.vehicleYear | date:'dd-MM-yyyy' }}</p>
-                <!-- <p>Available: {{ stock.available }}</p> -->
-                <button class="button edit" (click)="openEditVehiclePopup(stock)">Edit</button>
-                <button class="button btn-danger" (click)="onDelete(stock)" style="background-color: red;">Delete</button>
-                <!-- <button class="button edit">Edit</button> -->
-            </div>
+      <div class="stock-item" *ngFor="let stock of filteredStocks()" class="card-container">
+        <div class="card">
+          <h3 style="color: royalblue;"><i class="fas fa-car"></i> {{ stock.make }}</h3>
+          <p>Model: {{ stock.model }}</p>
+          <p>Location: {{ stock.city }}</p>
+          <p>Date: {{ stock.vehicleYear | date:'dd-MM-yyyy' }}</p>
+          <div class="card-actions">
+            <button class="button edit" (click)="openEditVehiclePopup(stock)">Edit</button>
+            <button class="button btn-danger" (click)="onDelete(stock)">Delete</button>
+          </div>
         </div>
+      </div>
     </div>
 
+    <!-- Add Vehicle Popup -->
     <div *ngIf="showPopup" class="popup">
-        <div class="popup-content">
-          <span class="close" (click)="closePopup()">&times;</span>
-          <h2>Add Vehicle</h2>
-      
-          <!-- Success message -->
-          <div *ngIf="successMessage" class="success-message">
-            <p>{{ successMessage }}</p>
-          </div>
-      
-          <form [formGroup]="vehicleForm" (ngSubmit)="onSubmit()">
-            <label for="make">Make:</label>
-            <input id="make" formControlName="make">
-      
-            <label for="model">Model:</label>
-            <input id="model" formControlName="model">
-      
-            <label for="city">City:</label>
-            <input id="city" formControlName="city">
-      
-            <label for="vehicleYear">Vehicle Year:</label>
-            <input id="vehicleYear" formControlName="vehicleYear" type="date">
-      
-            <button type="submit">Submit</button>
-          </form>
+      <div class="popup-content">
+        <span class="close" (click)="closePopup()">&times;</span>
+        <h2>Add Vehicle</h2>
+        <!-- Success message -->
+        <div *ngIf="successMessage" class="small-success-message">
+          <p>{{ successMessage }}</p>
         </div>
-      </div>
+        <form [formGroup]="vehicleForm" (ngSubmit)="onSubmit()">
+          <label for="make">Make:</label>
+          <input id="make" formControlName="make" placeholder="Enter vehicle make">
 
-    <div *ngIf="showEditPopup" class="popup">
-        <div class="popup-content">
-          <span class="close" (click)="closeEditPopup()">&times;</span>
-          <h2>Edit Vehicle</h2>
-          <!-- Success message -->
-          <div *ngIf="successMessage" class="success-message">
-            <p>{{ successMessage }}</p>
-          </div>
-          <form (ngSubmit)="onUpdate()">
-            <label for="editVehicleMake">Make:</label>
-            <input type="text" id="editVehicleMake" [(ngModel)]="editVehicleData.make" name="make" required>
-      
-            <label for="editVehicleModel">Model:</label>
-            <input type="text" id="editVehicleModel" [(ngModel)]="editVehicleData.model" name="model" required>
-      
-            <label for="editVehicleCity">City:</label>
-            <input type="text" id="editVehicleCity" [(ngModel)]="editVehicleData.city" name="city" required>
-      
-            <label for="editVehicleYear">Vehicle Year:</label>
-            <input type="date" id="editVehicleYear" [(ngModel)]="editVehicleData.vehicleYear" name="vehicleYear" required>
-      
-            <!-- <label for="editVehicleAvailable">Availability:</label>
-            <input type="number" id="editVehicleAvailable" [(ngModel)]="editVehicle.available" name="available" required> -->
-      
-            <button type="submit" class="button">Update Vehicle</button>
-          </form>
-        </div>
+          <label for="model">Model:</label>
+          <input id="model" formControlName="model" placeholder="Enter vehicle model">
+
+          <label for="city">City:</label>
+          <input id="city" formControlName="city" placeholder="Enter city">
+
+          <label for="vehicleYear">Vehicle Year:</label>
+          <input id="vehicleYear" formControlName="vehicleYear" type="date">
+
+          <button type="submit" class="button">Submit</button>
+        </form>
       </div>
-</div>
+    </div>
+
+    <!-- Edit Vehicle Popup -->
+    <div *ngIf="showEditPopup" class="popup">
+      <!-- Success message -->
+      <div *ngIf="successMessage" class="small-success-message">
+        <p>{{ successMessage }}</p>
+      </div>
+      <div class="popup-content">
+        <span class="close" (click)="closeEditPopup()">&times;</span>
+        <h2>Edit Vehicle</h2>
+        <form (ngSubmit)="onUpdate()">
+          <label for="editVehicleMake">Make:</label>
+          <input type="text" id="editVehicleMake" [(ngModel)]="editVehicleData.make" name="make"
+            placeholder="Enter vehicle make" required>
+
+          <label for="editVehicleModel">Model:</label>
+          <input type="text" id="editVehicleModel" [(ngModel)]="editVehicleData.model" name="model"
+            placeholder="Enter vehicle model" required>
+
+          <label for="editVehicleCity">City:</label>
+          <input type="text" id="editVehicleCity" [(ngModel)]="editVehicleData.city" name="city"
+            placeholder="Enter city" required>
+
+          <label for="editVehicleYear">Vehicle Year:</label>
+          <input type="date" id="editVehicleYear" [(ngModel)]="editVehicleData.vehicleYear" name="vehicleYear" required>
+
+          <button type="submit" class="button">Update Vehicle</button>
+        </form>
+      </div>
+    </div>
+  </div>
 </body>
+
 </html>
