@@ -313,18 +313,22 @@ input {
 
 /* Slider Container */
 .slider {
-    display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    gap: 15px; /* Add spacing between cards */
+    display: flex; /* Use flexbox for horizontal scrolling */
+    overflow-x: auto; /* Enable horizontal scrolling */
+    scroll-snap-type: x mandatory; /* Enable snapping for smooth scrolling */
+    gap: 15px; /* Add consistent spacing between cards */
     padding: 10px 0;
     margin-top: 20px;
+    background-color: #f9f9f9; /* Optional: Add a light background to the slider */
+    border-radius: 8px; /* Optional: Add rounded corners */
+    width: 100%; /* Ensure the slider takes full width */
+    box-sizing: border-box; /* Include padding and border in width */
 }
 
 /* Summary Card */
 .summary-card {
-    flex: 0 0 250px; /* Set a fixed width for each card */
-    scroll-snap-align: start;
+    flex: 0 0 300px; /* Set a fixed width for each card */
+    scroll-snap-align: start; /* Ensure cards snap into place */
     background: linear-gradient(135deg, #ff5722, #ff8a50); /* Gradient background */
     color: white;
     text-align: center;
@@ -376,6 +380,17 @@ input {
     z-index: 0;
 }
 
+/* Responsive Design */
+@media (max-width: 768px) {
+    .slider {
+        gap: 10px; /* Adjust spacing for smaller screens */
+    }
+
+    .summary-card {
+        flex: 0 0 250px; /* Adjust card width for smaller screens */
+    }
+}
+
 @keyframes rotateGlow {
     0% {
         transform: rotate(0deg);
@@ -388,15 +403,15 @@ input {
 /* Responsive Design */
 @media (max-width: 768px) {
     .summary-card {
-        flex: 0 0 80%; /* Adjust card width for smaller screens */
+        flex: 0 0 calc(50% - 15px); /* Adjust to two cards per row on smaller screens */
+        max-width: calc(50% - 15px);
     }
+}
 
-    .card-header h2 {
-        font-size: 1.2rem; /* Adjust font size for smaller screens */
-    }
-
-    .card-body p {
-        font-size: 1rem; /* Adjust font size for smaller screens */
+@media (max-width: 480px) {
+    .summary-card {
+        flex: 0 0 100%; /* Adjust to one card per row on very small screens */
+        max-width: 100%;
     }
 }
 

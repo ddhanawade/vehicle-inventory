@@ -58,6 +58,9 @@
           <button class="button add-vehicle" (click)="openAddVehiclePopup()">+ Add Vehicle</button>
       </div>
   </div>
+  <div *ngIf="successMessage" class="small-success-message">
+    <p>{{ successMessage }}</p>
+  </div>
     <!-- Stock List Section -->
     <div class="stock-list">
       <div class="stock-item" *ngFor="let stock of filteredStocks()" class="card-container">
