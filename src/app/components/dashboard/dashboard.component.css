@@ -16,7 +16,8 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    margin-top: -400px;
+    margin-top: 20px; /* Reduce the top margin */
+    gap: 20px; /* Add consistent spacing between child containers */
 }
 
 .dashboard-header {
@@ -34,14 +35,7 @@ body {
     align-items: center;
 }
 
-/* .search-input {
-    margin-right: 25px;
-    padding: 8px;
-    border: none;
-    border-radius: 4px;
-} */
-
-/* Submit Button */
+/* Buttons */
 .button {
     background-color: #4caf50;
     color: white;
@@ -51,7 +45,6 @@ body {
     cursor: pointer;
     font-size: 14px;
     transition: background-color 0.3s, transform 0.2s;
-    width: 100%; /* Make the button full-width for better responsiveness */
 }
 
 .button:hover {
@@ -85,19 +78,57 @@ body {
     border-radius: 4px;
 }
 
+/* Stock List */
 .stock-list {
     width: 100%;
-    margin: 20px 0;
+    margin: 0;
     padding: 20px;
     background-color: #f9f9f9;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    display: grid; /* Use grid layout */
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* 3 cards per row */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive grid layout */
     gap: 20px; /* Add spacing between cards */
-    justify-content: start; /* Center the cards when there are fewer items */
 }
 
+/* Stock Item Card */
+.card {
+    padding: 20px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #ffffff, #f1f1f1); /* Subtle gradient background */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    transition: transform 0.3s, box-shadow 0.3s; /* Smooth hover effects */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Card Header */
+.card-header h3 {
+    font-size: 1.5rem;
+    color: #3f51b5;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Space between icon and text */
+}
+
+/* Card Body */
+.card-body {
+    margin-top: 10px;
+}
+
+.card-body p {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin: 0;
+}
 
 .stock-list h2 {
     font-size: 1.8rem;
@@ -116,20 +147,6 @@ body {
     max-width: 400px; /* Limit the width of each card */
     width: 100%; /* Ensure cards take full width within their grid cell */
     margin: 0; /* Center the card within its container */
-}
-
-.card {
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.card:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
 }
 
 
@@ -197,33 +214,126 @@ input {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 20px 0;
-    padding: 10px 0;
+    gap: 20px; /* Add spacing between cards */
+    margin: 0; /* Remove extra margins */
+    padding: 15px 0; /* Adjust padding for compactness */
 }
 
+/* Total Stock Card */
 .total-stock-card {
-    flex: 0 0 20%;
-    /* Adjust as needed */
-    background-color: #ffeb3b;
-    color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #4caf50, #81c784); /* Gradient background */
+    color: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Stronger shadow */
+    transition: transform 0.3s, box-shadow 0.3s; /* Smooth hover effects */
+    text-align: center;
+    position: relative;
+    overflow: hidden;
 }
 
+/* Total Stock Card */
+.total-stock-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #4caf50, #81c784); /* Gradient background */
+    color: white;
+    padding: 15px; /* Reduced padding for a more compact look */
+    border-radius: 12px; /* Slightly smaller border radius */
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Subtle shadow */
+    transition: transform 0.3s, box-shadow 0.3s; /* Smooth hover effects */
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    height: auto; /* Ensure the height adjusts dynamically */
+    min-height: 150px; /* Set a minimum height */
+}
+
+/* Add a glowing effect */
+.total-stock-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent 70%);
+    animation: rotateGlow 6s linear infinite;
+    z-index: 0;
+}
+
+.total-stock-card:hover {
+    transform: scale(1.05); /* Slightly enlarge on hover */
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.25); /* Stronger shadow on hover */
+}
+
+/* Card Icon */
+.card-icon {
+    font-size: 3rem; /* Reduced icon size */
+    margin-bottom: 10px; /* Reduced margin for compactness */
+    color: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
+    z-index: 1; /* Ensure it appears above the glow */
+}
+
+/* Card Content */
+.card-content {
+    z-index: 1; /* Ensure it appears above the glow */
+}
+
+.card-content h2 {
+    font-size: 1.4rem; /* Reduced font size for the title */
+    margin: 0;
+    font-weight: bold;
+    letter-spacing: 0.5px; /* Adjusted spacing for better readability */
+}
+
+.card-content .card-value {
+    font-size: 2rem; /* Reduced font size for the value */
+    font-weight: bold;
+    margin-top: 5px; /* Reduced margin for compactness */
+    animation: fadeIn 1s ease-in-out; /* Fade-in animation for the value */
+}
+/* Fade-in Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Slider Container */
 .slider {
-    flex: 1;
     display: flex;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    gap: 10px;
+    gap: 15px; /* Add spacing between cards */
+    padding: 10px 0;
+    margin-top: 20px;
 }
 
+/* Summary Card */
 .summary-card {
-    flex: 0 0 20%;
+    flex: 0 0 250px; /* Set a fixed width for each card */
     scroll-snap-align: start;
-    background-color: #ff5722;
+    background: linear-gradient(135deg, #ff5722, #ff8a50); /* Gradient background */
     color: white;
     text-align: center;
     padding: 20px;
-    border-radius: 8px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+    transition: transform 0.3s, box-shadow 0.3s; /* Smooth hover effects */
+    position: relative;
+    overflow: hidden;
 }
 
 .slider::-webkit-scrollbar {
@@ -236,6 +346,58 @@ input {
     /* Hide scrollbar for IE and Edge */
     scrollbar-width: none;
     /* Hide scrollbar for Firefox */
+}
+
+/* Hover Effects */
+.summary-card:hover {
+    transform: scale(1.05); /* Slightly enlarge on hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Stronger shadow on hover */
+}
+
+/* Card Header */
+.card-header h2 {
+    font-size: 1.5rem;
+    margin: 0;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    text-transform: capitalize; /* Capitalize city names */
+}
+
+/* Add a glowing effect */
+.summary-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent 70%);
+    animation: rotateGlow 6s linear infinite;
+    z-index: 0;
+}
+
+@keyframes rotateGlow {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .summary-card {
+        flex: 0 0 80%; /* Adjust card width for smaller screens */
+    }
+
+    .card-header h2 {
+        font-size: 1.2rem; /* Adjust font size for smaller screens */
+    }
+
+    .card-body p {
+        font-size: 1rem; /* Adjust font size for smaller screens */
+    }
 }
 
 .success-message {
@@ -388,4 +550,86 @@ input {
 .add-vehicle:hover {
     background-color: #3548a5;
     transform: scale(1.05);
+}
+
+/* Menu Container */
+.menu-container {
+    display: flex; /* Align items side by side */
+    justify-content: space-around; /* Add equal spacing between items */
+    align-items: center; /* Center items vertically */
+    background-color: #f1f1f1; /* Light background for the menu */
+    padding: 15px; /* Adjust padding for compactness */
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for better appearance */
+}
+
+/* Individual Menu Items */
+.menu-item {
+    flex: 1; /* Allow items to grow equally */
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #3f51b5; /* Primary color */
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #ffffff; /* White background for each menu */
+    transition: transform 0.3s, background-color 0.3s, color 0.3s; /* Smooth transitions */
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for menu items */
+    display: flex;
+    flex-direction: column; /* Stack icon and text vertically */
+    align-items: center;
+    gap: 10px; /* Space between icon and text */
+}
+
+/* Icons Styling */
+.menu-item i {
+    font-size: 2rem; /* Larger size for icons */
+    color: #3f51b5; /* Match the primary color */
+}
+
+/* Hover Effects */
+.menu-item:hover {
+    transform: scale(1.1); /* Slightly enlarge on hover */
+    background-color: #3f51b5; /* Change background color on hover */
+    color: #ffffff; /* Change text color on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a stronger shadow on hover */
+}
+
+.menu-item:hover i {
+    color: #ffffff; /* Change icon color on hover */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .menu-container {
+        flex-direction: column; /* Stack items vertically on smaller screens */
+        padding: 10px;
+    }
+
+    .menu-item {
+        margin-bottom: 10px; /* Add spacing between items */
+        font-size: 1rem; /* Adjust font size for smaller screens */
+    }
+
+    .menu-item:last-child {
+        margin-bottom: 0; /* Remove margin for the last item */
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .menu-container {
+        flex-direction: column; /* Stack items vertically on smaller screens */
+        padding: 10px;
+    }
+
+    .summary-cards {
+        flex-direction: column; /* Stack cards vertically on smaller screens */
+        gap: 15px; /* Adjust spacing for smaller screens */
+    }
+
+    .stock-list {
+        grid-template-columns: 1fr; /* Single column layout for smaller screens */
+    }
 }

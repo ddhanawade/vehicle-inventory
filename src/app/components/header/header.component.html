@@ -1,53 +1,10 @@
-<!-- <ul>
-  <li><a routerLink="/" [ngClass]="{'active': isActive('/')}">Dashboard</a></li>
-  <li><a routerLink="/user-page" [ngClass]="{'active': isActive('/user-page')}">User Management</a></li>
-  <li><a routerLink="/login-page" [ngClass]="{'active': isActive('/login-page')}">Login</a></li>
-  <li class="right"><a href="#services" [ngClass]="{'active': isActive('/services')}">Services</a></li>
-  <li class="right"><a routerLink="/contact" [ngClass]="{'active': isActive('/contact')}">Contact</a></li>
-</ul> -->
-<br><br><br><br><br><br><br><br><br>
-<div class="dashboard-container">
-  <!-- Summary Cards Section -->
-  <div class="summary-cards">
-      <div class="card total-stock-card">
-          <div class="card-icon">
-              <i class="fas fa-car"></i>
-          </div>
-          <div class="card-content">
-              <h2>Total Cars Available</h2>
-              <!-- <p>{{ getTotalCarsAvailable() }}</p> -->
-          </div>
-      </div>
-      <div class="card total-stock-card">
-          <div class="card-icon">
-              <i class="fas fa-city"></i>
-          </div>
-          <div class="card-content">
-              <h2>Total Cities</h2>
-              <!-- <p>{{ distinctCityList.length }}</p> -->
-          </div>
-      </div>
-      <div class="card total-stock-card">
-          <div class="card-icon">
-              <i class="fas fa-car-side"></i>
-          </div>
-          <div class="card-content">
-              <h2>Total Models</h2>
-              <!-- <p>{{ distinctModelList.length }}</p> -->
-          </div>
-      </div>
-  </div>
-
-  <!-- City-Wise Vehicle Distribution Slider -->
-  <div class="city-slider">
-      <h2>City-Wise Vehicle Distribution</h2>
-      <div class="slider">
-          <div class="summary-card card" *ngFor="let cityData of getCityWiseModelCounts()">
-              <div class="card-content">
-                  <h3>{{ cityData.city }}</h3>
-                  <p><b>{{ cityData.count }}</b> Vehicles in stock</p>
-              </div>
-          </div>
-      </div>
-  </div>
+<div class="vertical-nav" [class.collapsed]="isNavCollapsed">
+    <div class="logo">Fleet Manager</div>
+    <ul>
+        <li><a routerLink="/" routerLinkActive="active"><i class="fas fa-home"></i> Dashboard</a></li>
+        <li><a routerLink="/user-page" routerLinkActive="active"><i class="fas fa-user"></i> User Management</a></li>
+        <li><a routerLink="/login-page" routerLinkActive="active"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+        <li><a routerLink="/service-page" routerLinkActive="active"><i class="fas fa-tools"></i> Services</a></li>
+    </ul>
+    <button class="toggle-nav-button" (click)="toggleNav()">☰</button>
 </div>

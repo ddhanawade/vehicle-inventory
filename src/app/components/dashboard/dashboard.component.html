@@ -4,74 +4,75 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Contact Us - Vehicle Inventory Management</title>
+  <title>Vehicle Inventory Management</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 
 <body>
   <div class="dashboard-container">
-  </div>
-  <div class="dashboard-container">
+    <!-- Menu Section -->
+    <div class="menu-container">
+        <div class="menu-item">
+            <i class="fas fa-car"></i>
+            <span>Tata</span>
+        </div>
+        <div class="menu-item">
+            <i class="fas fa-truck"></i>
+            <span>Eicher</span>
+        </div>
+        <div class="menu-item">
+            <i class="fas fa-car-side"></i>
+            <span>Toyota</span>
+        </div>
+    </div>
+
+    <!-- Summary Cards Section -->
     <div class="summary-cards">
       <div class="total-stock-card card">
-        <h2>Total Cars Available</h2>
-        <p>{{ getTotalCarsAvailable() }}</p>
-      </div>
-
-      <div class="slider">
-        <div class="summary-card card" *ngFor="let cityData of getCityWiseModelCounts()">
-          <h2 style="text-align: left;">{{ cityData.city }}</h2>
-          <p style="text-align: left;"><b>{{ cityData.count }}</b></p>
-          <p style="text-align: left;">Vehicles in stock</p>
+        <div class="card-icon">
+            <i class="fas fa-car"></i>
         </div>
-      </div>
+        <div class="card-content">
+            <h2>Total Cars Available</h2>
+            <p class="card-value">{{ getTotalCarsAvailable() }}</p>
+        </div>
     </div>
-    <!-- <header class="dashboard-header">
-        <h1>Stock Dashboard</h1>
-        <div class="header-actions">
-            <input type="text" placeholder="Search..." [(ngModel)]="searchTerm" class="search-input" />
-            <button class="button add-vehicle" (click)="openAddVehiclePopup()">Add Vehicle</button>
-        </div>
-    </header> -->
+    <div class="slider">
+      <div class="summary-card card" *ngFor="let cityData of getCityWiseModelCounts()">
+          <div class="card-header">
+              <h2>{{ cityData.city }}</h2>
+          </div>
+          <div class="card-body">
+              <p><b>{{ cityData.count }}</b> Vehicles in stock</p>
+          </div>
+      </div>
+  </div>
+    </div>
+    <!-- Search and Action Bar -->
     <div class="search-action-bar">
       <div class="search-container">
-        <input type="text" placeholder="Search vehicles by make, model, or city..." [(ngModel)]="searchTerm"
-          class="search-input" />
+          <input type="text" placeholder="Search vehicles by make, model, or city..." [(ngModel)]="searchTerm" class="search-input" />
+          <!-- <button class="button search-button" (click)="onSearch()">Search</button> -->
       </div>
       <div class="action-container">
-        <button class="button add-vehicle" (click)="openAddVehiclePopup()">+ Add Vehicle</button>
+          <button class="button add-vehicle" (click)="openAddVehiclePopup()">+ Add Vehicle</button>
       </div>
-    </div>
-
-    <div class="filter-section">
-      <select [(ngModel)]="selectedCity" (change)="selectedModel=''">
-        <!-- <option value="" disabled selected>Select City</option> -->
-        <option value="" selected>Select City</option>
-        <option *ngFor="let city of distinctCityList" [value]="city">{{ city }}</option>
-      </select>
-
-      <select [(ngModel)]="selectedModel" [disabled]="!selectedCity">
-        <option value="" selected>Select Model</option>
-        <option *ngFor="let model of getCarModels(selectedCity)" [value]="model">{{ model }}</option>
-      </select>
-    </div>
-    <div *ngIf="successMessage" class="small-success-message">
-      <p>{{ successMessage }}</p>
-    </div>
+  </div>
+    <!-- Stock List Section -->
     <div class="stock-list">
       <div class="stock-item" *ngFor="let stock of filteredStocks()" class="card-container">
-        <div class="card">
-          <h3 style="color: royalblue;"><i class="fas fa-car"></i> {{ stock.make }}</h3>
-          <p>Model: {{ stock.model }}</p>
-          <p>Location: {{ stock.city }}</p>
-          <p>Date: {{ stock.vehicleYear | date:'dd-MM-yyyy' }}</p>
-          <div class="card-actions">
-            <button class="button edit" (click)="openEditVehiclePopup(stock)">Edit</button>
-            <button class="button btn-danger" (click)="onDelete(stock)">Delete</button>
+          <div class="card">
+              <h3 style="color: royalblue;"><i class="fas fa-car"></i> {{ stock.make }}</h3>
+              <p>Model: {{ stock.model }}</p>
+              <p>Location: {{ stock.city }}</p>
+              <p>Date: {{ stock.vehicleYear | date:'dd-MM-yyyy' }}</p>
+              <div class="card-actions">
+                  <button class="button edit" (click)="openEditVehiclePopup(stock)">Edit</button>
+                  <button class="button btn-danger" (click)="onDelete(stock)">Delete</button>
+              </div>
           </div>
-        </div>
       </div>
-    </div>
+  </div>
 
     <!-- Add Vehicle Popup -->
     <div *ngIf="showPopup" class="popup">
@@ -129,7 +130,8 @@
         </form>
       </div>
     </div>
-  </div>
+
+</div>
 </body>
 
 </html>

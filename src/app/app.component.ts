@@ -4,16 +4,25 @@ import { FormsModule } from '@angular/forms';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterLink, RouterOutlet } from '@angular/router';
+import { HeaderComponent } from "./components/header/header.component";
 
 @Component({
   selector: 'app-root',
-  imports: [CommonModule, RouterOutlet, MatToolbarModule, RouterLink],
+  imports: [CommonModule, RouterOutlet, MatToolbarModule, HeaderComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 export class AppComponent implements AfterViewInit{
   title = 'vehicle-inventory';
+
   classList: any;
+
+  isNavCollapsed = false; // State to track whether the nav bar is collapsed
+
+  toggleNav() {
+    this.isNavCollapsed = !this.isNavCollapsed; // Toggle the nav bar visibility
+  }
+
   ngAfterViewInit() {
     // Mobile menu toggle
     document.getElementById('mobile-menu')?.addEventListener('click', function() {
