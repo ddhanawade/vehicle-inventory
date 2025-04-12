@@ -1,0 +1,56 @@
+<div class="table-container">
+    <div class="table-header">
+        <h2>Vehicle Details</h2>
+        <div class="export-buttons">
+            <button class="button export" (click)="exportToPDF()">Export to PDF</button>
+            <button class="button export" (click)="exportToExcel()">Export to Excel</button>
+        </div>
+    </div>
+    <table class="responsive-table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Vehicle Make</th>
+                <th>Model</th>
+                <th>Year</th>
+                <th>Location</th>
+                <!-- <th>Actions</th> -->
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>Toyota</td>
+                <td>Corolla</td>
+                <td>2020</td>
+                <td>New York</td>
+                <!-- <td>
+                    <button class="button edit">Edit</button>
+                    <button class="button btn-danger">Delete</button>
+                </td> -->
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Honda</td>
+                <td>Civic</td>
+                <td>2019</td>
+                <td>Los Angeles</td>
+                <!-- <td>
+                    <button class="button edit">Edit</button>
+                    <button class="button btn-danger">Delete</button>
+                </td> -->
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Ford</td>
+                <td>Focus</td>
+                <td>2021</td>
+                <td>Chicago</td>
+                <!-- <td>
+                    <button class="button edit">Edit</button>
+                    <button class="button btn-danger">Delete</button>
+                </td> -->
+            </tr>
+        </tbody>
+    </table>
+</div>

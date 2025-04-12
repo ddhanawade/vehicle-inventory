@@ -5,6 +5,7 @@ import { UserManagementComponent } from './components/user-management/user-manag
 import { HeaderComponent } from './components/header/header.component';
 import { ServicesComponent } from './components/services/services.component';
 import { ContactusComponent } from './components/contactus/contactus.component';
+import { VehicleDetailsComponent } from './components/vehicle-details/vehicle-details.component';
 
 export const routes: Routes = [
     {
@@ -34,5 +35,9 @@ export const routes: Routes = [
     {
         path: "contact-page",
         component: ContactusComponent
+    },
+    {
+        path: "vehicle-page",
+        component : VehicleDetailsComponent
     }
 ];

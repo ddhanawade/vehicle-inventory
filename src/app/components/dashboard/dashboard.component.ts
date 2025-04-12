@@ -7,6 +7,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { DataService } from '../../services/DataService';
 import { VehicleModel } from '../../models/VehicleModel';
 import { distinct } from 'rxjs';
+import { RouterLink } from '@angular/router';
 
 interface Stock {
   name: string;
@@ -16,7 +17,7 @@ interface Stock {
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, DatePipe],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, DatePipe, RouterLink],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
