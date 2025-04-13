@@ -2,17 +2,32 @@ export class VehicleModel {
     id: number;
     make: string;
     model: string;
-    city: string;
-    vehicleYear: number;
-    availableCars : number;
-    // More fields as necessary
+    grade: string;
+    fuelType: string;
+    exteriorColor: string;
+    interiorColor: string;
+    chassisNumber: string;
+    engineNumber: string;
+    location: string;
+    status: string;
+    keyNumber: number;
+    availableCars: number;
+    receivedDate: Date;
 
-    constructor(){
-        this.id = 0;
-        this.make = '';
-        this.model = '';
-        this.city = '';
-        this.vehicleYear = 0;
-        this.availableCars = 0;
+    constructor(data?: Partial<VehicleModel>) {
+        this.id = data?.id || 0;
+        this.make = data?.make || '';
+        this.model = data?.model || '';
+        this.grade = data?.grade || '';
+        this.fuelType = data?.fuelType || '';
+        this.exteriorColor = data?.exteriorColor || '';
+        this.interiorColor = data?.interiorColor || '';
+        this.chassisNumber = data?.chassisNumber || '';
+        this.engineNumber = data?.engineNumber || '';
+        this.location = data?.location || '';
+        this.status = data?.status || '';
+        this.keyNumber = data?.keyNumber || 0;
+        this.availableCars = data?.availableCars || 0;
+        this.receivedDate = data?.receivedDate ? new Date(data.receivedDate) : new Date();
     }
 }

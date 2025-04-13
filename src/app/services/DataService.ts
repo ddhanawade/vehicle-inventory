@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { VehicleModel } from '../models/VehicleModel';
 
 @Injectable({
@@ -12,8 +12,8 @@ export class DataService {
 
   constructor(private http: HttpClient) { }
 
-  getData(){
-    return this.http.get(this.baseUrl);
+  getData(): Observable<VehicleModel[]>{
+    return this.http.get<VehicleModel[]>(this.baseUrl);
   }
 
   addVehicle(vehicle: any): Observable<any> {
@@ -27,4 +27,15 @@ export class DataService {
   deleteVehicleDetails(id : number){
     return this.http.delete(`${this.baseUrl}/${id}`);
   }
+
+  private modelNameSubject = new Subject<string>();
+
+  // Observable to listen for model name changes
+  modelName$ = this.modelNameSubject.asObservable();
+
+  // Method to emit the model name
+  setModelName(modelName: string) {
+    this.modelNameSubject.next(modelName);
+  }
+  
 }

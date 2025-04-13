@@ -66,9 +66,9 @@
       <div class="stock-item" *ngFor="let stock of filteredStocks()" class="card-container">
           <div class="card">
               <h3 style="color: royalblue;"><i class="fas fa-car"></i> {{ stock.make }}</h3>
-              <p>Model: {{ stock.model }}</p>
-              <p>Location: {{ stock.city }}</p>
-              <p>Date: {{ stock.vehicleYear | date:'dd-MM-yyyy' }}</p>
+              <p><a [routerLink]="['/vehicle-page', stock.model]">Model: {{ stock.model }}</a></p>
+              <p>Location: {{ stock.location }}</p>
+              <p>Date: {{ stock.receivedDate | date:'dd-MM-yyyy' }}</p>
               <div class="card-actions">
                   <button class="button edit" (click)="openEditVehiclePopup(stock)">Edit</button>
                   <button class="button btn-danger" (click)="onDelete(stock)">Delete</button>

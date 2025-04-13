@@ -494,10 +494,10 @@ input {
 }
 
 .card-actions {
-    display: flex; /* Use flexbox to align buttons horizontally */
-    justify-content: space-between; /* Add space between the buttons */
-    gap: 10px; /* Add spacing between buttons */
-    margin-top: 15px; /* Add some margin above the buttons */
+  display: flex; /* Use flexbox to align buttons horizontally */
+  justify-content: flex-start; /* Align buttons to the left */
+  gap: 10px; /* Add spacing between the buttons */
+  margin-top: 15px; /* Add some margin above the buttons */
 }
 
 .close:hover {

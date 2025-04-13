@@ -1,56 +1,48 @@
-<div class="table-container">
-    <div class="table-header">
-        <h2>Vehicle Details</h2>
-        <div class="export-buttons">
-            <button class="button export" (click)="exportToPDF()">Export to PDF</button>
-            <button class="button export" (click)="exportToExcel()">Export to Excel</button>
-        </div>
+<div class="vehicle-details-container">
+    <h2 class="table-heading">Vehicle Details</h2>
+    <div class="table-actions">
+        <button class="export-button" (click)="exportToPDF()">Export to PDF</button>
+        <button class="export-button" (click)="exportToExcel()">Export to Excel</button>
     </div>
-    <table class="responsive-table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Vehicle Make</th>
-                <th>Model</th>
-                <th>Year</th>
-                <th>Location</th>
-                <!-- <th>Actions</th> -->
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>1</td>
-                <td>Toyota</td>
-                <td>Corolla</td>
-                <td>2020</td>
-                <td>New York</td>
-                <!-- <td>
-                    <button class="button edit">Edit</button>
-                    <button class="button btn-danger">Delete</button>
-                </td> -->
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>Honda</td>
-                <td>Civic</td>
-                <td>2019</td>
-                <td>Los Angeles</td>
-                <!-- <td>
-                    <button class="button edit">Edit</button>
-                    <button class="button btn-danger">Delete</button>
-                </td> -->
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>Ford</td>
-                <td>Focus</td>
-                <td>2021</td>
-                <td>Chicago</td>
-                <!-- <td>
-                    <button class="button edit">Edit</button>
-                    <button class="button btn-danger">Delete</button>
-                </td> -->
-            </tr>
-        </tbody>
-    </table>
+    <div class="table-container">
+        <table class="responsive-table">
+            <thead>
+                <tr>
+                    <th>Make</th>
+                    <th>Model</th>
+                    <th>Grade</th>
+                    <th>Fuel Type</th>
+                    <th>Exterior Color</th>
+                    <th>Interior Color</th>
+                    <th>Chassis Number</th>
+                    <th>Engine Number</th>
+                    <th>Key Number</th>
+                    <th>Location</th>
+                    <th>Status</th>
+                    <th>Received Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Show "No data available" message -->
+                <tr *ngIf="carDetailsList.length === 0">
+                    <td colspan="12" class="no-data">No data available</td>
+                </tr>
+                <!-- Display data rows -->
+                <tr *ngFor="let item of carDetailsList">
+                    <td>{{ item.make }}</td>
+                    <td>{{ item.model }}</td>
+                    <td>{{ item.grade }}</td>
+                    <td>{{ item.fuelType }}</td>
+                    <td>{{ item.exteriorColor }}</td>
+                    <td>{{ item.interiorColor }}</td>
+                    <td>{{ item.chassisNumber }}</td>
+                    <td>{{ item.engineNumber }}</td>
+                    <td>{{ item.keyNumber }}</td>
+                    <td>{{ item.location }}</td>
+                    <td>{{ item.status }}</td>
+                    <td>{{ item.receivedDate | date: 'dd-MM-yyyy' }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>

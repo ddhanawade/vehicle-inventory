@@ -50,7 +50,7 @@ export class DashboardComponent implements OnInit {
 
   filteredStocks(): any[] {
     return this.carDetailsList.filter(stock =>
-      (this.selectedCity ? stock.city === this.selectedCity : true) &&
+      (this.selectedCity ? stock.location === this.selectedCity : true) &&
       (this.selectedModel ? stock.model === this.selectedModel : true) &&
       (this.searchTerm ? stock.model.toLowerCase().includes(this.searchTerm.toLowerCase()) : true)
     );
@@ -195,7 +195,7 @@ export class DashboardComponent implements OnInit {
 
   getCarsAvailableInCity(city: string): number {
     // Filter the carDetailsList for the selected city
-    const cityStocks = this.carDetailsList.filter(stock => stock.city === city);
+    const cityStocks = this.carDetailsList.filter(stock => stock.location === city);
     // Sum up the available cars in the filtered stocks
     return cityStocks.reduce((total, stock) => total + stock.availableCars, 0);
   }
@@ -206,10 +206,10 @@ export class DashboardComponent implements OnInit {
   
     // Iterate through the carDetailsList and calculate model counts for each city
     this.carDetailsList.forEach(stock => {
-      if (cityModelCounts[stock.city]) {
-        cityModelCounts[stock.city] += 1; // Increment the count for the city
+      if (cityModelCounts[stock.location]) {
+        cityModelCounts[stock.location] += 1; // Increment the count for the city
       } else {
-        cityModelCounts[stock.city] = 1; // Initialize the count for the city
+        cityModelCounts[stock.location] = 1; // Initialize the count for the city
       }
     });
   
@@ -226,5 +226,10 @@ export class DashboardComponent implements OnInit {
       this.carDetailsList = result; // Assuming result contains the full car details list
       this.distinctCityList = [...new Set(this.carDetailsList.map((item: any) => item.city))];
     });
+  }
+
+  viewVehicleDetails(modelName: string) {
+    // Emit the model name to the service
+    this.vehicleService.setModelName(modelName);
   }
 }

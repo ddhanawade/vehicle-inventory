@@ -1,29 +1,32 @@
-/* Table Container */
-.table-container {
-    width: 60%; /* Restrict the table width */
-    margin: 60px auto; /* Center the table on the page */
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    background-color: #ffffff; /* White background for the table */
+/* Container */
+.vehicle-details-container {
     padding: 20px;
+    margin: 0 auto;
+    max-width: 1200px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
 }
 
-/* Table Header */
-.table-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.table-header h2 {
-    font-size: 1.5rem;
+/* Table Heading */
+.table-heading {
+    text-align: center;
+    font-size: 1.8rem;
     color: #3f51b5;
-    margin: 0;
+    margin-bottom: 20px;
+    font-weight: bold;
 }
 
-/* Export Buttons */
-.export-buttons .button {
+/* Table Actions */
+.table-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 15px;
+    gap: 10px;
+}
+
+.export-button {
     background-color: #3f51b5;
     color: white;
     border: none;
@@ -32,12 +35,19 @@
     cursor: pointer;
     font-size: 14px;
     transition: background-color 0.3s, transform 0.2s;
-    margin-left: 10px;
 }
 
-.export-buttons .button:hover {
+.export-button:hover {
     background-color: #3548a5;
     transform: scale(1.05);
+}
+
+/* Table Container */
+.table-container {
+    overflow-x: auto;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Responsive Table */
@@ -45,95 +55,65 @@
     width: 100%;
     border-collapse: collapse;
     text-align: left;
-    font-size: 14px;
-    color: #333;
+    border-radius: 8px;
+    overflow: hidden;
 }
 
-/* Table Header */
 .responsive-table thead {
-    background-color: #3f51b5; /* Primary color */
+    background-color: #3f51b5;
     color: white;
 }
 
-.responsive-table thead th {
+.responsive-table th,
+.responsive-table td {
     padding: 12px 15px;
-    text-transform: uppercase;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    word-wrap: break-word;
+}
+
+.responsive-table th {
     font-weight: bold;
+    text-transform: uppercase;
     font-size: 14px;
 }
 
-/* Table Body */
 .responsive-table tbody tr:nth-child(even) {
-    background-color: #f9f9f9; /* Alternating row colors */
+    background-color: #f9f9f9;
 }
 
 .responsive-table tbody tr:hover {
-    background-color: #f1f1f1; /* Highlight row on hover */
+    background-color: #f1f1f1;
 }
 
-.responsive-table tbody td {
-    padding: 10px 15px;
-    border-bottom: 1px solid #ddd;
-}
-
-/* Action Buttons */
-.button {
-    background-color: #4caf50;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
-    transition: background-color 0.3s, transform 0.2s;
-}
-
-.button:hover {
-    background-color: #45a049;
-    transform: scale(1.05);
-}
-
-.btn-danger {
-    background-color: #f44336;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
-    transition: background-color 0.3s, transform 0.2s;
-}
-
-.btn-danger:hover {
-    background-color: #d32f2f;
-    transform: scale(1.05);
+/* No Data Row */
+.no-data {
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    color: #555;
+    padding: 20px;
+    background-color: #f9f9f9;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .responsive-table thead {
-        display: none; /* Hide table header for smaller screens */
+    .responsive-table th,
+    .responsive-table td {
+        font-size: 12px;
+        padding: 8px 10px;
     }
 
-    .responsive-table tbody tr {
-        display: block;
-        margin-bottom: 10px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        padding: 10px;
+    .no-data {
+        font-size: 14px;
     }
 
-    .responsive-table tbody td {
-        display: flex;
-        justify-content: space-between;
-        padding: 8px 0;
-        border: none;
+    .table-actions {
+        flex-direction: column;
+        align-items: flex-start;
     }
 
-    .responsive-table tbody td::before {
-        content: attr(data-label);
-        font-weight: bold;
-        text-transform: uppercase;
-        color: #555;
+    .export-button {
+        width: 100%;
     }
 }

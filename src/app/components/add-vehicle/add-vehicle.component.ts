@@ -1,21 +1,25 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { DataService } from '../../services/DataService';
 
 @Component({
   selector: 'app-add-vehicle',
-  imports: [ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './add-vehicle.component.html',
   styleUrl: './add-vehicle.component.css'
 })
 export class AddVehicleComponent {
   vehicleForm: FormGroup;
 
-  makes = ['Toyota', 'Honda', 'Ford', 'BMW', 'Mercedes'];
+  successMessage: string = '';
+
+  makes = ['Tata', 'Toyota', 'Eicher'];
   models = ['Corolla', 'Civic', 'Focus', 'X5', 'C-Class'];
   fuelTypes = ['Petrol', 'Diesel', 'Electric', 'Hybrid'];
-  statuses = ['Available', 'Sold', 'In Transit', 'Under Maintenance'];
+  statuses = ['Available', 'Sold', 'In Transit', 'Booked', 'Free'];
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private vehicleService: DataService) {
     this.vehicleForm = this.fb.group({
       make: ['', Validators.required],
       model: ['', Validators.required],
@@ -32,11 +36,31 @@ export class AddVehicleComponent {
     });
   }
 
+  // onSubmit() {
+  //   if (this.vehicleForm.valid) {
+  //     console.log('Vehicle Details:', this.vehicleForm.value);
+  //     alert('Vehicle added successfully!');
+  //     this.vehicleForm.reset();
+  //   }
+  // }
+
   onSubmit() {
-    if (this.vehicleForm.valid) {
-      console.log('Vehicle Details:', this.vehicleForm.value);
-      alert('Vehicle added successfully!');
-      this.vehicleForm.reset();
-    }
+    this.vehicleService.addVehicle(this.vehicleForm.value).subscribe(
+      response => {
+        console.log('Vehicle added:', response);
+        this.successMessage = 'Vehicle details added successfully!';
+  
+        // Display the success message for 2 seconds before closing the popup
+        setTimeout(() => {
+          this.successMessage = '';
+        }, 2000);
+  
+        this.vehicleForm.reset();
+      },
+      error => {
+        console.error('Error adding vehicle:', error);
+      }
+    );
   }
+
 }
