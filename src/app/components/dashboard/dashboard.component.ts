@@ -9,12 +9,6 @@ import { VehicleModel } from '../../models/VehicleModel';
 import { distinct } from 'rxjs';
 import { RouterLink } from '@angular/router';
 
-interface Stock {
-  name: string;
-  location: string;
-  available: number;
-}
-
 @Component({
   selector: 'app-dashboard',
   imports: [CommonModule, FormsModule, ReactiveFormsModule, DatePipe, RouterLink],
@@ -24,180 +18,105 @@ interface Stock {
 export class DashboardComponent implements OnInit {
 
   vehicleForm!: FormGroup;
+  carDetailsList: VehicleModel[] = [];
+  filteredStocksList: VehicleModel[] = [];
+  searchTerm: string = '';
+  selectedMake: string = ''; // Selected make for filtering
+  successMessage: string = '';
+  showPopup: boolean = false;
+  showEditPopup: boolean = false;
+  editVehicleData: any = {};
 
-  constructor(
-    private fb: FormBuilder,
-    private vehicleService: DataService
-  ) {
-    this.vehicleForm = this.fb.group({
-      make: [''],
-      model: [''],
-      city: [''],
-      vehicleYear: ['']
+  constructor(private fb: FormBuilder, private vehicleService: DataService) {}
+
+  ngOnInit(): void {
+    this.getCarDetails();
+  }
+
+  getCarDetails(): void {
+    this.vehicleService.getData().subscribe((data: VehicleModel[]) => {
+      this.carDetailsList = data;
+      this.filteredStocksList = [...this.carDetailsList]; // Initialize filtered list
     });
   }
-  stocks: any[] = [];
-  searchTerm: string = '';
-  showPopup: boolean = false;
-  showEditPopup: boolean = false; // or set to true as needed
-  successMessage: string = '';
 
-  newVehicle: { name: string, location: String, available: number } = { name: '', location: '', available: 0 };
-
-  selectedCity: string = '';
-  selectedModel: string = '';
-
-
-  filteredStocks(): any[] {
-    return this.carDetailsList.filter(stock =>
-      (this.selectedCity ? stock.location === this.selectedCity : true) &&
-      (this.selectedModel ? stock.model === this.selectedModel : true) &&
-      (this.searchTerm ? stock.model.toLowerCase().includes(this.searchTerm.toLowerCase()) : true)
-    );
+  filterByMake(make: string): void {
+    this.selectedMake = make; // Set the selected make
+    this.filterStocks(); // Apply the filter
   }
 
-  openAddVehiclePopup() {
+  filterStocks(): void {
+    const searchTermLower = this.searchTerm.toLowerCase();
+    this.filteredStocksList = this.carDetailsList.filter((stock) => {
+      const matchesMake = this.selectedMake ? stock.make.toLowerCase() === this.selectedMake.toLowerCase() : true;
+      const matchesSearch = stock.make.toLowerCase().includes(searchTermLower) ||
+                            stock.model.toLowerCase().includes(searchTermLower) ||
+                            stock.location.toLowerCase().includes(searchTermLower);
+      return matchesMake && matchesSearch;
+    });
+  }
+
+  openAddVehiclePopup(): void {
     this.showPopup = true;
-    this.newVehicle = { name: '', location: '', available: 0 }; // Reset fields
+    this.vehicleForm.reset();
   }
 
-  closePopup() {
+  closePopup(): void {
     this.showPopup = false;
   }
 
-  closeEditPopup() {
-    this.showEditPopup = false;
-  }
-
-  getCarModels(city: string): string[] {
-    // Filter carDetailsList for the selected city
-    const cityCars = this.carDetailsList.filter((item: any) => item.city === city);
-  
-    // Extract and return the models for the selected city
-    return cityCars.map((item: any) => item.model);
-  }
-
-  openEditVehiclePopup(stock: any): void {
+  openEditVehiclePopup(stock: VehicleModel): void {
     this.editVehicleData = { ...stock };
-    // Ensure vehicleYear is in YYYY-MM-DD format
-    if (this.editVehicleData.vehicleYear) {
-      this.editVehicleData.vehicleYear = new Date(this.editVehicleData.vehicleYear).toISOString().split('T')[0];
-    }
     this.showEditPopup = true;
   }
 
-  // Declare the editVehicle property with the Vehicle interface type
-  editVehicle: Vehicle = {
-    name: '',
-    location: '',
-    available: 0,
-    id: 0,
-    status: ''
-    // Initialize other properties if needed
-  };
+  closeEditPopup(): void {
+    this.showEditPopup = false;
+  }
 
-  editVehicleData: any = {}; // Object to hold the selected vehicle data
-
-  onSubmit() {
+  onSubmit(): void {
     this.vehicleService.addVehicle(this.vehicleForm.value).subscribe(
-      response => {
-        console.log('Vehicle added:', response);
+      () => {
         this.successMessage = 'Vehicle details added successfully!';
-  
-        // Display the success message for 2 seconds before closing the popup
         setTimeout(() => {
           this.successMessage = '';
-          this.closePopup(); // Close the popup after the message disappears
+          this.closePopup();
         }, 2000);
-  
-        this.getCarDetails(); // Refresh the data
-        this.getTotalCarsAvailable();
-        this.getCityWiseModelCounts();
-        this.getDistinctCities();
+        this.getCarDetails();
       },
-      error => {
-        console.error('Error adding vehicle:', error);
-        this.closePopup();
-      }
+      (error) => console.error('Error adding vehicle:', error)
     );
-  }
-  cityWiseCounts: { city: string, count: number }[] = [];
-
-  ngOnInit(): void {
-    this.vehicleService.getData().subscribe((data: any) => {
-      this.carDetailsList = data;
-      console.log('Car Details List:', this.carDetailsList); // Log the carDetailsList
-      this.cityWiseCounts = this.getCityWiseModelCounts(); // Store the result
-      console.log('City-wise counts:', this.cityWiseCounts); // Log the result
-    });
-    this.getDistinctCities();
-  }
-
-  carDetailsList: VehicleModel[] = [];
-
-  getCarDetails() {
-    this.vehicleService.getData().subscribe((result: any) => {
-      this.carDetailsList = result;
-    })
   }
 
   onUpdate(): void {
     this.vehicleService.updateVehicleDetails(this.editVehicleData).subscribe(
-      response => {
-        console.log('Vehicle updated:', response);
+      () => {
         this.successMessage = 'Vehicle details updated successfully!';
-        
-         // Display the success message for 2 seconds before closing the popup
-         setTimeout(() => {
+        setTimeout(() => {
           this.successMessage = '';
-          this.closePopup(); // Close the popup after the message disappears
+          this.closeEditPopup();
         }, 2000);
-
-        // Refresh the data and close the popup
         this.getCarDetails();
-       // this.closeEditPopup();
-       this.getTotalCarsAvailable();
-       this.getCityWiseModelCounts();
       },
-      error => {
-        console.error('Error updating vehicle:', error);
-      }
+      (error) => console.error('Error updating vehicle:', error)
     );
   }
 
-  onDelete(stock : any): void {
+  onDelete(stock: VehicleModel): void {
     this.vehicleService.deleteVehicleDetails(stock.id).subscribe(
-      response => {
-        console.log('Vehicle deleted:', response);
+      () => {
         this.successMessage = 'Vehicle details deleted successfully!';
-        
-         // Display the success message for 2 seconds before closing the popup
-         setTimeout(() => {
+        setTimeout(() => {
           this.successMessage = '';
-          this.closePopup(); // Close the popup after the message disappears
         }, 2000);
-
-        // Refresh the data and close the popup
         this.getCarDetails();
-       // this.closeEditPopup();
-       this.getTotalCarsAvailable();
-       this.getCityWiseModelCounts();
       },
-      error => {
-        console.error('Error deleting vehicle:', error);
-      }
+      (error) => console.error('Error deleting vehicle:', error)
     );
   }
 
   getTotalCarsAvailable() {
     return this.carDetailsList.length;
-  }
-
-  getCarsAvailableInCity(city: string): number {
-    // Filter the carDetailsList for the selected city
-    const cityStocks = this.carDetailsList.filter(stock => stock.location === city);
-    // Sum up the available cars in the filtered stocks
-    return cityStocks.reduce((total, stock) => total + stock.availableCars, 0);
   }
 
   getCityWiseModelCounts(): { city: string, count: number }[] {
@@ -218,18 +137,5 @@ export class DashboardComponent implements OnInit {
       city,
       count: cityModelCounts[city]
     }));
-  }
-
-  distinctCityList: any[] = [];
-  getDistinctCities() {
-    this.vehicleService.getData().subscribe((result: any) => {
-      this.carDetailsList = result; // Assuming result contains the full car details list
-      this.distinctCityList = [...new Set(this.carDetailsList.map((item: any) => item.city))];
-    });
-  }
-
-  viewVehicleDetails(modelName: string) {
-    // Emit the model name to the service
-    this.vehicleService.setModelName(modelName);
   }
 }

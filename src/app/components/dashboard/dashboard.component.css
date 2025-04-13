@@ -514,22 +514,24 @@ input {
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     margin: 20px 0;
-}
+  }
 
+/* Search Container */
 .search-container {
     display: flex;
     align-items: center;
-    gap: 10px;
     flex: 1;
-}
+  }
 
+/* Search Input */
 .search-input {
-    flex: 1;
-    padding: 10px 15px;
+    width: 100%;
+    padding: 10px 15px 10px 40px; /* Add padding to make space for the icon */
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 14px;
-}
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
 
 .search-button {
     background-color: #4caf50;
@@ -547,25 +549,48 @@ input {
     transform: scale(1.05);
 }
 
+/* Search Wrapper */
+.search-wrapper {
+    position: relative;
+    width: 100%;
+  }
+  
+.search-icon {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+    color: #888;
+    pointer-events: none;
+}
+
+.search-input:focus {
+    border-color: #3f51b5;
+    box-shadow: 0 0 5px rgba(63, 81, 181, 0.5);
+    outline: none;
+  }
+
 .action-container {
     margin-left: 20px;
 }
 
+/* Add Vehicle Button */
 .add-vehicle {
     background-color: #3f51b5;
     color: white;
     border: none;
-    padding: 16px 16px;
+    padding: 10px 16px;
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
     transition: background-color 0.3s, transform 0.2s;
-}
+  }
 
-.add-vehicle:hover {
+  .add-vehicle:hover {
     background-color: #3548a5;
     transform: scale(1.05);
-}
+  }
 
 /* Menu Container */
 .menu-container {
@@ -648,3 +673,14 @@ input {
         grid-template-columns: 1fr; /* Single column layout for smaller screens */
     }
 }
+
+.invisible-link {
+    text-decoration: none; /* Remove underline */
+    color: inherit; /* Inherit the text color from the parent */
+    cursor: pointer; /* Keep the pointer cursor for interactivity */
+  }
+  
+  .invisible-link:hover {
+    text-decoration: none; /* Ensure no underline appears on hover */
+    color: inherit; /* Prevent color change on hover */
+  }
