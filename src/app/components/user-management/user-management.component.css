@@ -1,76 +1,134 @@
-html, body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  background-color: #f7f7f7;
-
+/* General Styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f9f9f9;
 }
 
-/* Ensure the container is within constraints and responsive */
 .container {
-    width: 600px;
-    margin: 0 auto;
-    padding: 16px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
-    display: flex;
-    flex-direction: column;
+  width: 40%;
+  max-width: 1200px; /* Increase the maximum width */
+  margin: 90px auto; /* Adjust the top and bottom margin */
+  padding: 30px; /* Increase the padding for more spacing inside the container */
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 
+.page-title {
+  text-align: center;
+  font-size: 1.8rem;
+  color: #3f51b5;
+  margin-bottom: 20px;
+}
+
+/* Form Styles */
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+input, select {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input:focus, select:focus {
+  border-color: #3f51b5;
+  box-shadow: 0 0 5px rgba(63, 81, 181, 0.5);
+  outline: none;
+}
+
+button {
+  padding: 10px 16px;
+  background-color: #3f51b5;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+button:hover {
+  background-color: #3548a5;
+  transform: scale(1.05);
+}
+
+button:disabled {
+  background-color: #ddd;
+  cursor: not-allowed;
+}
+
+/* User List Styles */
+.user-list-container {
+  margin-top: 30px;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  color: #3f51b5;
+  margin-bottom: 15px;
+}
+
+.responsive-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.responsive-table th, .responsive-table td {
+  padding: 10px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+.responsive-table th {
+  background-color: #3f51b5;
+  color: white;
+  font-weight: bold;
+}
+
+.responsive-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.responsive-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 15px;
   }
-  
-  h2 {
-    text-align: center;
-    margin-bottom: 24px;
+
+  .form-container {
+    gap: 10px;
   }
-  
-  .form-group {
-    margin-bottom: 16px;
+
+  button {
+    font-size: 13px;
   }
-  
-  .form-group label {
-    display: block;
-    margin-bottom: 8px;
-  }
-  
-  .form-group input,
-  .form-group select {
-    width: 100%;
+
+  .responsive-table th, .responsive-table td {
+    font-size: 13px;
     padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
   }
-  
-  .btn {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    background-color: #007bff;
-    border: none;
-    color: #fff;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .btn:disabled {
-    background-color: #ccc;
-  }
-  
-  /* Media query for small screens */
-  @media (max-width: 600px) {
-    .container {
-      padding: 12px;
-    }
-  }
-  
-  /* Layout adjustment when the header is fixed */
-  body {
-    margin-top: 60px; /* Adjust according to the header height */
-  }
-  
-  .tablewrapper{
-    width: 95%; overflow-y: hidden; overflow-x: auto; 
-    background-color:#fff;  height: auto; padding: 5px;}
-  
+}

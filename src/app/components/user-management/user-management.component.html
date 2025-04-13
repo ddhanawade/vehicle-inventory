@@ -3,28 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Responsive Login Page</title>
-  <!-- <link rel="stylesheet" href="styles.css"> -->
+  <title>User Management</title>
 </head>
 <body>
   <div class="container">
-    <h2>User Management</h2>
-    <form #userForm="ngForm" (ngSubmit)="onSubmit(userForm)" novalidate>
+    <h2 class="page-title">User Management</h2>
+    <form #userForm="ngForm" (ngSubmit)="onSubmit(userForm)" novalidate class="form-container">
       <div class="form-group">
         <label for="username">Username:</label>
-        <input type="text" id="username" class="form-control" name="username" ngModel required>
+        <input type="text" id="username" class="form-control" name="username" ngModel required placeholder="Enter username">
       </div>
       <div class="form-group">
         <label for="email">Email:</label>
-        <input type="email" id="email" [value]="stname" class="form-control" name="email" ngModel required>
+        <input type="email" id="email" class="form-control" name="email" ngModel required placeholder="Enter email">
       </div>
       <div class="form-group">
         <label for="password">Password:</label>
-        <input type="password" id="password" class="form-control" name="password" ngModel required>
+        <input type="password" id="password" class="form-control" name="password" ngModel required placeholder="Enter password">
       </div>
       <div class="form-group">
         <label for="role">User Role:</label>
         <select id="role" class="form-control" name="role" ngModel required>
+          <option value="" disabled selected>Select a role</option>
           <option value="admin">Admin</option>
           <option value="user">User</option>
           <option value="design">Design</option>
@@ -32,33 +32,28 @@
       </div>
       <button type="submit" class="btn btn-primary" [disabled]="!userForm.valid">Submit</button>
     </form>
+
+    <!-- <div class="user-list-container">
+      <h3 class="section-title">User List</h3>
+      <table class="responsive-table">
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of userList">
+            <td>{{ user.id }}</td>
+            <td>{{ user.name }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.phone }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div> -->
   </div>
-  <!-- <div class="container">
-    <button class="btn btn-primary" (click)="getUsers()">Get Users</button>
-    <div class="row">
-      <div class="tablewrapper">
-        <table class="responsive" width="98%" cellpadding="4" cellspacing="1" border="1">
-          <thead>
-            <tr>
-              <th>Id</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Phone</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (item of userList; track $index) {
-              <tr>
-                <td>{{item.id}}</td>
-                <td>{{item.name}}</td>
-                <td>{{item.email}}</td>
-                <td>{{item.phone}}</td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div> -->
 </body>
 </html>
