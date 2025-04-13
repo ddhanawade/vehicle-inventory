@@ -92,9 +92,20 @@
       <div class="stock-item" *ngFor="let stock of filteredStocksList" class="card-container">
         <div class="card">
           <h3 style="color: royalblue;"><i class="fas fa-car"></i> {{ stock.make }}</h3>
-          <p><a [routerLink]="['/vehicle-page', stock.model]" class="invisible-link">Model: {{ stock.model }}</a></p>
-          <p>Location: {{ stock.location }}</p>
-          <p>Date: {{ stock.receivedDate | date: 'dd-MM-yyyy' }}</p>
+          <div class="card-details">
+            <p class="detail-item">
+              <span class="detail-label">Model:</span>
+              <a [routerLink]="['/vehicle-page', stock.model]" class="invisible-link">{{ stock.model }}</a>
+            </p>
+            <p class="detail-item">
+              <span class="detail-label">Location:</span>
+              <span class="detail-value">{{ stock.location }}</span>
+            </p>
+            <p class="detail-item">
+              <span class="detail-label">Date:</span>
+              <span class="detail-value">{{ stock.receivedDate | date: 'dd-MM-yyyy' }}</span>
+            </p>
+          </div>
           <div class="card-actions">
             <button class="button edit" (click)="openEditVehiclePopup(stock)">Edit</button>
             <button class="button btn-danger" (click)="onDelete(stock)">Delete</button>
@@ -102,37 +113,6 @@
         </div>
       </div>
     </div>
-
-    <!-- <div class="stock-list">
-      <div class="stock-item" *ngFor="let stock of filteredStocksList" class="card-container">
-        <div class="card">
-          <div class="card-header">
-            <h3><i class="fas fa-car"></i> {{ stock.make }}</h3>
-          </div>
-          <div class="card-body">
-            <div class="detail-item">
-              <i class="fas fa-car-side detail-icon"></i>
-              <span class="detail-label">Model:</span>
-              <a [routerLink]="['/vehicle-page', stock.model]" class="interactive-link">{{ stock.model }}</a>
-            </div>
-            <div class="detail-item">
-              <i class="fas fa-map-marker-alt detail-icon"></i>
-              <span class="detail-label">Location:</span>
-              <span class="detail-value">{{ stock.location }}</span>
-            </div>
-            <div class="detail-item">
-              <i class="fas fa-calendar-alt detail-icon"></i>
-              <span class="detail-label">Date:</span>
-              <span class="detail-value">{{ stock.receivedDate | date: 'dd-MM-yyyy' }}</span>
-            </div>
-          </div>
-          <div class="card-actions">
-            <button class="button edit" (click)="openEditVehiclePopup(stock)">Edit</button>
-            <button class="button btn-danger" (click)="onDelete(stock)">Delete</button>
-          </div>
-        </div>
-      </div>
-    </div> -->
 
     <!-- Add Vehicle Popup -->
     <div *ngIf="showPopup" class="popup">

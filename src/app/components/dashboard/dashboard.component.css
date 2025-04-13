@@ -684,3 +684,33 @@ input {
     text-decoration: none; /* Ensure no underline appears on hover */
     color: inherit; /* Prevent color change on hover */
   }
+
+  /* Card Details Section */
+.card-details {
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Add spacing between items */
+    padding: 10px 0;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #333;
+  }
+  
+  /* Detail Item */
+  .detail-item {
+    margin: 0;
+    line-height: 1.5;
+  }
+  
+  /* Detail Label */
+  .detail-label {
+    font-weight: bold;
+    color: #000;
+    margin-right: 5px;
+  }
+  
+  /* Detail Value */
+  .detail-value {
+    color: #555;
+  }
+  
