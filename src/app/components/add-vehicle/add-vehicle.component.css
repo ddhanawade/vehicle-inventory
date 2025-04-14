@@ -1,83 +1,156 @@
-/* Container */
+/* General Styles */
 .add-vehicle-container {
-    max-width: 600px;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 50px auto; /* Adjusted margin to add spacing from the top */
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+}
+
+h2 {
+  text-align: center;
+  color: #3f51b5;
+  margin-bottom: 20px;
+}
+
+/* Tab Navigation */
+.tab-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 10px;
+  background-color: #f1f1f1;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.tab-button.active {
+  background-color: #3f51b5;
+  color: white;
+}
+
+.tab-button:hover {
+  background-color: #3f51b5;
+  color: white;
+}
+
+/* Tab Content */
+.tab-content {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Add spacing between inputs */
+}
+
+/* Form Styles */
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+input, select {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input:focus, select:focus {
+  border-color: #3f51b5;
+  box-shadow: 0 0 5px rgba(63, 81, 181, 0.5);
+  outline: none;
+}
+
+/* Submit Button */
+.form-actions {
+  margin-top: 20px; /* Add spacing above the button */
+}
+
+.submit-button {
+  width: 100%;
+  padding: 10px;
+  background-color: #3f51b5;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.submit-button:hover {
+  background-color: #3548a5;
+  transform: scale(1.05);
+}
+
+.submit-button:disabled {
+  background-color: #ddd;
+  cursor: not-allowed;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .add-vehicle-container {
+    padding: 15px;
   }
-  
-  .add-vehicle-container h2 {
-    text-align: center;
-    color: #3f51b5;
-    margin-bottom: 20px;
+
+  .tab-button {
+    font-size: 12px;
   }
-  
-  /* Form Group */
-  .form-group {
-    margin-bottom: 15px;
+
+  input, select {
+    font-size: 12px;
   }
-  
-  label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #333;
-  }
-  
-  input,
-  select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 14px;
-    box-sizing: border-box;
-  }
-  
-  input:focus,
-  select:focus {
-    outline: none;
-    border-color: #3f51b5;
-    box-shadow: 0 0 5px rgba(63, 81, 181, 0.5);
-  }
-  
-  /* Submit Button */
+
   .submit-button {
-    width: 100%;
-    padding: 12px;
-    background-color: #3f51b5;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
+    font-size: 14px;
   }
-  
-  .submit-button:hover {
-    background-color: #3548a5;
-    transform: scale(1.05);
-  }
-  
-  .submit-button:disabled {
-    background-color: #ddd;
-    cursor: not-allowed;
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .add-vehicle-container {
-      padding: 15px;
-    }
-  
-    input,
-    select {
-      font-size: 13px;
-    }
-  
-    .submit-button {
-      font-size: 14px;
-    }
-  }
+}
+
+.success-message {
+  background-color: #4caf50;
+  /* Green background */
+  color: white;
+  /* White text */
+  padding: 10px 15px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 16px;
+  animation: fadeInOut 2s ease-in-out;
+}
+
+.small-success-message {
+  background-color: #d4edda;
+  /* Light green background */
+  color: #155724;
+  /* Dark green text */
+  padding: 5px 10px;
+  margin: 10px 0;
+  border: 1px solid #c3e6cb;
+  /* Light green border */
+  border-radius: 4px;
+  font-size: 15px;
+  /* Small font size */
+  text-align: center;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}

@@ -14,6 +14,8 @@ export class AddVehicleComponent {
 
   successMessage: string = '';
 
+  currentTab: number = 0; // Track the current tab
+
   makes = ['Tata', 'Toyota', 'Eicher'];
   models = ['Corolla', 'Civic', 'Focus', 'X5', 'C-Class'];
   fuelTypes = ['Petrol', 'Diesel', 'Electric', 'Hybrid'];
@@ -36,14 +38,6 @@ export class AddVehicleComponent {
     });
   }
 
-  // onSubmit() {
-  //   if (this.vehicleForm.valid) {
-  //     console.log('Vehicle Details:', this.vehicleForm.value);
-  //     alert('Vehicle added successfully!');
-  //     this.vehicleForm.reset();
-  //   }
-  // }
-
   onSubmit() {
     this.vehicleService.addVehicle(this.vehicleForm.value).subscribe(
       response => {
@@ -62,5 +56,7 @@ export class AddVehicleComponent {
       }
     );
   }
-
+  setTab(index: number): void {
+    this.currentTab = index;
+  }
 }
