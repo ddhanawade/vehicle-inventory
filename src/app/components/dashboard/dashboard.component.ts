@@ -125,16 +125,17 @@ export class DashboardComponent implements OnInit {
   
     // Iterate through the carDetailsList and calculate model counts for each city
     this.carDetailsList.forEach(stock => {
-      if (cityModelCounts[stock.location]) {
-        cityModelCounts[stock.location] += 1; // Increment the count for the city
+      const city = stock.location.trim().toLowerCase(); // Normalize city names (case-insensitive)
+      if (cityModelCounts[city]) {
+        cityModelCounts[city] += 1; // Increment the count for the city
       } else {
-        cityModelCounts[stock.location] = 1; // Initialize the count for the city
+        cityModelCounts[city] = 1; // Initialize the count for the city
       }
     });
   
     // Convert the map into an array of objects with city and model count
     return Object.keys(cityModelCounts).map(city => ({
-      city,
+      city: city.charAt(0).toUpperCase() + city.slice(1), // Capitalize the city name
       count: cityModelCounts[city]
     }));
   }
