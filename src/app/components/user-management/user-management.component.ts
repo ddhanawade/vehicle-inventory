@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
+import { UserModel } from '../../models/UserModel';
+import { userService } from '../../services/userService';
 
 @Component({
   selector: 'app-user-management',
@@ -10,19 +12,60 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './user-management.component.css'
 })
 export class UserManagementComponent {
-  constructor(private http: HttpClient) { }
+
+  userData = {
+    username: '',
+    email: '',
+    password: '',
+    role: ''
+  };
+
+  constructor(private userService : userService, private fb: FormBuilder) { 
+    this.userForm = this.fb.group({
+      username: ['', Validators.required],
+      email: ['', Validators.required],
+      password: ['', Validators.required],
+      role: ['', Validators.required],
+      createdDate: ['', Validators.required]
+    });
+  }
+
+  userForm!: FormGroup;
+  userList: UserModel[] = [];
+  editUserData: any = {};
+  successMessage: string = '';
   stname = 'DD';
 
-  userList: any [] = [];
   onSubmit(form: any) {
     console.log('Form submitted:', form);
   }
 
   getUsers(){
-    alert("calling...");
-    this.http.get("https://jsonplaceholder.typicode.com/users").subscribe((result:any) => {
-        this.userList = result;
+    this.userService.getUsers().subscribe((result: UserModel[]) =>{
+      this.userList = result;
     })
+  }
+
+  onCreateUser(): void {
+    this.userService.createUser(this.userData).subscribe(
+      (response) => {
+        this.successMessage = 'User created successfully!';
+        setTimeout(() => {
+          this.successMessage = '';
+        }, 3000);
+  
+        // Reset the userData object after successful submission
+        this.userData = {
+          username: '',
+          email: '',
+          password: '',
+          role: ''
+        };
+      },
+      (error) => {
+        console.error('Error creating user:', error);
+      }
+    );
   }
 
   studentList : any [] = [
