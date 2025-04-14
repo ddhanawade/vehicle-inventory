@@ -66,8 +66,9 @@ export class DashboardComponent implements OnInit {
   }
 
   openEditVehiclePopup(stock: VehicleModel): void {
-    this.editVehicleData = { ...stock };
+    this.editVehicleData = { ...stock }; // Clone the selected stock data
     this.showEditPopup = true;
+    console.log("Edit Vehicle Data:", this.editVehicleData); // Debugging log
   }
 
   closeEditPopup(): void {
@@ -89,16 +90,26 @@ export class DashboardComponent implements OnInit {
   }
 
   onUpdate(): void {
+    if (!this.editVehicleData || !this.editVehicleData.id) {
+      console.error('Invalid vehicle data for update');
+      return;
+    }
+  
+    console.log("Sending updated data to backend:", this.editVehicleData); // Debugging log
+  
     this.vehicleService.updateVehicleDetails(this.editVehicleData).subscribe(
-      () => {
+      (response) => {
+        console.log("Response from backend:", response); // Debugging log
         this.successMessage = 'Vehicle details updated successfully!';
         setTimeout(() => {
           this.successMessage = '';
           this.closeEditPopup();
         }, 2000);
-        this.getCarDetails();
+        this.getCarDetails(); // Refresh the list after update
       },
-      (error) => console.error('Error updating vehicle:', error)
+      (error) => {
+        console.error('Error updating vehicle:', error); // Debugging log
+      }
     );
   }
 

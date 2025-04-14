@@ -155,11 +155,11 @@
             placeholder="Enter vehicle model" required>
 
           <label for="editVehicleCity">City:</label>
-          <input type="text" id="editVehicleCity" [(ngModel)]="editVehicleData.city" name="city"
+          <input type="text" id="editVehicleCity" [(ngModel)]="editVehicleData.location" name="city"
             placeholder="Enter city" required>
 
           <label for="editVehicleYear">Vehicle Year:</label>
-          <input type="date" id="editVehicleYear" [(ngModel)]="editVehicleData.vehicleYear" name="vehicleYear" required>
+          <input type="date" id="editVehicleYear" [(ngModel)]="editVehicleData.receivedDate" name="vehicleYear" required>
 
           <button type="submit" class="button">Update Vehicle</button>
         </form>
