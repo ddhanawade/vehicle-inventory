@@ -8,23 +8,25 @@
 </head>
 
 <body>
-  <div class="login-container">
-    <div class="login-form">
-      <h2 class="login-title">Login</h2>
-      <form (ngSubmit)="login()" #loginForm="ngForm">
-        <div class="form-group">
-          <label for="username">User Name</label>
-          <input type="text" id="username" name="username" [(ngModel)]="username" required
-            placeholder="Enter user name" />
-        </div>
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" id="password" name="password" [(ngModel)]="password" required
-            placeholder="Enter your password" />
-        </div>
-        <button type="submit" class="btn btn-primary" [disabled]="!loginForm.valid">Login</button>
-        <p class="forgot-password"><a href="#">Forgot Password?</a></p>
-      </form>
+  <div class="login-page">
+    <div class="login-container">
+      <div class="login-form">
+        <h2 class="login-title">Login</h2>
+        <form (ngSubmit)="login()" #loginForm="ngForm">
+          <div class="form-group">
+            <label for="username">User Name</label>
+            <input type="text" id="username" name="username" [(ngModel)]="username" required
+              placeholder="Enter user name" />
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" [(ngModel)]="password" required
+              placeholder="Enter your password" />
+          </div>
+          <button type="submit" class="btn btn-primary" [disabled]="!loginForm.valid">Login</button>
+          <p class="forgot-password"><a href="#">Forgot Password?</a></p>
+        </form>
+      </div>
     </div>
   </div>
 </body>

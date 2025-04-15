@@ -37,6 +37,10 @@ export class AuthService {
     this.isLoggedInSubject.next(false); // Notify components that the user is logged out
   }
 
+  registerUser(userData: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/register`,  userData); // Ensure the endpoint matches the backend
+  }
+
   isAuthenticated(): boolean {
     return !!this.getToken(); // Check if the token exists
   }

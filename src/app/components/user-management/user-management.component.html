@@ -10,32 +10,27 @@
 <body>
   <div class="container">
     <h2 class="page-title">User Management</h2>
-    <form #userForm="ngForm" (ngSubmit)="onCreateUser()" novalidate>
+    <form (ngSubmit)="onCreateUser()">
       <div class="form-group">
-        <label for="username">Username:</label>
-        <input type="text" id="username" class="form-control" name="username" [(ngModel)]="userData.username" required
-          placeholder="Enter username" />
+        <label for="username">Username</label>
+        <input type="text" id="username" [(ngModel)]="userData.username" name="username" required />
       </div>
       <div class="form-group">
-        <label for="email">Email:</label>
-        <input type="email" id="email" class="form-control" name="email" [(ngModel)]="userData.email" required
-          placeholder="Enter email" />
+        <label for="email">Email</label>
+        <input type="email" id="email" [(ngModel)]="userData.email" name="email" required />
       </div>
       <div class="form-group">
-        <label for="password">Password:</label>
-        <input type="password" id="password" class="form-control" name="password" [(ngModel)]="userData.password"
-          required placeholder="Enter password" />
+        <label for="password">Password</label>
+        <input type="password" id="password" [(ngModel)]="userData.password" name="password" required />
       </div>
       <div class="form-group">
-        <label for="role">User Role:</label>
-        <select id="role" class="form-control" name="role" [(ngModel)]="userData.role" required>
-          <option value="" disabled selected>Select a role</option>
+        <label for="role">Role</label>
+        <select id="role" [(ngModel)]="userData.role" name="role" required>
           <option value="admin">Admin</option>
           <option value="user">User</option>
-          <option value="design">Design</option>
         </select>
       </div>
-      <button type="submit" class="btn btn-primary" [disabled]="!userForm.valid">Submit</button>
+      <button type="submit" class="btn btn-primary">Create User</button>
     </form>
     <div *ngIf="successMessage" class="small-success-message">
       <p>{{ successMessage }}</p>

@@ -4,6 +4,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
 import { UserModel } from '../../models/UserModel';
 import { userService } from '../../services/userService';
+import { AuthService } from '../../services/AuthService';
 
 @Component({
   selector: 'app-user-management',
@@ -20,7 +21,7 @@ export class UserManagementComponent {
     role: ''
   };
 
-  constructor(private userService : userService, private fb: FormBuilder) { 
+  constructor(private userService : userService, private fb: FormBuilder, private authService : AuthService) { 
     this.userForm = this.fb.group({
       username: ['', Validators.required],
       email: ['', Validators.required],
@@ -47,8 +48,11 @@ export class UserManagementComponent {
   }
 
   onCreateUser(): void {
-    this.userService.createUser(this.userData).subscribe(
+    console.log('User data being sent:', this.userData); // Log the user data
+  
+    this.authService.registerUser(this.userData).subscribe(
       (response) => {
+        console.log('Response from backend:', response); // Log the backend response
         this.successMessage = 'User created successfully!';
         setTimeout(() => {
           this.successMessage = '';
@@ -63,18 +67,9 @@ export class UserManagementComponent {
         };
       },
       (error) => {
-        console.error('Error creating user:', error);
+        console.error('Error creating user:', error); // Log the error
       }
     );
   }
-
-  studentList : any [] = [
-    {studId : 123 ,name : 'DD', mob: '5463647578', city : 'PUNE', isActive : false},
-    {studId : 1234 ,name : 'EE', mob: '5463647578', city : 'PUNE', isActive : false},
-    {studId : 1235 ,name : 'FF', mob: '5463647578', city : 'PUNE', isActive : false},
-    {studId : 1236,name : 'GG', mob: '5463647578', city : 'PUNE', isActive : false},
-    {studId : 1237 ,name : 'HH', mob: '5463647578', city : 'PUNE', isActive : false},
-    {studId : 1238 ,name : 'II', mob: '5463647578', city : 'PUNE', isActive : false}
-  ]
   
 }
