@@ -4,7 +4,6 @@ import { LoginComponent } from './components/login/login.component';
 import { UserManagementComponent } from './components/user-management/user-management.component';
 import { HeaderComponent } from './components/header/header.component';
 import { ServicesComponent } from './components/services/services.component';
-import { ContactusComponent } from './components/contactus/contactus.component';
 import { VehicleDetailsComponent } from './components/vehicle-details/vehicle-details.component';
 import { AddVehicleComponent } from './components/add-vehicle/add-vehicle.component';
 
@@ -32,10 +31,6 @@ export const routes: Routes = [
     {
         path: "service-page",
         component: ServicesComponent
-    },
-    {
-        path: "contact-page",
-        component: ContactusComponent
     },
     {
         path: "vehicle-page/:modelName",

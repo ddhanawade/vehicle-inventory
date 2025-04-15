@@ -1,12 +1,9 @@
 import { Component, NgModule, OnInit } from '@angular/core';
-import { Vehicle } from '../../models/vehicle.model';
-import { VehicleService } from '../../services/vehicle.service';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FormGroup } from '@angular/forms';
 import { CommonModule, DatePipe } from '@angular/common';
 import { DataService } from '../../services/DataService';
 import { VehicleModel } from '../../models/VehicleModel';
-import { distinct } from 'rxjs';
 import { RouterLink } from '@angular/router';
 
 @Component({
