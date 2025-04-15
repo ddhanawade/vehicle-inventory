@@ -4,7 +4,8 @@ import { FormGroup } from '@angular/forms';
 import { CommonModule, DatePipe } from '@angular/common';
 import { DataService } from '../../services/DataService';
 import { VehicleModel } from '../../models/VehicleModel';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../services/AuthService';
 
 @Component({
   selector: 'app-dashboard',
@@ -24,7 +25,7 @@ export class DashboardComponent implements OnInit {
   showEditPopup: boolean = false;
   editVehicleData: any = {};
 
-  constructor(private fb: FormBuilder, private vehicleService: DataService) {}
+  constructor(private fb: FormBuilder, private vehicleService: DataService, private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
     this.getCarDetails();
@@ -146,5 +147,23 @@ export class DashboardComponent implements OnInit {
       city: city.charAt(0).toUpperCase() + city.slice(1), // Capitalize the city name
       count: cityModelCounts[city]
     }));
+  }
+
+  logout(): void {
+    const token = this.authService.getToken();
+    if (token) {
+      this.authService.logout(token).subscribe({
+        next: () => {
+          this.authService.clearToken();
+          this.router.navigate(['/login']); // Redirect to login page
+        },
+        error: () => {
+          console.error('Logout failed');
+        }
+      });
+    } else {
+      console.warn('No token found. Redirecting to login.');
+      this.router.navigate(['/login']);
+    }
   }
 }

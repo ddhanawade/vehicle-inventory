@@ -6,15 +6,18 @@ import { HeaderComponent } from './components/header/header.component';
 import { ServicesComponent } from './components/services/services.component';
 import { VehicleDetailsComponent } from './components/vehicle-details/vehicle-details.component';
 import { AddVehicleComponent } from './components/add-vehicle/add-vehicle.component';
+import { AuthGuard } from './services/AuthGuard';
 
 export const routes: Routes = [
     {
         path: '',
-        component: DashboardComponent
+        pathMatch: 'full',
+        component: LoginComponent
     },
     {
         path: "home-page",
-        component: DashboardComponent
+        component: DashboardComponent,
+        canActivate: [AuthGuard]
     },
     {
         path: "login-page",
@@ -22,7 +25,8 @@ export const routes: Routes = [
     },
     {
         path: "user-page",
-        component: UserManagementComponent
+        component: UserManagementComponent,
+        canActivate: [AuthGuard]
     },
     {
         path: "header-page",
@@ -30,14 +34,21 @@ export const routes: Routes = [
     },
     {
         path: "service-page",
-        component: ServicesComponent
+        component: ServicesComponent,
+        canActivate: [AuthGuard]
     },
     {
         path: "vehicle-page/:modelName",
-        component : VehicleDetailsComponent
+        component : VehicleDetailsComponent,
+        canActivate: [AuthGuard]
     },
     {
         path: "add-vehicle",
-        component: AddVehicleComponent
+        component: AddVehicleComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: "**",
+        component: LoginComponent
     }
 ];
