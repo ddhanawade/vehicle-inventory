@@ -157,3 +157,23 @@
         right: 10px; /* Adjust right spacing */
     }
 }
+
+@media (max-width: 480px) {
+    .vertical-nav {
+        height: 60px; /* Reduce height */
+        width: 100%; /* Take full width */
+    }
+
+    .vertical-nav ul {
+        display: flex;
+        justify-content: center; /* Center the menu items */
+    }
+
+    .vertical-nav ul li {
+        margin: 0 10px; /* Adjust margin for items */
+    }
+
+    .vertical-nav ul li a {
+        padding: 10px;
+    }
+}
