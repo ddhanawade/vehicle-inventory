@@ -1,4 +1,4 @@
-import { Component, NgModule, OnInit } from '@angular/core';
+import { Component, HostListener, NgModule, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/AuthService';
 import { CommonModule } from '@angular/common';
@@ -11,15 +11,27 @@ import { CommonModule } from '@angular/common';
 })
 export class HeaderComponent implements OnInit {
   isLoggedIn: boolean = false; // Track login state
-  isNavCollapsed: boolean = false; // Track navigation collapse state
+  isNavCollapsed: boolean = true; // Track navigation collapse state
 
+  // Auto collapse based on screen size
+  private readonly COLLAPSE_SIZE = 768; // You can adjust this value if needed
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: Event) {
+    this.updateNavCollapse(window.innerWidth);
+  }
+  
   ngOnInit(): void {
+    this.updateNavCollapse(window.innerWidth); // Ensure collapse state is set on initial load
     // Subscribe to the authentication state
     this.authService.isLoggedIn$.subscribe((loggedIn) => {
       this.isLoggedIn = loggedIn;
     });
   }
 
+  updateNavCollapse(width: number) {
+    this.isNavCollapsed = width <= this.COLLAPSE_SIZE;
+  }
   toggleNav() {
     this.isNavCollapsed = !this.isNavCollapsed; // Toggle the nav bar visibility
   }
@@ -50,3 +62,4 @@ export class HeaderComponent implements OnInit {
     });
   }
 }
+

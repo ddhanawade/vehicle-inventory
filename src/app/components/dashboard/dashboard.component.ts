@@ -1,4 +1,4 @@
-import { Component, NgModule, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, NgModule, OnInit } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FormGroup } from '@angular/forms';
 import { CommonModule, DatePipe } from '@angular/common';
@@ -25,7 +25,11 @@ export class DashboardComponent implements OnInit {
   showEditPopup: boolean = false;
   editVehicleData: any = {};
 
-  constructor(private fb: FormBuilder, private vehicleService: DataService, private authService: AuthService, private router: Router) {}
+  constructor(private fb: FormBuilder,
+    private vehicleService: DataService,
+    private authService: AuthService,
+    private router: Router,
+    private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.getCarDetails();
@@ -35,6 +39,7 @@ export class DashboardComponent implements OnInit {
     this.vehicleService.getData().subscribe((data: VehicleModel[]) => {
       this.carDetailsList = data;
       this.filteredStocksList = [...this.carDetailsList]; // Initialize filtered list
+      this.cdr.markForCheck(); // Notify Angular about data changes
     });
   }
 
