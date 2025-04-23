@@ -1,90 +1,103 @@
-<div class="add-vehicle-container">
-  <h2>Add Vehicle Details</h2>
-  <form [formGroup]="vehicleForm" (ngSubmit)="onSubmit()">
-    <div class="tab-container">
-      <!-- Tab Navigation -->
-      <div class="tab-header">
-        <button type="button" class="tab-button" [class.active]="currentTab === 0" (click)="setTab(0)">Basic Details</button>
-        <button type="button" class="tab-button" [class.active]="currentTab === 1" (click)="setTab(1)">Specifications</button>
-        <button type="button" class="tab-button" [class.active]="currentTab === 2" (click)="setTab(2)">Additional Info</button>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vehicle Inventory Management</title>
+</head>
+
+<body>
+  <div class="add-vehicle-container">
+    <h2>Add Vehicle Details</h2>
+    <form [formGroup]="vehicleForm" (ngSubmit)="onSubmit()">
+      <div class="tab-container">
+        <!-- Tab Navigation -->
+        <div class="tab-header">
+          <button type="button" class="tab-button" [class.active]="currentTab === 0" (click)="setTab(0)">Basic Details</button>
+          <button type="button" class="tab-button" [class.active]="currentTab === 1" (click)="setTab(1)">Specifications</button>
+          <button type="button" class="tab-button" [class.active]="currentTab === 2" (click)="setTab(2)">Additional Info</button>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="tab-content" *ngIf="currentTab === 0">
+          <div class="form-group">
+            <label for="make">Make</label>
+            <select id="make" formControlName="make">
+              <option value="" disabled>Select Make</option>
+              <option *ngFor="let make of makes" [value]="make">{{ make }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="model">Model Name</label>
+            <select id="model" formControlName="model">
+              <option value="" disabled>Select Model</option>
+              <option *ngFor="let model of models" [value]="model">{{ model }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="grade">Grade</label>
+            <input type="text" id="grade" formControlName="grade" placeholder="Enter Grade" />
+          </div>
+          <div class="form-group">
+            <label for="fuelType">Fuel Type</label>
+            <select id="fuelType" formControlName="fuelType">
+              <option value="" disabled>Select Fuel Type</option>
+              <option *ngFor="let fuel of fuelTypes" [value]="fuel">{{ fuel }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="tab-content" *ngIf="currentTab === 1">
+          <div class="form-group">
+            <label for="exteriorColor">Exterior Color</label>
+            <input type="text" id="exteriorColor" formControlName="exteriorColor" placeholder="Enter Exterior Color" />
+          </div>
+          <div class="form-group">
+            <label for="interiorColor">Interior Color</label>
+            <input type="text" id="interiorColor" formControlName="interiorColor" placeholder="Enter Interior Color" />
+          </div>
+          <div class="form-group">
+            <label for="chassisNumber">Chassis Number</label>
+            <input type="text" id="chassisNumber" formControlName="chassisNumber" placeholder="Enter Chassis Number" />
+          </div>
+          <div class="form-group">
+            <label for="engineNumber">Engine Number</label>
+            <input type="text" id="engineNumber" formControlName="engineNumber" placeholder="Enter Engine Number" />
+          </div>
+        </div>
+
+        <div class="tab-content" *ngIf="currentTab === 2">
+          <div class="form-group">
+            <label for="keyNumber">Key Number</label>
+            <input type="text" id="keyNumber" formControlName="keyNumber" placeholder="Enter Key Number" />
+          </div>
+          <div class="form-group">
+            <label for="location">Location</label>
+            <input type="text" id="location" formControlName="location" placeholder="Enter Location" />
+          </div>
+          <div class="form-group">
+            <label for="status">Status</label>
+            <select id="status" formControlName="status">
+              <option value="" disabled>Select Status</option>
+              <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="receivedDate">Received Date</label>
+            <input type="date" id="receivedDate" formControlName="receivedDate" />
+          </div>
+        </div>
       </div>
 
-      <!-- Tab Content -->
-      <div class="tab-content" *ngIf="currentTab === 0">
-        <div class="form-group">
-          <label for="make">Make</label>
-          <select id="make" formControlName="make">
-            <option value="" disabled>Select Make</option>
-            <option *ngFor="let make of makes" [value]="make">{{ make }}</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="model">Model Name</label>
-          <select id="model" formControlName="model">
-            <option value="" disabled>Select Model</option>
-            <option *ngFor="let model of models" [value]="model">{{ model }}</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="grade">Grade</label>
-          <input type="text" id="grade" formControlName="grade" placeholder="Enter Grade" />
-        </div>
-        <div class="form-group">
-          <label for="fuelType">Fuel Type</label>
-          <select id="fuelType" formControlName="fuelType">
-            <option value="" disabled>Select Fuel Type</option>
-            <option *ngFor="let fuel of fuelTypes" [value]="fuel">{{ fuel }}</option>
-          </select>
-        </div>
+      <div class="form-actions">
+        <button type="submit" class="submit-button" [disabled]="vehicleForm.invalid">Add Vehicle</button>
       </div>
-
-      <div class="tab-content" *ngIf="currentTab === 1">
-        <div class="form-group">
-          <label for="exteriorColor">Exterior Color</label>
-          <input type="text" id="exteriorColor" formControlName="exteriorColor" placeholder="Enter Exterior Color" />
-        </div>
-        <div class="form-group">
-          <label for="interiorColor">Interior Color</label>
-          <input type="text" id="interiorColor" formControlName="interiorColor" placeholder="Enter Interior Color" />
-        </div>
-        <div class="form-group">
-          <label for="chassisNumber">Chassis Number</label>
-          <input type="text" id="chassisNumber" formControlName="chassisNumber" placeholder="Enter Chassis Number" />
-        </div>
-        <div class="form-group">
-          <label for="engineNumber">Engine Number</label>
-          <input type="text" id="engineNumber" formControlName="engineNumber" placeholder="Enter Engine Number" />
-        </div>
-      </div>
-
-      <div class="tab-content" *ngIf="currentTab === 2">
-        <div class="form-group">
-          <label for="keyNumber">Key Number</label>
-          <input type="text" id="keyNumber" formControlName="keyNumber" placeholder="Enter Key Number" />
-        </div>
-        <div class="form-group">
-          <label for="location">Location</label>
-          <input type="text" id="location" formControlName="location" placeholder="Enter Location" />
-        </div>
-        <div class="form-group">
-          <label for="status">Status</label>
-          <select id="status" formControlName="status">
-            <option value="" disabled>Select Status</option>
-            <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="receivedDate">Received Date</label>
-          <input type="date" id="receivedDate" formControlName="receivedDate" />
-        </div>
-      </div>
+    </form>
+    <div *ngIf="successMessage" class="small-success-message">
+      <p>{{ successMessage }}</p>
     </div>
-
-    <div class="form-actions">
-      <button type="submit" class="submit-button" [disabled]="vehicleForm.invalid">Add Vehicle</button>
-    </div>
-  </form>
-  <div *ngIf="successMessage" class="small-success-message">
-    <p>{{ successMessage }}</p>
   </div>
-</div>
+</body>
+
+</html>
