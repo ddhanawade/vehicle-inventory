@@ -1,22 +1,39 @@
+html,
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+}
+
 /* Background styling for the login page */
 .login-page {
-  background: url('/assets/public/testcar.png') no-repeat center center fixed;
-  /* Replace the URL with a suitable image for vehicle inventory */
   background-size: cover;
   height: 100vh;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
 /* Login container styling */
 .login-container {
-  background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
-  width: 100%;
-  max-width: 400px;
+  width: calc(100% - 200px);
+    max-width: 400px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: margin 0.3s ease;
+
+    margin-left: 220px; /* Add margin-left to avoid overlap with fixed navbar */
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+    gap: 20px;
+    background-color: #ffffff;
 }
 
 /* Login form title */
@@ -86,4 +103,56 @@ input:focus {
 
 .forgot-password a:hover {
   text-decoration: underline;
+}
+
+/* Success and error messages */
+.small-success-message {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 10px;
+  margin: 15px 0;
+  border: 1px solid #c3e6cb;
+  border-radius: 4px;
+  text-align: center;
+  width: 90%;
+  max-width: 400px;
+}
+
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 10px;
+  margin: 15px 0;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  text-align: center;
+  width: 90%;
+  max-width: 400px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .login-title {
+    font-size: 1.5rem;
+  }
+
+  .btn-primary {
+    font-size: 14px;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .login-container {
+    width: calc(100% - 80px); /* Adjust width for collapsed nav */
+    margin-left: 80px; /* Adjust margin-left for collapsed nav */
+  }
+}
+
+@media (max-width: 480px) {
+    .login-container {
+      width: 100%;
+      margin-left: 0; /* Remove margin-left for full width */
+      padding-top: 80px; /* Add padding-top to avoid overlap with nav */
+    }
 }

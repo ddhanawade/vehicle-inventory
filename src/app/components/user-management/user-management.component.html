@@ -8,6 +8,7 @@
 </head>
 
 <body>
+  <br><br><br><br>
   <div class="container">
     <h2 class="page-title">User Management</h2>
     <form (ngSubmit)="onCreateUser()">
@@ -35,27 +36,6 @@
     <div *ngIf="successMessage" class="small-success-message">
       <p>{{ successMessage }}</p>
     </div>
-    <!-- <div class="user-list-container">
-      <h3 class="section-title">User List</h3>
-      <table class="responsive-table">
-        <thead>
-          <tr>
-            <th>Id</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let user of userList">
-            <td>{{ user.id }}</td>
-            <td>{{ user.name }}</td>
-            <td>{{ user.email }}</td>
-            <td>{{ user.phone }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div> -->
   </div>
 </body>
 

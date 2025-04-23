@@ -1,166 +1,128 @@
 /* General Styles */
+html,
 body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  background-color: #f9f9f9;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    scroll-behavior: smooth;
+    overflow-x: hidden;
 }
 
 .container {
-  width: 40%;
-  max-width: 1200px; /* Increase the maximum width */
-  margin: 90px auto; /* Adjust the top and bottom margin */
-  padding: 30px; /* Increase the padding for more spacing inside the container */
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: calc(100% - 200px);
+    max-width: 800px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: margin 0.3s ease;
+
+    margin-left: 350px; /* Add margin-left to avoid overlap with fixed navbar */
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+    gap: 20px;
+    background-color: #ffffff;
 }
 
 .page-title {
-  text-align: center;
-  font-size: 1.8rem;
-  color: #3f51b5;
-  margin-bottom: 20px;
+    text-align: center;
+    font-size: 1.8rem;
+    color: #3f51b5;
+    margin-bottom: 20px;
 }
 
 /* Form Styles */
-.form-container {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
 .form-group {
-  display: flex;
-  flex-direction: column;
-  padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 10px;
 }
 
 label {
-  font-weight: bold;
-  margin-bottom: 5px;
-  color: #333;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
 }
 
-input, select {
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-  transition: border-color 0.3s, box-shadow 0.3s;
+input,
+select {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-input:focus, select:focus {
-  border-color: #3f51b5;
-  box-shadow: 0 0 5px rgba(63, 81, 181, 0.5);
-  outline: none;
+input:focus,
+select:focus {
+    border-color: #3f51b5;
+    box-shadow: 0 0 5px rgba(63, 81, 181, 0.5);
+    outline: none;
 }
 
 button {
-  padding: 10px 16px;
-  background-color: #3f51b5;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.3s, transform 0.2s;
-  margin-left: 2%;
+    padding: 10px 16px;
+    background-color: #3f51b5;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-left: 2%;
 }
 
 button:hover {
-  background-color: #3548a5;
-  transform: scale(1.05);
+    background-color: #3548a5;
+    transform: scale(1.05);
 }
 
 button:disabled {
-  background-color: #ddd;
-  cursor: not-allowed;
+    background-color: #ddd;
+    cursor: not-allowed;
 }
 
-/* User List Styles */
-.user-list-container {
-  margin-top: 30px;
-}
-
-.section-title {
-  font-size: 1.5rem;
-  color: #3f51b5;
-  margin-bottom: 15px;
-}
-
-.responsive-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-}
-
-.responsive-table th, .responsive-table td {
-  padding: 10px;
-  text-align: left;
-  border: 1px solid #ddd;
-}
-
-.responsive-table th {
-  background-color: #3f51b5;
-  color: white;
-  font-weight: bold;
-}
-
-.responsive-table tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-.responsive-table tr:hover {
-  background-color: #f1f1f1;
+.small-success-message {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 5px 10px;
+    margin: 10px 0;
+    border: 1px solid #c3e6cb;
+    border-radius: 4px;
+    font-size: 15px;
+    text-align: center;
+    max-width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
   .container {
-    padding: 15px;
+    width: calc(100% - 80px); /* Adjust width for collapsed nav */
+    margin-left: 80px; /* Adjust margin-left for collapsed nav */
   }
 
-  .form-container {
-    gap: 10px;
-  }
+    .form-group {
+        padding: 5px;
+    }
 
-  button {
-    font-size: 13px;
-  }
+    button {
+        font-size: 13px;
+    }
 
-  .responsive-table th, .responsive-table td {
-    font-size: 13px;
-    padding: 8px;
-  }
+    .small-success-message {
+        max-width: 100%;
+    }
 }
 
-.success-message {
-  background-color: #4caf50;
-  /* Green background */
-  color: white;
-  /* White text */
-  padding: 10px 15px;
-  margin-bottom: 15px;
-  border-radius: 5px;
-  text-align: center;
-  font-size: 16px;
-  animation: fadeInOut 2s ease-in-out;
-}
-.small-success-message {
-  background-color: #d4edda;
-  /* Light green background */
-  color: #155724;
-  /* Dark green text */
-  padding: 5px 10px;
-  margin: 10px 0;
-  border: 1px solid #c3e6cb;
-  /* Light green border */
-  border-radius: 4px;
-  font-size: 15px;
-  /* Small font size */
-  text-align: center;
-  width: fit-content;
-  margin-left: auto;
-  margin-right: auto;
+@media (max-width: 480px) {
+    .container {
+      width: 100%;
+      margin-left: 0; /* Remove margin-left for full width */
+      padding-top: 80px; /* Add padding-top to avoid overlap with nav */
+    }
 }

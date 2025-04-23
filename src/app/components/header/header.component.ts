@@ -2,6 +2,7 @@ import { Component, HostListener, NgModule, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/AuthService';
 import { CommonModule } from '@angular/common';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-header',
@@ -36,7 +37,7 @@ export class HeaderComponent implements OnInit {
     this.isNavCollapsed = !this.isNavCollapsed; // Toggle the nav bar visibility
   }
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router, private snackBar: MatSnackBar) {}
 
   logout(): void {
     const token = this.authService.getToken();
@@ -49,12 +50,14 @@ export class HeaderComponent implements OnInit {
     this.authService.logout(token).subscribe({
       next: () => {
         this.authService.clearToken(); // Clear the token
+        this.snackBar.open('Logout successful!', 'Close', { duration: 3000 });
         this.router.navigate(['/login-page']); // Redirect to the login page
       },
       error: (err) => {
         console.error('Logout failed:', err);
         if (err.status === 403) {
-          alert('Session expired. Please log in again.');
+          //alert('Session expired or token invalid. Please log in again.');
+          this.snackBar.open('Session expired or token invalid. Please log in again.', 'Close', { duration: 3000 });
           this.authService.clearToken(); // Clear the token
           this.router.navigate(['/login-page']); // Redirect to the login page
         }

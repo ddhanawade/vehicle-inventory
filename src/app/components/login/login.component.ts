@@ -1,23 +1,27 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/AuthService';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule],
+  imports: [CommonModule ,FormsModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
-export class LoginComponent {
+export class LoginComponent  {
   username: string = '';
   password: string = '';
   errorMessage: string = '';
+  successMessage: string = '';
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router, private snackBar: MatSnackBar) {}
 
-  login(): void {
-    if (!this.username || !this.password) {
+
+  login() {
+    if (this.username == ''|| this.password == '') {
       this.errorMessage = 'Username and password are required';
       return;
     }
@@ -25,10 +29,17 @@ export class LoginComponent {
     this.authService.login(this.username, this.password).subscribe({
       next: (response) => {
         this.authService.saveToken(response.token);
-        this.router.navigate(['/home-page']); // Redirect to the dashboard
+        this.successMessage = 'Login Successful.';
+        setTimeout(() => {
+          this.router.navigate(['/home-page']); // Redirect to the home page
+        }, 3000);
       },
       error: (err) => {
         this.errorMessage = 'Invalid username or password';
+        setTimeout(() => {
+          this.errorMessage = '';
+          //this.router.navigate(['/']); // Redirect to a different page if needed
+        }, 2000);
         console.error('Login failed:', err);
       }
     });
