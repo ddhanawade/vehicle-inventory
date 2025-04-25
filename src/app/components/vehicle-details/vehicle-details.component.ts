@@ -1,18 +1,39 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import jsPDF from 'jspdf';
 import * as XLSX from 'xlsx';
 import { VehicleModel } from '../../models/VehicleModel';
 import { DataService } from '../../services/DataService';
 import { CommonModule, DatePipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-vehicle-details',
-  imports: [CommonModule,DatePipe],
+  imports: [CommonModule,DatePipe, MatTableModule,MatButtonModule],
   templateUrl: './vehicle-details.component.html',
   styleUrl: './vehicle-details.component.css'
 })
 export class VehicleDetailsComponent implements OnInit{
+
+  displayedColumns: string[] = [
+    'make',
+    'model',
+    'grade',
+    'fuelType',
+    'exteriorColor',
+    'interiorColor',
+    'chassisNumber',
+    'engineNumber',
+    'keyNumber',
+    'location',
+    'status',
+    'receivedDate'
+  ];
 
   carDetailsList: VehicleModel[] = [];
   filteredCarDetailsList: VehicleModel[] = [];
@@ -22,7 +43,7 @@ export class VehicleDetailsComponent implements OnInit{
   constructor(private route: ActivatedRoute, private vehicleService: DataService, private cdr: ChangeDetectorRef){
     
   }
-
+  
   ngOnInit(): void {
     // Retrieve the parameter from the route
     this.route.paramMap.subscribe((params) => {
@@ -31,7 +52,9 @@ export class VehicleDetailsComponent implements OnInit{
         this.getCarDetails(modelName);
       }
     });
+
   }
+
 
   exportToPDF() {
     const doc = new jsPDF();

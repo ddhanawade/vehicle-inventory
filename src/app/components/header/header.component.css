@@ -1,6 +1,6 @@
 /* Vertical Navigation Bar */
 .vertical-nav {
-    width: 200px; /* Full width when expanded */
+    width: 150px; /* Full width when expanded */
     height: 100vh;
     background: linear-gradient(135deg, #3f51b5, #5c6bc0); /* Gradient background */
     color: white;
@@ -81,11 +81,12 @@
     border-radius: 8px;
     margin-bottom: 20px; /* Add spacing below the logo */
     text-transform: uppercase; /* Make the text uppercase */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+    width: 100%; /* Make sure the logo takes the full width */
 }
 
 .logo i {
-    font-size: 2rem; /* Adjust icon size */
+    font-size: calc(0.6 * var(--nav-width)); /* Adjust icon size relative to nav width */
     color: #ffeb3b; /* Yellow color for the icon */
 }
 
@@ -120,7 +121,7 @@
 
 /* Logo Text */
 .logo-text {
-    font-size: 1.2rem; /* Slightly larger font size */
+    font-size: 0.9rem; /* Slightly larger font size */
     font-weight: bold;
     background: linear-gradient(135deg, #f9f8f7, #ff8a50); /* Gradient text */
     -webkit-background-clip: text; /* Clip the background to the text */
@@ -145,7 +146,7 @@
     }
 
     .logo i {
-        font-size: 1.5rem; /* Adjust icon size for smaller screens */
+        font-size: calc(0.6 * var(--nav-width)); /* Adjust icon size for smaller screens */
     }
     .logo-text {
         font-size: 1.2rem; /* Adjust text size for smaller screens */
@@ -158,22 +159,28 @@
     }
 }
 
+/* Remove conflicting styles */
 @media (max-width: 480px) {
     .vertical-nav {
-        height: 60px; /* Reduce height */
-        width: 100%; /* Take full width */
+        width: 60px; /* Keep consistent width for smaller screens */
+        height: 100vh; /* Ensure it takes full height */
     }
 
-    .vertical-nav ul {
-        display: flex;
-        justify-content: center; /* Center the menu items */
+    .logo {
+        font-size: 1.2rem; /* Adjust font size for smaller screens */
+        padding: 10px 0; /* Adjust padding */
     }
 
-    .vertical-nav ul li {
-        margin: 0 10px; /* Adjust margin for items */
+    .logo i {
+        font-size: calc(0.6 * var(--nav-width)); /* Adjust icon size for smallest screens */
     }
 
-    .vertical-nav ul li a {
-        padding: 10px;
+    .logo-text {
+        display: none; /* Hide the logo text on the smallest screens */
+    }
+
+    .toggle-nav-button {
+        bottom: 10px; /* Adjust bottom spacing */
+        right: 10px; /* Adjust right spacing */
     }
 }
