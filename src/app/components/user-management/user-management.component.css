@@ -126,3 +126,31 @@ button:disabled {
       padding-top: 80px; /* Add padding-top to avoid overlap with nav */
     }
 }
+/* Add custom styles for the multi-select dropdown */
+.custom-multiselect {
+    border: 2px solid #007bff; /* Add a blue border */
+    border-radius: 8px; /* Rounded corners */
+    padding: 10px; /* Add padding for better spacing */
+    background-color: #f8f9fa; /* Light background color */
+    font-size: 16px; /* Increase font size */
+    color: #495057; /* Text color */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+    transition: all 0.3s ease; /* Smooth transition for hover effects */
+  }
+  
+  .custom-multiselect:focus {
+    outline: none; /* Remove default focus outline */
+    border-color: #0056b3; /* Darker blue border on focus */
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.5); /* Glow effect on focus */
+  }
+  
+  .custom-multiselect option {
+    padding: 5px; /* Add padding to options */
+    background-color: #ffffff; /* White background for options */
+    color: #495057; /* Text color for options */
+  }
+  
+  .custom-multiselect option:hover {
+    background-color: #007bff; /* Highlight color on hover */
+    color: #ffffff; /* White text on hover */
+  }

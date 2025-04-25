@@ -6,7 +6,8 @@ import { Observable, BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
-  private baseUrl = 'http://localhost:8082/auth'; // Backend API base URL
+  //private baseUrl = 'http://Inventory-security-service-env.eba-eqv2mgxp.us-east-2.elasticbeanstalk.com/auth'; // Backend API base URL
+  private baseUrl = 'http://localhost:8082/auth';
   private tokenKey = 'authToken';
 
   // BehaviorSubject to track authentication state
@@ -38,8 +39,9 @@ export class AuthService {
   }
 
   registerUser(userData: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/register`,  userData); // Ensure the endpoint matches the backend
+    return this.http.post(`${this.baseUrl}/register`,  userData, { responseType: 'text' }); // Ensure the endpoint matches the backend
   }
+
 
   isAuthenticated(): boolean {
     return !!this.getToken(); // Check if the token exists

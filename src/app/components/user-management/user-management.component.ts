@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, NgModule } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
 import { UserModel } from '../../models/UserModel';
 import { userService } from '../../services/userService';
@@ -18,7 +18,7 @@ export class UserManagementComponent {
     username: '',
     email: '',
     password: '',
-    role: ''
+    roles: [] as string[] // Initialize roles as an empty array
   };
 
   constructor(private userService : userService, private fb: FormBuilder, private authService : AuthService) { 
@@ -26,7 +26,7 @@ export class UserManagementComponent {
       username: ['', Validators.required],
       email: ['', Validators.required],
       password: ['', Validators.required],
-      role: ['', Validators.required],
+      roles: ['', Validators.required],
       createdDate: ['', Validators.required]
     });
   }
@@ -35,7 +35,6 @@ export class UserManagementComponent {
   userList: UserModel[] = [];
   editUserData: any = {};
   successMessage: string = '';
-  stname = 'DD';
 
   onSubmit(form: any) {
     console.log('Form submitted:', form);
@@ -47,7 +46,14 @@ export class UserManagementComponent {
     })
   }
 
+  availableRoles = ['ADMIN', 'USER', 'TATA', 'TOYOTA', 'EICHER']; // Dynamic roles
+
   onCreateUser(): void {
+    // Ensure roles are in the correct format (array of strings)
+    if (typeof this.userData.roles === 'string') {
+      this.userData.roles = [this.userData.roles]; // Convert single role to an array
+    }
+  
     console.log('User data being sent:', this.userData); // Log the user data
   
     this.authService.registerUser(this.userData).subscribe(
@@ -63,7 +69,7 @@ export class UserManagementComponent {
           username: '',
           email: '',
           password: '',
-          role: ''
+          roles: [] as string[] // Initialize roles as an empty array
         };
       },
       (error) => {

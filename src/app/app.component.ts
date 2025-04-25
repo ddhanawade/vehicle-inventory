@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { AfterViewInit, Component, NgModule } from '@angular/core';
+import { FormsModule, NgSelectOption } from '@angular/forms';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterLink, RouterOutlet } from '@angular/router';
