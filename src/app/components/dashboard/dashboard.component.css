@@ -1,5 +1,4 @@
-html,
-body {
+html, body {
     margin: 0;
     font-family: Arial, sans-serif;
     overflow-x: hidden;
@@ -10,15 +9,15 @@ body {
 }
 
 .dashboard-container {
-    width: calc(100% - 200px); /* Adjust width to account for nav bar */
+    width: calc(100% - 200px);
     max-width: 1200px;
-    margin-left: 220px; /* Add margin-left to avoid overlap with fixed navbar */
+    margin-left: 220px;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
     margin-top: 20px;
     gap: 20px;
-    transition: margin-left 0.3s ease; /* Smooth transition for margin-left */
+    transition: margin-left 0.3s ease;
 }
 
 .button {
@@ -32,7 +31,7 @@ body {
 }
 
 .button:hover {
-    background-color: #45a049;
+    background-color: #303f9f;
 }
 
 .btn-danger {
@@ -78,11 +77,10 @@ body {
 }
 
 .card:hover {
-    transform: none;
-    box-shadow: none;
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
-/* Card Header */
 .card-header h3 {
     font-size: 1.5rem;
     color: #3f51b5;
@@ -146,7 +144,6 @@ input {
     padding: 15px 0;
 }
 
-/* Total Stock Card */
 .total-stock-card {
     display: flex;
     flex-direction: column;
@@ -181,7 +178,6 @@ input {
     margin-top: 5px;
 }
 
-/* Slider Container */
 .slider {
     display: flex;
     overflow-x: auto;
@@ -209,11 +205,10 @@ input {
 }
 
 .summary-card:hover {
-    transform: none;
-    box-shadow: none;
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
-/* Card Header */
 .card-header h2 {
     font-size: 1.5rem;
     margin: 0;
@@ -222,9 +217,7 @@ input {
     text-transform: capitalize;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
-
     .summary-card {
         flex: 0 0 calc(50% - 15px);
         max-width: calc(50% - 15px);
@@ -257,7 +250,6 @@ input {
 }
 
 @media (max-width: 768px) {
-
     input {
         font-size: 13px;
     }
@@ -346,14 +338,14 @@ input {
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    flex-wrap: wrap; /* Allow wrapping */
+    flex-wrap: wrap;
 }
 
 .menu-item {
     flex: 1;
-    display: inline-flex; /* Use inline-flex for inline alignment */
-    align-items: center; /* Align items to center */
-    justify-content: center; /* Center content */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     font-size: 1rem;
     font-weight: bold;
     color: #3f51b5;
@@ -368,7 +360,7 @@ input {
 .menu-item i {
     font-size: 1.5rem;
     color: #3f51b5;
-    margin-right: 5px; /* Add margin to the right for spacing between icon and text */
+    margin-right: 5px;
 }
 
 .menu-item:hover {
@@ -389,7 +381,7 @@ input {
     }
 
     .menu-item {
-        flex: 0 0 45%; /* Adjust the size to fit two items per row */
+        flex: 0 0 45%;
         margin-bottom: 10px;
         font-size: 1rem;
     }
@@ -411,8 +403,6 @@ input {
         grid-template-columns: 1fr;
     }
 }
-
-
 
 .invisible-link {
     text-decoration: none;
@@ -447,15 +437,15 @@ input {
 
 @media (max-width: 768px) {
     .dashboard-container {
-        width: calc(100% - 80px); /* Adjust width for collapsed nav */
-        margin-left: 80px; /* Adjust margin-left for collapsed nav */
+        width: calc(100% - 80px);
+        margin-left: 80px;
     }
 }
 
 @media (max-width: 480px) {
     .dashboard-container {
         width: 100%;
-        margin-left: 0; /* Remove margin-left for full width */
-        padding-top: 80px; /* Add padding-top to avoid overlap with nav */
+        margin-left: 0;
+        padding-top: 80px;
     }
 }
