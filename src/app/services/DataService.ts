@@ -8,6 +8,7 @@ import { VehicleModel } from '../models/VehicleModel';
 })
 export class DataService {
 
+  //private baseUrl = 'http://fleet-manager-env.eba-5vfuueih.us-east-2.elasticbeanstalk.com/api/vehicles';
   private baseUrl = 'http://localhost:8080/api/vehicles';
 
   constructor(private http: HttpClient) { }
