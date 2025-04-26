@@ -47,6 +47,7 @@ h2 {
   display: flex;
   justify-content: space-between;
   margin-bottom: 20px;
+  border-bottom: 2px solid #ddd;
 }
 
 .tab-button {
@@ -54,17 +55,19 @@ h2 {
   padding: 10px;
   background-color: #f1f1f1;
   border: none;
-  border-radius: 4px;
+  border-radius: 4px 4px 0 0;
   cursor: pointer;
   font-size: 14px;
   font-weight: bold;
   color: #333;
-  transition: background-color 0.3s, color 0.3s;
+  transition: background-color 0.3s, color 0.3s, transform 0.2s;
 }
 
 .tab-button.active {
   background-color: #3f51b5;
   color: white;
+  transform: translateY(-2px);
+  border-bottom: 2px solid #3f51b5;
 }
 
 .tab-button:hover {
@@ -77,6 +80,7 @@ h2 {
   display: flex;
   flex-direction: column;
   gap: 15px;
+  animation: fadeIn 0.3s ease-in-out;
 }
 
 /* Form Styles */
@@ -110,15 +114,17 @@ input:focus, select:focus {
   margin-top: 20px;
 }
 
+/* Submit Button */
 .submit-button {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   background-color: #3f51b5;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
+  font-weight: bold;
   transition: background-color 0.3s, transform 0.2s;
 }
 
@@ -130,7 +136,9 @@ input:focus, select:focus {
 .submit-button:disabled {
   background-color: #ddd;
   cursor: not-allowed;
+  transform: none;
 }
+
 
 /* Responsive Design */
 @media (max-width: 768px) {
@@ -164,10 +172,11 @@ input:focus, select:focus {
   animation: fadeInOut 2s ease-in-out;
 }
 
+/* Success Message Animation */
 .small-success-message {
   background-color: #d4edda;
   color: #155724;
-  padding: 5px 10px;
+  padding: 10px 15px;
   margin: 10px 0;
   border: 1px solid #c3e6cb;
   border-radius: 4px;
@@ -176,6 +185,7 @@ input:focus, select:focus {
   width: fit-content;
   margin-left: auto;
   margin-right: auto;
+  animation: fadeInOut 3s ease-in-out;
 }
 
 
@@ -187,13 +197,33 @@ input:focus, select:focus {
   }
 }
 
-/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes fadeInOut {
   0%, 100% {
     opacity: 0;
   }
-
   50% {
     opacity: 1;
   }
+}
+
+/* Form Validation */
+input.ng-invalid.ng-touched, select.ng-invalid.ng-touched {
+  border-color: #f44336;
+  box-shadow: 0 0 5px rgba(244, 67, 54, 0.5);
+}
+
+input.ng-valid.ng-touched, select.ng-valid.ng-touched {
+  border-color: #4caf50;
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
 }
