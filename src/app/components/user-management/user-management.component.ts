@@ -57,9 +57,11 @@ export class UserManagementComponent {
     console.log('User data being sent:', this.userData); // Log the user data
   
     this.authService.registerUser(this.userData).subscribe(
-      (response) => {
-        console.log('Response from backend:', response); // Log the backend response
-        this.successMessage = 'User created successfully!';
+      (response:any) => {
+        console.log('Full Response from backend:', response); // Log the full response
+        this.successMessage = response; // Safely extract the message
+        console.log('Extracted successMessage:', this.successMessage); // Log the extracted message
+  
         setTimeout(() => {
           this.successMessage = '';
         }, 3000);
@@ -74,8 +76,8 @@ export class UserManagementComponent {
       },
       (error) => {
         console.error('Error creating user:', error); // Log the error
+        this.successMessage = error.error?.message || 'An error occurred while creating the user.';
       }
     );
   }
-  
 }
