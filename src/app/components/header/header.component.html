@@ -42,6 +42,13 @@
               <span>Logout</span>
             </a>
           </li>
+          <!-- <div *ngIf="user; else noUser">
+            <h1>Welcome, {{ user.username }}</h1>
+            <p>Role: {{ user.roles }}</p>
+          </div>
+          <ng-template #noUser>
+            <p>No user is logged in.</p>
+          </ng-template> -->
     </ul>
     <button class="toggle-nav-button" (click)="toggleNav()">
         {{ isNavCollapsed ? '>>' : '<<' }}

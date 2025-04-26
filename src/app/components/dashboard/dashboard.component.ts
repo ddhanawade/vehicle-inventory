@@ -6,6 +6,7 @@ import { DataService } from '../../services/DataService';
 import { VehicleModel } from '../../models/VehicleModel';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/AuthService';
+import { UserModel } from '../../models/UserModel';
 
 @Component({
   selector: 'app-dashboard',
@@ -25,20 +26,56 @@ export class DashboardComponent implements OnInit {
   showEditPopup: boolean = false;
   editVehicleData: any = {};
 
+  user: UserModel | null = null;
+
   constructor(private fb: FormBuilder,
     private vehicleService: DataService,
     private authService: AuthService,
     private router: Router,
-    private cdr: ChangeDetectorRef) {}
+    private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    this.getCarDetails();
-  }
+    //  // Subscribe to the user observable to get the current user
+    //  this.authService.getUser().subscribe((user) => {
+    //   this.user = user;
+    //   console.log('Current User:', this.user);
+    // });
 
+    // Retrieve the user from localStorage if available
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      this.user = JSON.parse(storedUser);
+      console.log('Retrieved User from Storage:', this.user);
+    }
+
+    this.getCarDetails();
+
+    // Subscribe to the user observable to get the current user
+    this.authService.getUser().subscribe((user) => {
+      this.user = user;
+      console.log('Current User:', this.user);
+
+      // Store the user in localStorage for persistence
+      localStorage.setItem('user', JSON.stringify(this.user));
+    });
+
+  }
   getCarDetails(): void {
     this.vehicleService.getData().subscribe((data: VehicleModel[]) => {
       this.carDetailsList = data;
-      this.filteredStocksList = [...this.carDetailsList]; // Initialize filtered list
+
+      // Filter the data based on roles
+      if (this.hasRole('ADMIN')) {
+        this.filteredStocksList = [...this.carDetailsList]; // Show all data for ADMIN
+      } else if (this.hasRole('TATA')) {
+        this.filteredStocksList = this.carDetailsList.filter(car => car.make === 'Tata');
+      } else if (this.hasRole('TOYOTA')) {
+        this.filteredStocksList = this.carDetailsList.filter(car => car.make === 'Toyota');
+      } else if (this.hasRole('EICHER')) {
+        this.filteredStocksList = this.carDetailsList.filter(car => car.make === 'Eicher');
+      } else {
+        this.filteredStocksList = []; // Default to an empty list if no roles match
+      }
       this.cdr.markForCheck(); // Notify Angular about data changes
     });
   }
@@ -53,8 +90,8 @@ export class DashboardComponent implements OnInit {
     this.filteredStocksList = this.carDetailsList.filter((stock) => {
       const matchesMake = this.selectedMake ? stock.make.toLowerCase() === this.selectedMake.toLowerCase() : true;
       const matchesSearch = stock.make.toLowerCase().includes(searchTermLower) ||
-                            stock.model.toLowerCase().includes(searchTermLower) ||
-                            stock.location.toLowerCase().includes(searchTermLower);
+        stock.model.toLowerCase().includes(searchTermLower) ||
+        stock.location.toLowerCase().includes(searchTermLower);
       return matchesMake && matchesSearch;
     });
   }
@@ -97,9 +134,9 @@ export class DashboardComponent implements OnInit {
       console.error('Invalid vehicle data for update');
       return;
     }
-  
+
     console.log("Sending updated data to backend:", this.editVehicleData); // Debugging log
-  
+
     this.vehicleService.updateVehicleDetails(this.editVehicleData).subscribe(
       (response) => {
         console.log("Response from backend:", response); // Debugging log
@@ -136,7 +173,7 @@ export class DashboardComponent implements OnInit {
   getCityWiseModelCounts(): { city: string, count: number }[] {
     // Create a map to store city-wise model counts
     const cityModelCounts: { [key: string]: number } = {};
-  
+
     // Iterate through the carDetailsList and calculate model counts for each city
     this.carDetailsList.forEach(stock => {
       const city = stock.location.trim().toLowerCase(); // Normalize city names (case-insensitive)
@@ -146,7 +183,7 @@ export class DashboardComponent implements OnInit {
         cityModelCounts[city] = 1; // Initialize the count for the city
       }
     });
-  
+
     // Convert the map into an array of objects with city and model count
     return Object.keys(cityModelCounts).map(city => ({
       city: city.charAt(0).toUpperCase() + city.slice(1), // Capitalize the city name
@@ -170,5 +207,12 @@ export class DashboardComponent implements OnInit {
       console.warn('No token found. Redirecting to login.');
       this.router.navigate(['/login']);
     }
+  }
+
+  hasRole(role: string): boolean {
+    if (this.user?.roles?.includes('ADMIN')) {
+      return true; // ADMIN can access all menus
+    }
+    return this.user?.roles?.includes(role) || false;
   }
 }

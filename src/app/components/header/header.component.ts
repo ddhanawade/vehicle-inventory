@@ -3,6 +3,7 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/AuthService';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { UserModel } from '../../models/UserModel';
 
 @Component({
   selector: 'app-header',
@@ -13,6 +14,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class HeaderComponent implements OnInit {
   isLoggedIn: boolean = false; // Track login state
   isNavCollapsed: boolean = true; // Track navigation collapse state
+  user: UserModel | null = null;
 
   // Auto collapse based on screen size
   private readonly COLLAPSE_SIZE = 768; // You can adjust this value if needed
@@ -27,6 +29,11 @@ export class HeaderComponent implements OnInit {
     // Subscribe to the authentication state
     this.authService.isLoggedIn$.subscribe((loggedIn) => {
       this.isLoggedIn = loggedIn;
+    });
+    // Subscribe to the user observable to get the current user
+    this.authService.getUser().subscribe((user) => {
+      this.user = user;
+      console.log('Current User:', this.user);
     });
   }
 
@@ -50,6 +57,7 @@ export class HeaderComponent implements OnInit {
     this.authService.logout(token).subscribe({
       next: () => {
         this.authService.clearToken(); // Clear the token
+        this.authService.clearUser(); // Clear the user globally
         this.snackBar.open('Logout successful!', 'Close', { duration: 3000 });
         this.router.navigate(['/login-page']); // Redirect to the login page
       },

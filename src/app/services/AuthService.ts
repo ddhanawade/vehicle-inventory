@@ -1,18 +1,21 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
+import { UserModel } from '../models/UserModel';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  //private baseUrl = 'http://Inventory-security-service-env.eba-eqv2mgxp.us-east-2.elasticbeanstalk.com/auth'; // Backend API base URL
   private baseUrl = 'http://localhost:8082/auth';
   private tokenKey = 'authToken';
+  private userKey = 'authUser';
 
-  // BehaviorSubject to track authentication state
+  private userSubject = new BehaviorSubject<UserModel | null>(this.getStoredUser());
+  user$ = this.userSubject.asObservable(); // Observable for components to subscribe to
+
   private isLoggedInSubject = new BehaviorSubject<boolean>(this.isAuthenticated());
-  isLoggedIn$ = this.isLoggedInSubject.asObservable(); // Observable for components to subscribe to
+  isLoggedIn$ = this.isLoggedInSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
@@ -21,29 +24,57 @@ export class AuthService {
   }
 
   saveToken(token: string): void {
-    localStorage.setItem(this.tokenKey, token); // Save the token in local storage
-    this.isLoggedInSubject.next(true); // Notify components that the user is logged in
+    localStorage.setItem(this.tokenKey, token);
+    this.isLoggedInSubject.next(true);
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.tokenKey); // Retrieve the token from local storage
+    return localStorage.getItem(this.tokenKey);
+  }
+
+  saveUser(user: UserModel): void {
+    localStorage.setItem(this.userKey, JSON.stringify(user));
+    this.userSubject.next(user);
+  }
+
+  getStoredUser(): UserModel | null {
+    const user = localStorage.getItem(this.userKey);
+    return user ? JSON.parse(user) : null;
   }
 
   logout(token: string): Observable<any> {
-    const headers = { Authorization: `Bearer ${token}` }; // Add the token to the Authorization header
-    return this.http.post(`${this.baseUrl}/logout`, {}, { headers, responseType: 'text' as 'json' }); // Expect plain text response
+    const headers = { Authorization: `Bearer ${token}` };
+    return this.http.post(`${this.baseUrl}/logout`, {}, { headers, responseType: 'text' as 'json' });
   }
+
   clearToken(): void {
-    localStorage.removeItem(this.tokenKey); // Remove the token from local storage
-    this.isLoggedInSubject.next(false); // Notify components that the user is logged out
+    localStorage.removeItem(this.tokenKey);
+    localStorage.removeItem(this.userKey);
+    this.isLoggedInSubject.next(false);
+    this.userSubject.next(null);
   }
 
   registerUser(userData: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/register`,  userData, { responseType: 'text' }); // Ensure the endpoint matches the backend
+    return this.http.post(`${this.baseUrl}/register`, userData, { responseType: 'text' });
   }
 
+  getUserByName(username: string): Observable<UserModel> {
+    return this.http.get<UserModel>(`${this.baseUrl}/${username}`);
+  }
 
   isAuthenticated(): boolean {
-    return !!this.getToken(); // Check if the token exists
+    return !!this.getToken();
+  }
+
+  setUser(user: UserModel): void {
+    this.saveUser(user);
+  }
+
+  getUser(): Observable<UserModel | null> {
+    return this.user$;
+  }
+
+  clearUser(): void {
+    this.clearToken();
   }
 }
