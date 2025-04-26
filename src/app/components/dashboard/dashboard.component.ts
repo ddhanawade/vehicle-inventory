@@ -35,11 +35,6 @@ export class DashboardComponent implements OnInit {
     private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    //  // Subscribe to the user observable to get the current user
-    //  this.authService.getUser().subscribe((user) => {
-    //   this.user = user;
-    //   console.log('Current User:', this.user);
-    // });
 
     // Retrieve the user from localStorage if available
     const storedUser = localStorage.getItem('user');
@@ -53,7 +48,6 @@ export class DashboardComponent implements OnInit {
     // Subscribe to the user observable to get the current user
     this.authService.getUser().subscribe((user) => {
       this.user = user;
-      console.log('Current User:', this.user);
 
       // Store the user in localStorage for persistence
       localStorage.setItem('user', JSON.stringify(this.user));
@@ -82,10 +76,10 @@ export class DashboardComponent implements OnInit {
 
   filterByMake(make: string): void {
     this.selectedMake = make; // Set the selected make
-    this.filterStocks(); // Apply the filter
+    this.filterVehicles(); // Apply the filter
   }
 
-  filterStocks(): void {
+  filterVehicles(): void {
     const searchTermLower = this.searchTerm.toLowerCase();
     this.filteredStocksList = this.carDetailsList.filter((stock) => {
       const matchesMake = this.selectedMake ? stock.make.toLowerCase() === this.selectedMake.toLowerCase() : true;
@@ -93,6 +87,29 @@ export class DashboardComponent implements OnInit {
         stock.model.toLowerCase().includes(searchTermLower) ||
         stock.location.toLowerCase().includes(searchTermLower);
       return matchesMake && matchesSearch;
+    });
+  }
+
+  filterStocks(): void {
+    const searchTermLower = this.searchTerm.toLowerCase();
+  
+    // Apply role-based filtering first
+    let roleFilteredList: VehicleModel[] = [];
+    if (this.hasRole('ADMIN')) {
+      roleFilteredList = [...this.carDetailsList]; // Show all data for ADMIN
+    } else if (this.hasRole('TATA')) {
+      roleFilteredList = this.carDetailsList.filter(car => car.make === 'Tata');
+    } else if (this.hasRole('TOYOTA')) {
+      roleFilteredList = this.carDetailsList.filter(car => car.make === 'Toyota');
+    } else if (this.hasRole('EICHER')) {
+      roleFilteredList = this.carDetailsList.filter(car => car.make === 'Eicher');
+    }
+  
+    // Apply search term filtering on the role-filtered list
+    this.filteredStocksList = roleFilteredList.filter((stock) => {
+      return stock.make.toLowerCase().includes(searchTermLower) ||
+             stock.model.toLowerCase().includes(searchTermLower) ||
+             stock.location.toLowerCase().includes(searchTermLower);
     });
   }
 
