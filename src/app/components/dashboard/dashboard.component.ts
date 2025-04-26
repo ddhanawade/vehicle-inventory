@@ -183,28 +183,40 @@ export class DashboardComponent implements OnInit {
     );
   }
 
-  getTotalCarsAvailable() {
-    return this.carDetailsList.length;
+  getTotalCarsAvailable(): number {
+    if (this.hasRole('ADMIN')) {
+      return this.carDetailsList.length; // Total count for ADMIN
+    } else if (this.hasRole('TATA')) {
+      return this.carDetailsList.filter(car => car.make === 'Tata').length;
+    } else if (this.hasRole('TOYOTA')) {
+      return this.carDetailsList.filter(car => car.make === 'Toyota').length;
+    } else if (this.hasRole('EICHER')) {
+      return this.carDetailsList.filter(car => car.make === 'Eicher').length;
+    }
+    return 0; // Default to 0 if no roles match
   }
 
-  getCityWiseModelCounts(): { city: string, count: number }[] {
-    // Create a map to store city-wise model counts
-    const cityModelCounts: { [key: string]: number } = {};
-
-    // Iterate through the carDetailsList and calculate model counts for each city
-    this.carDetailsList.forEach(stock => {
-      const city = stock.location.trim().toLowerCase(); // Normalize city names (case-insensitive)
-      if (cityModelCounts[city]) {
-        cityModelCounts[city] += 1; // Increment the count for the city
-      } else {
-        cityModelCounts[city] = 1; // Initialize the count for the city
-      }
-    });
-
-    // Convert the map into an array of objects with city and model count
-    return Object.keys(cityModelCounts).map(city => ({
-      city: city.charAt(0).toUpperCase() + city.slice(1), // Capitalize the city name
-      count: cityModelCounts[city]
+  getCityWiseModelCounts(): { city: string; count: number }[] {
+    let filteredList: any[] = [];
+    if (this.hasRole('ADMIN')) {
+      filteredList = [...this.carDetailsList]; // All data for ADMIN
+    } else if (this.hasRole('TATA')) {
+      filteredList = this.carDetailsList.filter(car => car.make === 'Tata');
+    } else if (this.hasRole('TOYOTA')) {
+      filteredList = this.carDetailsList.filter(car => car.make === 'Toyota');
+    } else if (this.hasRole('EICHER')) {
+      filteredList = this.carDetailsList.filter(car => car.make === 'Eicher');
+    }
+  
+    // Group by city and count vehicles
+    const cityCounts = filteredList.reduce((acc, car) => {
+      acc[car.location] = (acc[car.location] || 0) + 1;
+      return acc;
+    }, {} as { [key: string]: number });
+  
+    return Object.keys(cityCounts).map(city => ({
+      city,
+      count: cityCounts[city]
     }));
   }
 
