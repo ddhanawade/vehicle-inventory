@@ -58,7 +58,7 @@ export class HeaderComponent implements OnInit {
       next: () => {
         this.authService.clearToken(); // Clear the token
         this.authService.clearUser(); // Clear the user globally
-        this.snackBar.open('Logout successful!', 'Close', { duration: 3000 });
+        // this.snackBar.open('Logout successful!', 'Close', { duration: 3000 });
         this.router.navigate(['/login-page']); // Redirect to the login page
       },
       error: (err) => {

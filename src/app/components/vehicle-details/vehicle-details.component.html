@@ -9,75 +9,81 @@
 </head>
 
 <body>
-<div class="vehicle-details-container">
-    <div> <h2 class="table-heading">Vehicle Details</h2>
-    <div class="table-actions">
-        <button mat-raised-button color="primary" (click)="exportToPDF()">Export to PDF</button>
-        <button mat-raised-button color="accent" (click)="exportToExcel()">Export to Excel</button>
-    </div>
-</div>
-    <div class="table-container">
+    <div class="vehicle-details-container">
+      <div>
+        <h2 class="table-heading">Vehicle Details</h2>
+        <div class="table-actions">
+          <button mat-raised-button color="primary" (click)="exportToPDF()">
+            <i class="fas fa-file-pdf"></i> Export to PDF
+          </button>
+          <button mat-raised-button color="accent" (click)="exportToExcel()">
+            <i class="fas fa-file-excel"></i> Export to Excel
+          </button>
+        </div>
+      </div>
+      <div class="table-container">
         <div class="responsive-table">
           <table mat-table [dataSource]="carDetailsList" class="mat-elevation-z8">
-              <ng-container matColumnDef="make">
-                  <th mat-header-cell *matHeaderCellDef> Make </th>
-                  <td mat-cell *matCellDef="let item"> {{item.make}} </td>
-              </ng-container>
-              <ng-container matColumnDef="model">
-                  <th mat-header-cell *matHeaderCellDef> Model </th>
-                  <td mat-cell *matCellDef="let item"> {{item.model}} </td>
-              </ng-container>
-              <ng-container matColumnDef="grade">
-                  <th mat-header-cell *matHeaderCellDef> Grade </th>
-                  <td mat-cell *matCellDef="let item"> {{item.grade}} </td>
-              </ng-container>
-              <ng-container matColumnDef="fuelType">
-                  <th mat-header-cell *matHeaderCellDef> Fuel Type </th>
-                  <td mat-cell *matCellDef="let item"> {{item.fuelType}} </td>
-              </ng-container>
-              <ng-container matColumnDef="exteriorColor">
-                  <th mat-header-cell *matHeaderCellDef> Exterior Color </th>
-                  <td mat-cell *matCellDef="let item"> {{item.exteriorColor}} </td>
-              </ng-container>
-              <ng-container matColumnDef="interiorColor">
-                  <th mat-header-cell *matHeaderCellDef> Interior Color </th>
-                  <td mat-cell *matCellDef="let item"> {{item.interiorColor}} </td>
-              </ng-container>
-              <ng-container matColumnDef="chassisNumber">
-                  <th mat-header-cell *matHeaderCellDef> Chassis Number </th>
-                  <td mat-cell *matCellDef="let item"> {{item.chassisNumber}} </td>
-              </ng-container>
-              <ng-container matColumnDef="engineNumber">
-                  <th mat-header-cell *matHeaderCellDef> Engine Number </th>
-                  <td mat-cell *matCellDef="let item"> {{item.engineNumber}} </td>
-              </ng-container>
-              <ng-container matColumnDef="keyNumber">
-                  <th mat-header-cell *matHeaderCellDef> Key Number </th>
-                  <td mat-cell *matCellDef="let item"> {{item.keyNumber}} </td>
-              </ng-container>
-              <ng-container matColumnDef="location">
-                  <th mat-header-cell *matHeaderCellDef> Location </th>
-                  <td mat-cell *matCellDef="let item"> {{item.location}} </td>
-              </ng-container>
-              <ng-container matColumnDef="status">
-                  <th mat-header-cell *matHeaderCellDef> Status </th>
-                  <td mat-cell *matCellDef="let item"> {{item.status}} </td>
-              </ng-container>
-              <ng-container matColumnDef="receivedDate">
-                  <th mat-header-cell *matHeaderCellDef> Received Date </th>
-                  <td mat-cell *matCellDef="let item"> {{item.receivedDate | date: 'dd-MM-yyyy'}} </td>
-              </ng-container>
-
-              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-              <ng-container *matNoDataRowDef>
-                  <tr mat-row class="mat-no-data-row">
-                      <td colspan="12">No data available</td>
-                  </tr>
-              </ng-container>
+            <ng-container matColumnDef="make">
+              <th mat-header-cell *matHeaderCellDef> Make </th>
+              <td mat-cell *matCellDef="let item">{{item.make}}</td>
+            </ng-container>
+            <ng-container matColumnDef="model">
+              <th mat-header-cell *matHeaderCellDef> Model </th>
+              <td mat-cell *matCellDef="let item">{{item.model}}</td>
+            </ng-container>
+            <ng-container matColumnDef="grade">
+              <th mat-header-cell *matHeaderCellDef> Grade </th>
+              <td mat-cell *matCellDef="let item">{{item.grade}}</td>
+            </ng-container>
+            <ng-container matColumnDef="fuelType">
+              <th mat-header-cell *matHeaderCellDef> Fuel Type </th>
+              <td mat-cell *matCellDef="let item">{{item.fuelType}}</td>
+            </ng-container>
+            <ng-container matColumnDef="exteriorColor">
+              <th mat-header-cell *matHeaderCellDef> Exterior Color </th>
+              <td mat-cell *matCellDef="let item">{{item.exteriorColor}}</td>
+            </ng-container>
+            <ng-container matColumnDef="interiorColor">
+              <th mat-header-cell *matHeaderCellDef> Interior Color </th>
+              <td mat-cell *matCellDef="let item">{{item.interiorColor}}</td>
+            </ng-container>
+            <ng-container matColumnDef="chassisNumber">
+              <th mat-header-cell *matHeaderCellDef> Chassis Number </th>
+              <td mat-cell *matCellDef="let item">{{item.chassisNumber}}</td>
+            </ng-container>
+            <ng-container matColumnDef="engineNumber">
+              <th mat-header-cell *matHeaderCellDef> Engine Number </th>
+              <td mat-cell *matCellDef="let item">{{item.engineNumber}}</td>
+            </ng-container>
+            <ng-container matColumnDef="keyNumber">
+              <th mat-header-cell *matHeaderCellDef> Key Number </th>
+              <td mat-cell *matCellDef="let item">{{item.keyNumber}}</td>
+            </ng-container>
+            <ng-container matColumnDef="location">
+              <th mat-header-cell *matHeaderCellDef> Location </th>
+              <td mat-cell *matCellDef="let item">{{item.location}}</td>
+            </ng-container>
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef> Status </th>
+              <td mat-cell *matCellDef="let item">{{item.status}}</td>
+            </ng-container>
+            <ng-container matColumnDef="receivedDate">
+              <th mat-header-cell *matHeaderCellDef> Received Date </th>
+              <td mat-cell *matCellDef="let item">{{item.receivedDate | date:'dd-MM-yyyy'}}</td>
+            </ng-container>
+  
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;">
+            </tr>
+            <ng-container *matNoDataRowDef>
+              <tr mat-row class="mat-no-data-row">
+                <td colspan="12">No data available</td>
+              </tr>
+            </ng-container>
           </table>
         </div>
+      </div>
     </div>
-</div>
-</body>
+  </body>
 </html>
