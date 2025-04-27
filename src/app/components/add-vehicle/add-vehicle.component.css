@@ -7,223 +7,218 @@ body {
     flex-direction: column;
     height: 100vh;
     scroll-behavior: smooth;
+    background-color: #f0f2f5;
 }
-/* General Styles */
-/* .add-vehicle-container {
-  max-width: 800px;
-  margin: 50px auto;
-  padding: 20px;
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  font-family: Arial, sans-serif;
-} */
 
+/* General Styles */
 .add-vehicle-container {
-  width: calc(100% - 200px); /* Adjust width to account for nav bar */
-  max-width: 1000px;
-  margin-left: 220px; /* Add margin-left to avoid overlap with fixed navbar */
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  margin-top: 20px;
-  gap: 20px;
-  padding: 20px;
-  background-color: #ffffff;
-  /* border-radius: 8px; */
-  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
-  min-height: 100vh;
-  transition: margin-left 0.3s ease; /* Smooth transition for margin-left */
+    width: calc(100% - 200px); /* Adjust width to account for nav bar */
+    max-width: 1000px;
+    margin-left: 220px; /* Add margin-left to avoid overlap with fixed navbar */
+    display: flex;
+    flex-direction: column;
+    min-height: 60vh;
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: margin-left 0.3s ease; /* Smooth transition for margin-left */
 }
 
 h2 {
-  text-align: center;
-  color: #3f51b5;
-  margin-bottom: 20px;
+    text-align: center;
+    color: #3f51b5;
+    margin-bottom: 20px;
+    font-size: 24px;
 }
 
 /* Tab Navigation */
 .tab-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-  border-bottom: 2px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #ddd;
 }
 
 .tab-button {
-  flex: 1;
-  padding: 10px;
-  background-color: #f1f1f1;
-  border: none;
-  border-radius: 4px 4px 0 0;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: bold;
-  color: #333;
-  transition: background-color 0.3s, color 0.3s, transform 0.2s;
+    flex: 1;
+    padding: 12px;
+    background-color: #e0e0e0;
+    border: none;
+    border-radius: 4px 4px 0 0;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    transition: background-color 0.3s, color 0.3s, transform 0.2s;
 }
 
 .tab-button.active {
-  background-color: #3f51b5;
-  color: white;
-  transform: translateY(-2px);
-  border-bottom: 2px solid #3f51b5;
+    background-color: #3f51b5;
+    color: white;
+    transform: translateY(-2px);
+    border-bottom: 2px solid #3f51b5;
 }
 
 .tab-button:hover {
-  background-color: #3f51b5;
-  color: white;
+    background-color: #3f51b5;
+    color: white;
 }
 
 /* Tab Content */
 .tab-content {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  animation: fadeIn 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    animation: fadeIn 0.3s ease-in-out;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Form Styles */
 .form-group {
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 
 label {
-  font-weight: bold;
-  margin-bottom: 5px;
-  color: #333;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
 }
 
 input, select {
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-  transition: border-color 0.3s, box-shadow 0.3s;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 input:focus, select:focus {
-  border-color: #3f51b5;
-  box-shadow: 0 0 5px rgba(63, 81, 181, 0.5);
-  outline: none;
+    border-color: #3f51b5;
+    box-shadow: 0 0 5px rgba(63, 81, 181, 0.5);
+    outline: none;
 }
 
-/* Submit Button */
+/* Form Actions */
 .form-actions {
-  margin-top: 20px;
+    margin-top: 20px;
 }
 
 /* Submit Button */
 .submit-button {
-  width: 100%;
-  padding: 12px;
-  background-color: #3f51b5;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
-  transition: background-color 0.3s, transform 0.2s;
+    width: 100%;
+    padding: 12px;
+    background-color: #3f51b5;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 .submit-button:hover {
-  background-color: #3548a5;
-  transform: scale(1.05);
+    background-color: #3548a5;
+    transform: scale(1.05);
 }
 
 .submit-button:disabled {
-  background-color: #ddd;
-  cursor: not-allowed;
-  transform: none;
+    background-color: #ddd;
+    cursor: not-allowed;
+    transform: none;
 }
-
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .add-vehicle-container {
-    width: calc(100% - 80px); /* Adjust width for collapsed nav */
-    margin-left: 80px; /* Adjust margin-left for collapsed nav */
-  }
+    .add-vehicle-container {
+        width: calc(100% - 80px); /* Adjust width for collapsed nav */
+        margin-left: 80px; /* Adjust margin-left for collapsed nav */
+    }
 
-  .tab-button {
-    font-size: 12px;
-  }
+    .tab-button {
+        font-size: 14px;
+    }
 
-  input, select {
-    font-size: 12px;
-  }
+    input, select {
+        font-size: 14px;
+    }
 
-  .submit-button {
-    font-size: 14px;
-  }
+    .submit-button {
+        font-size: 14px;
+    }
 }
 
 /* Success Message */
 .success-message {
-  background-color: #4caf50;
-  color: white;
-  padding: 10px 15px;
-  margin-bottom: 15px;
-  border-radius: 5px;
-  text-align: center;
-  font-size: 16px;
-  animation: fadeInOut 2s ease-in-out;
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 15px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 16px;
+    animation: fadeInOut 2s ease-in-out;
 }
 
 /* Success Message Animation */
 .small-success-message {
-  background-color: #d4edda;
-  color: #155724;
-  padding: 10px 15px;
-  margin: 10px 0;
-  border: 1px solid #c3e6cb;
-  border-radius: 4px;
-  font-size: 15px;
-  text-align: center;
-  width: fit-content;
-  margin-left: auto;
-  margin-right: auto;
-  animation: fadeInOut 3s ease-in-out;
+    background-color: #d4edda;
+    color: #155724;
+    padding: 10px 15px;
+    margin: 10px 0;
+    border: 1px solid #c3e6cb;
+    border-radius: 4px;
+    font-size: 16px;
+    text-align: center;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    animation: fadeInOut 3s ease-in-out;
 }
 
-
+/* Fullscreen View for Small Screens */
 @media (max-width: 480px) {
-  .add-vehicle-container {
-      width: 100%;
-      margin-left: 0; /* Remove margin-left for full width */
-      padding-top: 80px; /* Add padding-top to avoid overlap with nav */
-  }
+    .add-vehicle-container {
+        width: 100%;
+        margin-left: 0; /* Remove margin-left for full width */
+        padding-top: 80px; /* Add padding-top to avoid overlap with nav */
+    }
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes fadeInOut {
-  0%, 100% {
-    opacity: 0;
-  }
-  50% {
-    opacity: 1;
-  }
+    0%, 100% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
 }
 
 /* Form Validation */
 input.ng-invalid.ng-touched, select.ng-invalid.ng-touched {
-  border-color: #f44336;
-  box-shadow: 0 0 5px rgba(244, 67, 54, 0.5);
+    border-color: #f44336;
+    box-shadow: 0 0 5px rgba(244, 67, 54, 0.5);
 }
 
 input.ng-valid.ng-touched, select.ng-valid.ng-touched {
-  border-color: #4caf50;
-  box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+    border-color: #4caf50;
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
 }
