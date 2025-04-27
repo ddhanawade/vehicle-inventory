@@ -29,12 +29,16 @@
                             <option *ngFor="let make of makes" [value]="make">{{ make }}</option>
                         </select>
                     </div>
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <label for="model">Model Name</label>
                         <select id="model" formControlName="model">
                             <option value="" disabled>Select Model</option>
                             <option *ngFor="let model of models" [value]="model">{{ model }}</option>
                         </select>
+                    </div> -->
+                    <div class="form-group">
+                        <label for="model">Model Name</label>
+                        <input type="text" id="model" formControlName="model" placeholder="Enter Model Name" />
                     </div>
                     <div class="form-group">
                         <label for="grade">Grade</label>
