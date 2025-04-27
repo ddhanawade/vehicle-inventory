@@ -37,8 +37,8 @@
             </a>
           </li>
           <li *ngIf="isLoggedIn">
-            <a (click)="logout()">
-              <i class="fas fa-sign-out-alt" routerLinkActive="active"></i>
+            <a (click)="logout()" routerLinkActive="active" style="cursor: pointer;">
+              <i class="fas fa-sign-out-alt"></i>
               <span>Logout</span>
             </a>
           </li>

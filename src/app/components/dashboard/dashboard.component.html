@@ -10,12 +10,9 @@
 
 <body>
   <div class="dashboard-container" *ngIf="user">
-    <div>
+    <div class="welcome-container">
       <h1>Welcome, {{ user.username }}</h1>
     </div>
-    <!-- <ng-template #noUser>
-      <p>No user is logged in.</p>
-    </ng-template> -->
     <!-- Menu Section -->
     <div class="menu-container">
       <div *ngIf="hasRole('TATA')" class="menu-item" (click)="filterByMake('Tata')">
