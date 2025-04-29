@@ -1,10 +1,11 @@
 import { Component, inject, Inject, OnInit } from '@angular/core';
 import { DataService } from '../../services/DataService';
 import { VehicleModel } from '../../models/VehicleModel';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-services',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './services.component.html',
   styleUrl: './services.component.css'
 })

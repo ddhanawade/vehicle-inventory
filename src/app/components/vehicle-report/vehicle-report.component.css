@@ -1,0 +1,73 @@
+html,
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    color: #333;
+    line-height: 1.2;
+    background-color: #f4f4f4;
+    height: 100vh;
+    scroll-behavior: smooth;
+    padding: 10px;
+}
+.report-container {
+    padding: 16px;
+
+    width: calc(100% - 200px); /* Adjust width to account for nav bar */
+    max-width: 1200px;
+    margin-left: 220px; /* Add margin-left to avoid overlap with fixed navbar */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin-top: 20px;
+    gap: 20px;
+    transition: margin-left 0.3s ease; /* Smooth transition for margin-left */
+  }
+  
+  .filter-section {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  
+  table {
+    width: 100%;
+    overflow-x: auto;
+  }
+  
+  @media (max-width: 768px) {
+    table {
+      display: block;
+      overflow-x: scroll;
+    }
+  }
+  
+  th, td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  
+  .summary {
+    margin-top: 20px;
+    text-align: right;
+  }
+
+  @media (max-width: 768px) {
+    .report-container {
+        width: calc(100% - 80px); /* Adjust width for collapsed nav */
+        margin-left: 80px; /* Adjust margin-left for collapsed nav */
+    }
+}
+
+@media (max-width: 480px) {
+    .report-container {
+        width: 100%;
+        margin-left: 0; /* Remove margin-left for full width */
+        padding-top: 80px; /* Add padding-top to avoid overlap with nav */
+    }
+}

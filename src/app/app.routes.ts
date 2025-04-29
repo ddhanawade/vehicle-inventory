@@ -7,6 +7,7 @@ import { ServicesComponent } from './components/services/services.component';
 import { VehicleDetailsComponent } from './components/vehicle-details/vehicle-details.component';
 import { AddVehicleComponent } from './components/add-vehicle/add-vehicle.component';
 import { AuthGuard } from './services/AuthGuard';
+import { VehicleReportComponent } from './components/vehicle-report/vehicle-report.component';
 
 export const routes: Routes = [
     {
@@ -45,6 +46,11 @@ export const routes: Routes = [
     {
         path: "add-vehicle",
         component: AddVehicleComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: "monthly-report",
+        component: VehicleReportComponent,
         canActivate: [AuthGuard]
     },
     {
