@@ -9,59 +9,74 @@
 </head>
 
 <body>
-<div class="report-container">
-    <h2>Vehicle Sales Report</h2>
+  <div class="page-container">
+    <div class="report-container">
+      <div class="report-header">
+        <h2><i class="fas fa-chart-line"></i> Vehicle Sales Report</h2>
+      </div>
   
-    <!-- Filter Section -->
-    <div class="filter-section">
-      <mat-form-field appearance="fill">
-        <mat-label>Model</mat-label>
-        <mat-select [(ngModel)]="selectedModel">
-          <mat-option *ngFor="let model of models" [value]="model">{{ model }}</mat-option>
-        </mat-select>
-      </mat-form-field>
+      <!-- Filter Section -->
+      <div class="filter-section">
+        <div class="filter-group">
+          <mat-form-field appearance="outline">
+            <mat-label>Model</mat-label>
+            <mat-select [(ngModel)]="selectedModel">
+              <mat-option *ngFor="let model of models" [value]="model">{{ model }}</mat-option>
+            </mat-select>
+          </mat-form-field>
   
-      <mat-form-field appearance="fill">
-        <mat-label>Start Date</mat-label>
-        <input matInput [matDatepicker]="startPicker" [(ngModel)]="startDate">
-        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
-        <mat-datepicker #startPicker></mat-datepicker>
-      </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Start Date</mat-label>
+            <input matInput [matDatepicker]="startPicker" [(ngModel)]="startDate">
+            <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+            <mat-datepicker #startPicker></mat-datepicker>
+          </mat-form-field>
   
-      <mat-form-field appearance="fill">
-        <mat-label>End Date</mat-label>
-        <input matInput [matDatepicker]="endPicker" [(ngModel)]="endDate">
-        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
-        <mat-datepicker #endPicker></mat-datepicker>
-      </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>End Date</mat-label>
+            <input matInput [matDatepicker]="endPicker" [(ngModel)]="endDate">
+            <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+            <mat-datepicker #endPicker></mat-datepicker>
+          </mat-form-field>
   
-      <button mat-raised-button color="primary" (click)="applyFilters()">Apply Filters</button>
-    </div>
+          <button mat-raised-button class="apply-button" (click)="applyFilters()">
+            <i class="fas fa-filter"></i> Apply Filters
+          </button>
+        </div>
+      </div>
   
-    <!-- Data Table -->
-    <table mat-table [dataSource]="filteredVehicles" class="mat-elevation-z8">
-      <ng-container matColumnDef="model">
-        <th mat-header-cell *matHeaderCellDef> Model </th>
-        <td mat-cell *matCellDef="let vehicle"> {{ vehicle.model }} </td>
-      </ng-container>
+      <!-- Data Table -->
+      <div class="table-container mat-elevation-z8">
+        <table mat-table [dataSource]="filteredVehicles">
+          <ng-container matColumnDef="model">
+            <th mat-header-cell *matHeaderCellDef> Model </th>
+            <td mat-cell *matCellDef="let vehicle"> {{ vehicle.model }} </td>
+          </ng-container>
   
-      <ng-container matColumnDef="salePrice">
-        <th mat-header-cell *matHeaderCellDef> Sale Price </th>
-        <td mat-cell *matCellDef="let vehicle"> {{ vehicle.salePrice | currency }} </td>
-      </ng-container>
+          <ng-container matColumnDef="salePrice">
+            <th mat-header-cell *matHeaderCellDef> Sale Price </th>
+            <td mat-cell *matCellDef="let vehicle" class="price-cell"> 
+              {{ vehicle.salePrice | currency }} 
+            </td>
+          </ng-container>
   
-      <ng-container matColumnDef="soldDate">
-        <th mat-header-cell *matHeaderCellDef> Sold Date </th>
-        <td mat-cell *matCellDef="let vehicle"> {{ vehicle.soldDate | date }} </td>
-      </ng-container>
+          <ng-container matColumnDef="soldDate">
+            <th mat-header-cell *matHeaderCellDef> Sold Date </th>
+            <td mat-cell *matCellDef="let vehicle"> {{ vehicle.soldDate | date:'mediumDate' }} </td>
+          </ng-container>
   
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </div>
   
-    <!-- Total Sales Summary -->
-    <div class="summary">
-      <h3>Total Sales: {{ totalSales | currency }}</h3>
+      <!-- Total Sales Summary -->
+      <div class="summary-card">
+        <div class="summary-content">
+          <span class="summary-label">Total Sales</span>
+          <span class="summary-value">{{ totalSales | currency }}</span>
+        </div>
+      </div>
     </div>
   </div>
 

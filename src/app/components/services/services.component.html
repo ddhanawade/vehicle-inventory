@@ -9,58 +9,59 @@
 </head>
 
 <body>
-  <div class="inventory-container">
-    <main>
-        <section id="inventory" class="service-section">
-            <h2>Inventory Management</h2>
-            <p>Our Inventory Management service ensures that your vehicle inventory is accurately tracked, updated, and
-                managed efficiently.</p>
-        </section>
-        <section id="tracking" class="service-section">
-            <h2>Vehicle Tracking</h2>
-            <p>We provide real-time vehicle tracking to keep you updated on the whereabouts and status of your vehicles.
-            </p>
-        </section>
-        <section id="sales" class="service-section">
-            <h2>Sales Management</h2>
-            <p>Our Sales Management tool helps you manage your sales pipeline, track leads, and improve your sales
-                process.</p>
-        </section>
-        <section id="reporting" class="service-section">
-            <a routerLink="/monthly-report"><h2>Reporting & Analytics</h2></a>
-            <p>We offer comprehensive reporting and analytics to give you insights into your inventory, sales, and
-                overall performance.</p>
-        </section>
-        <section id="customer" class="service-section">
-            <h2>Customer Support</h2>
-            <p>Our Customer Support team is here to assist you with any issues or questions you may have about our
-                services.</p>
-        </section>
-    </main>
-    <!-- <div class="container">
-      <div class="tablewrapper">
-        <table class="table">
-          <thead class="table-dark">
-            <tr>
-              <th>Id</th>
-              <th>Make</th>
-              <th>Model</th>
-              <th>Year</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (item of carDetailsList; track $index) {
-              <tr>
-                <td>{{item.id}}</td>
-                <td>{{item.make}}</td>
-                <td>{{item.model}}</td>
-                <td>{{item.vehicleYear}}</td>
-              </tr>
-            }
-          </tbody>
-        </table>
+  <div class="page-container">
+    <div class="services-container">
+      <div class="services-header">
+        <h1><i class="fas fa-tools"></i> Our Services</h1>
+      </div>
+  
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="service-icon">
+            <i class="fas fa-warehouse"></i>
+          </div>
+          <h2>Inventory Management</h2>
+          <p>Our Inventory Management service ensures that your vehicle inventory is accurately tracked, updated, and managed efficiently.</p>
+          <a class="service-link">Learn More <i class="fas fa-arrow-right"></i></a>
+        </div>
+  
+        <div class="service-card">
+          <div class="service-icon">
+            <i class="fas fa-map-marker-alt"></i>
+          </div>
+          <h2>Vehicle Tracking</h2>
+          <p>We provide real-time vehicle tracking to keep you updated on the whereabouts and status of your vehicles.</p>
+          <a class="service-link">Learn More <i class="fas fa-arrow-right"></i></a>
+        </div>
+  
+        <!-- <div class="service-card">
+          <div class="service-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <h2>Sales Management</h2>
+          <p>Our Sales Management tool helps you manage your sales pipeline, track leads, and improve your sales process.</p>
+          <a class="service-link">Learn More <i class="fas fa-arrow-right"></i></a>
+        </div> -->
+  
+        <div class="service-card">
+          <div class="service-icon">
+            <i class="fas fa-chart-bar"></i>
+          </div>
+          <h2>Reporting & Analytics</h2>
+          <p>We offer comprehensive reporting and analytics to give you insights into your inventory, sales, and overall performance.</p>
+          <a routerLink="/monthly-report" class="service-link">View Reports <i class="fas fa-arrow-right"></i></a>
+        </div>
+  
+        <div class="service-card">
+          <div class="service-icon">
+            <i class="fas fa-headset"></i>
+          </div>
+          <h2>Customer Support</h2>
+          <p>Our Customer Support team is here to assist you with any issues or questions you may have about our services.</p>
+          <a class="service-link">Contact Support <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
     </div>
-  </div> -->
   </div>
 </body>
 

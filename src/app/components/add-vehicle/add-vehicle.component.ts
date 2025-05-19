@@ -7,7 +7,7 @@ import { DataService } from '../../services/DataService';
   selector: 'app-add-vehicle',
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './add-vehicle.component.html',
-  styleUrl: './add-vehicle.component.css'
+  styleUrl: './add-vehicle.component.scss'
 })
 export class AddVehicleComponent {
   vehicleForm: FormGroup;
@@ -58,5 +58,16 @@ export class AddVehicleComponent {
   }
   setTab(index: number): void {
     this.currentTab = index;
+  }
+
+  nextTab() {
+    if (this.currentTab < 2) {
+      this.currentTab++;
+    }
+  }
+  previousTab() {
+    if (this.currentTab > 0) {
+      this.currentTab--;
+    }
   }
 }

@@ -12,9 +12,20 @@ import { UserModel } from '../../models/UserModel';
   selector: 'app-dashboard',
   imports: [CommonModule, FormsModule, ReactiveFormsModule, DatePipe, RouterLink],
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.css'
+  styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent implements OnInit {
+  stocksList: any;
+selectedAgeFilter: any;
+scrollLeft() {
+throw new Error('Method not implemented.');
+}
+scrollRight() {
+throw new Error('Method not implemented.');
+}
+clearSearch() {
+throw new Error('Method not implemented.');
+}
 
   vehicleForm!: FormGroup;
   carDetailsList: VehicleModel[] = [];
@@ -27,6 +38,8 @@ export class DashboardComponent implements OnInit {
   editVehicleData: any = {};
 
   user: UserModel | null = null;
+showLeftScroll: any;
+showRightScroll: any;
 
   constructor(private fb: FormBuilder,
     private vehicleService: DataService,
@@ -243,5 +256,34 @@ export class DashboardComponent implements OnInit {
       return true; // ADMIN can access all menus
     }
     return this.user?.roles?.includes(role) || false;
+  }
+
+  // Add this method to your component class
+  calculateVehicleAge(receivedDate: string): { days: number; status: string } {
+    if (!receivedDate) {
+      return { days: 0, status: 'recent' };
+    }
+  
+    const received = new Date(receivedDate);
+    const today = new Date();
+    
+    // Ensure valid date
+    if (isNaN(received.getTime())) {
+      return { days: 0, status: 'recent' };
+    }
+  
+    const diffTime = Math.abs(today.getTime() - received.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  
+    let status: string;
+    if (diffDays <= 15) {
+      status = 'recent';
+    } else if (diffDays <= 30) {
+      status = 'moderate';
+    } else {
+      status = 'aged';
+    }
+  
+    return { days: diffDays, status };
   }
 }

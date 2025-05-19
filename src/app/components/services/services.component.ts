@@ -7,10 +7,10 @@ import { RouterLink } from '@angular/router';
   selector: 'app-services',
   imports: [RouterLink],
   templateUrl: './services.component.html',
-  styleUrl: './services.component.css'
+  styleUrl: './services.component.scss'
 })
 export class ServicesComponent implements OnInit{
-  
+  isNavCollapsed = false;
   ngOnInit(): void {
     this.getCarDetails();
   }

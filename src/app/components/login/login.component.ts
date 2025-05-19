@@ -11,13 +11,14 @@ import { UserModel } from '../../models/UserModel';
   selector: 'app-login',
   imports: [CommonModule ,FormsModule],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+  styleUrl: './login.component.scss'
 })
 export class LoginComponent  {
   username: string = '';
   password: string = '';
   errorMessage: string = '';
   successMessage: string = '';
+  showPassword: boolean = false;
   user: UserModel | null = null;
 
   constructor(private authService: AuthService, private userservice: userService, private router: Router, private snackBar: MatSnackBar) {}

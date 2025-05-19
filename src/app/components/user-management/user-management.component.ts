@@ -10,10 +10,10 @@ import { AuthService } from '../../services/AuthService';
   selector: 'app-user-management',
   imports: [CommonModule, FormsModule],
   templateUrl: './user-management.component.html',
-  styleUrl: './user-management.component.css'
+  styleUrl: './user-management.component.scss'
 })
 export class UserManagementComponent {
-
+  showPassword = false;
   userData = {
     username: '',
     email: '',

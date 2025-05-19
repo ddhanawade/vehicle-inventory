@@ -15,7 +15,7 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-vehicle-report',
   imports: [BrowserModule,FormsModule,MatTableModule, MatFormFieldModule, MatInputModule, MatButtonModule, CommonModule, MatSelectModule, MatDatepickerModule, MatNativeDateModule],
   templateUrl: './vehicle-report.component.html',
-  styleUrls: ['./vehicle-report.component.css']
+  styleUrls: ['./vehicle-report.component.scss']
 })
 export class VehicleReportComponent implements OnInit {
   models: string[] = ['Tata', 'Toyota', 'Eicher'];

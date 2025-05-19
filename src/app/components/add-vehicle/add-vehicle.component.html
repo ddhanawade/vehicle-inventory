@@ -9,16 +9,30 @@
 </head>
 
 <body>
-    <div class="add-vehicle-container">
-        <h2>Add Vehicle Details</h2>
-        <form [formGroup]="vehicleForm" (ngSubmit)="onSubmit()">
+    <div class="page-container">
+        <div class="add-vehicle-container">
+          <div class="form-header">
+            <h2><i class="fas fa-plus-circle"></i> Add Vehicle Details</h2>
+          </div>
+      
+          <form [formGroup]="vehicleForm" (ngSubmit)="onSubmit()">
             <div class="tab-container">
-                <!-- Tab Navigation -->
-                <div class="tab-header">
-                    <button type="button" class="tab-button" [class.active]="currentTab === 0" (click)="setTab(0)">Basic Details</button>
-                    <button type="button" class="tab-button" [class.active]="currentTab === 1" (click)="setTab(1)">Specifications</button>
-                    <button type="button" class="tab-button" [class.active]="currentTab === 2" (click)="setTab(2)">Additional Info</button>
-                </div>
+              <!-- Tab Navigation -->
+              <div class="tab-header">
+                <button type="button" class="tab-button" [class.active]="currentTab === 0" (click)="setTab(0)">
+                  <i class="fas fa-info-circle"></i>
+                  <span>Basic Details</span>
+                </button>
+                <button type="button" class="tab-button" [class.active]="currentTab === 1" (click)="setTab(1)">
+                  <i class="fas fa-cogs"></i>
+                  <span>Specifications</span>
+                </button>
+                <button type="button" class="tab-button" [class.active]="currentTab === 2" (click)="setTab(2)">
+                  <i class="fas fa-clipboard-list"></i>
+                  <span>Additional Info</span>
+                </button>
+              </div>
+      
 
                 <!-- Tab Content -->
                 <div class="tab-content" *ngIf="currentTab === 0">
@@ -96,14 +110,22 @@
             </div>
 
             <div class="form-actions">
-                <button type="submit" class="submit-button" [disabled]="vehicleForm.invalid">Add Vehicle</button>
-            </div>
+                <button type="button" class="nav-button" [disabled]="currentTab === 0" (click)="previousTab()">
+                  <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                <button type="button" class="nav-button" *ngIf="currentTab < 2" (click)="nextTab()">
+                  Next <i class="fas fa-arrow-right"></i>
+                </button>
+                <button type="submit" class="submit-button" *ngIf="currentTab === 2" [disabled]="vehicleForm.invalid">
+                  <i class="fas fa-check-circle"></i> Add Vehicle
+                </button>
+              </div>
         </form>
         <div *ngIf="successMessage" class="small-success-message">
             <p>{{ successMessage }}</p>
         </div>
     </div>
-
+</div>
     <!-- Load external scripts if needed -->
     <script src="script.js"></script>
 </body>

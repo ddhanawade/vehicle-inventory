@@ -1,0 +1,24 @@
+/* Add these Material theme customizations */
+@use '@angular/material' as mat;
+
+$custom-primary: mat.define-palette((
+  50: #e3f2fd,
+  100: #bbdefb,
+  500: #2193b0,
+  700: #1976d2,
+  contrast: (
+    50: rgba(black, 0.87),
+    100: rgba(black, 0.87),
+    500: white,
+    700: white,
+  )
+));
+
+$custom-theme: mat.define-light-theme((
+  color: (
+    primary: $custom-primary
+  )
+));
+
+@include mat.core();
+@include mat.all-component-themes($custom-theme);
