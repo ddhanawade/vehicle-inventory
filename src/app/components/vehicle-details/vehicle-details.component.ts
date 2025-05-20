@@ -38,18 +38,26 @@ export class VehicleDetailsComponent implements OnInit{
   totalVehicles = 0;
 
   displayedColumns: string[] = [
-    'make',
+    'invoiceDate',
+    'invoiceNumber',
+    'purchaseDealer',
+    'receivedDate',
+    'manufactureDate',
     'model',
     'grade',
     'fuelType',
+    'suffix',
     'exteriorColor',
     'interiorColor',
     'chassisNumber',
     'engineNumber',
     'keyNumber',
     'location',
+    'tkmInvoiceValue',
+    'age',
+    'interest',
     'status',
-    'receivedDate'
+    'make'
   ];
 
   carDetailsList: VehicleModel[] = [];
@@ -61,6 +69,14 @@ export class VehicleDetailsComponent implements OnInit{
     
   }
   
+  ngAfterViewInit() {
+    if (this.dataSource) {
+      this.dataSource.sort = this.sort;
+      this.dataSource.paginator = this.paginator;
+      this.cdr.detectChanges();
+    }
+  }
+
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
       const modelName = params.get('modelName');
@@ -108,15 +124,45 @@ export class VehicleDetailsComponent implements OnInit{
       });
     });
   }
+
   getCarDetails(modelName: string): void {
     this.vehicleService.getData().subscribe({
       next: (result: VehicleModel[]) => {
         this.carDetailsList = result.filter((item) => item.model === modelName);
-        this.dataSource = new MatTableDataSource(this.carDetailsList);
+        this.dataSource = new MatTableDataSource<VehicleModel>(this.carDetailsList);
+        
+        // Set up sorting and pagination
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
+        
+        // Configure custom sorting
+        this.dataSource.sortingDataAccessor = (item: VehicleModel, property: string) => {
+          switch (property) {
+            case 'receivedDate':
+            case 'invoiceDate':
+            case 'manufactureDate':
+              return new Date(item[property] || '').getTime();
+            case 'age':
+            case 'tkmInvoiceValue':
+              return typeof item[property] === 'number' ? item[property] : 0;
+            default:
+              return item[property]?.toString() || '';
+          }
+        };
+
+        // Update the filter predicate
+this.dataSource.filterPredicate = (data: VehicleModel, filter: string) => {
+  return Object.keys(data).some(key => {
+    const value = data[key];
+    return value !== null && 
+           value !== undefined && 
+           value.toString().toLowerCase().includes(filter.toLowerCase());
+  });
+};
+
         this.totalVehicles = this.carDetailsList.length;
         this.isLoading = false;
+        this.cdr.detectChanges(); // Trigger change detection
       },
       error: (error) => {
         console.error('Error fetching data:', error);
@@ -125,9 +171,39 @@ export class VehicleDetailsComponent implements OnInit{
     });
   }
 
+  // Update filter method
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+    if (this.dataSource) {
+      this.dataSource.filter = filterValue.trim().toLowerCase();
+
+      if (this.dataSource.paginator) {
+        this.dataSource.paginator.firstPage(); // Reset to first page when filtering
+      }
+    }
+  }
+
+  getColumnHeader(column: string): string {
+    // Convert camelCase to Title Case with spaces
+    return column.replace(/([A-Z])/g, ' $1')
+      .replace(/^./, str => str.toUpperCase());
+  }
+
+  // Update the getColumnValue method
+getColumnValue(item: VehicleModel, column: string): string {
+  const value = item[column as keyof VehicleModel];
+  
+  if (column.includes('Date') && value) {
+    return new Date(value).toLocaleDateString();
+  }
+  
+  return value?.toString() || '';
+}
+
+  shouldTruncate(column: string): boolean {
+    // Add columns that should be truncated
+    const truncateColumns = ['chassisNumber', 'engineNumber', 'keyNumber'];
+    return truncateColumns.includes(column);
   }
 
 }

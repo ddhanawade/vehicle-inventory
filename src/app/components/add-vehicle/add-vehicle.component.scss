@@ -86,13 +86,16 @@
   }
   
   .form-group {
-    margin-bottom: 20px;
-  
+    margin-bottom: 1.5rem;
+    position: relative;
+
     label {
-      display: block;
-      margin-bottom: 8px;
-      color: #334155;
-      font-weight: 500;
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #1e293b;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: color 0.3s ease;
     }
   
     input, select {
@@ -114,6 +117,7 @@
         cursor: not-allowed;
       }
     }
+    
   }
   
   .form-actions {

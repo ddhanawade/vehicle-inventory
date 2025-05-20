@@ -152,17 +152,21 @@ $transition: all 0.3s ease;
 
   .city-stats {
     position: relative;
+    overflow: hidden; // Add this to hide overflow
+    padding: 0 16px; // Add padding to accommodate scroll buttons
     
     .stats-slider {
-      display: flex;
-      gap: 16px;
-      overflow-x: auto;
-      padding: 8px 4px;
-      scroll-behavior: smooth;
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding: 8px 4px;
+    scroll-behavior: smooth;
+    -ms-overflow-style: none;  // Hide scrollbar for IE and Edge
+    scrollbar-width: none;     // Hide scrollbar for Firefox
 
-      &::-webkit-scrollbar {
-        height: 6px;
-      }
+    &::-webkit-scrollbar {
+      display: none; // Hide scrollbar for Chrome, Safari and Opera
+    }
 
       &::-webkit-scrollbar-track {
         background: #f1f5f9;
