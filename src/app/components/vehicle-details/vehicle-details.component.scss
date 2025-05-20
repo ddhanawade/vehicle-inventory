@@ -1,0 +1,194 @@
+// filepath: /Users/ddhanawade/Desktop/Angular-Project/vehicle-inventory/src/app/components/vehicle-details/vehicle-details.component.scss
+
+.vehicle-details-container {
+    padding: 24px;
+    margin-left: 220px;
+    min-height: 100vh;
+    background: #f8fafc;
+    transition: all 0.3s ease;
+  
+    @media (max-width: 768px) {
+      margin-left: 0;
+      padding: 80px 16px 24px;
+    }
+  }
+  
+  .header-section {
+    margin-bottom: 24px;
+  
+    .table-heading {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #1e293b;
+      margin-bottom: 24px;
+  
+      i {
+        color: #2193b0;
+        font-size: 1.8rem;
+      }
+  
+      .total-count {
+        font-size: 1rem;
+        color: #64748b;
+        margin-left: 8px;
+      }
+    }
+  
+    .table-actions {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      flex-wrap: wrap;
+  
+      .search-box {
+        flex: 1;
+        min-width: 300px;
+  
+        .mat-form-field {
+          width: 100%;
+        }
+      }
+  
+      .export-buttons {
+        display: flex;
+        gap: 12px;
+  
+        button {
+          min-width: 140px;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 8px 16px;
+          transition: all 0.3s ease;
+  
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+          }
+        }
+      }
+    }
+  }
+  
+  .table-container {
+    margin: 20px 0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    background: white;
+  
+    .responsive-table {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      
+      &::-webkit-scrollbar {
+        height: 8px;
+      }
+      
+      &::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 4px;
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+        
+        &:hover {
+          background: #94a3b8;
+        }
+      }
+  
+      table {
+        min-width: 1200px; // Ensures table doesn't shrink too much
+        width: 100%;
+  
+        .mat-mdc-header-cell,
+        .mat-mdc-cell {
+          padding: 16px;
+          font-size: 14px;
+          
+          // Handle long content
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          max-width: 150px; // Adjust based on your needs
+        }
+  
+        .mat-mdc-header-cell {
+          background: #f8fafc;
+          font-weight: 600;
+          color: #1e293b;
+        }
+  
+        .mat-mdc-row {
+          &:hover {
+            background-color: #f1f5f9;
+          }
+        }
+  
+        .mat-mdc-cell {
+          color: #475569;
+        }
+  
+        .mat-no-data-row td {
+          padding: 24px;
+          text-align: center;
+          color: #64748b;
+        }
+      }
+    }
+  }
+  
+  // Responsive adjustments
+@media screen and (max-width: 768px) {
+    .vehicle-details-container {
+      padding: 16px;
+    }
+  
+    .header-section {
+      .table-heading {
+        font-size: 1.25rem;
+      }
+  
+      .table-actions {
+        flex-direction: column;
+        gap: 16px;
+  
+        .export-buttons {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 8px;
+          width: 100%;
+  
+          button {
+            width: 100%;
+          }
+        }
+      }
+    }
+  
+    .table-container {
+      margin: 16px -16px;
+      border-radius: 0;
+  
+      .responsive-table {
+        table {
+          .mat-mdc-header-cell,
+          .mat-mdc-cell {
+            padding: 12px;
+            font-size: 13px;
+          }
+        }
+      }
+    }
+  
+    mat-paginator {
+      .mat-mdc-paginator-container {
+        justify-content: flex-start;
+        padding: 0 16px;
+      }
+    }
+  }

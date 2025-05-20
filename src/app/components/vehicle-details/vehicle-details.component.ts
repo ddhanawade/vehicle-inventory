@@ -5,20 +5,37 @@ import { VehicleModel } from '../../models/VehicleModel';
 import { DataService } from '../../services/DataService';
 import { CommonModule, DatePipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatTableDataSource } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatIconModule } from '@angular/material/icon';
-
+import { MatTableModule } from '@angular/material/table';
 @Component({
   selector: 'app-vehicle-details',
-  imports: [CommonModule,DatePipe, MatTableModule,MatButtonModule],
+  imports: [
+    CommonModule,
+    DatePipe,
+    MatTableModule,
+    MatButtonModule,
+    MatSortModule,
+    MatPaginatorModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatInputModule
+  ],
   templateUrl: './vehicle-details.component.html',
-  styleUrl: './vehicle-details.component.css'
+  styleUrl: './vehicle-details.component.scss'
 })
 export class VehicleDetailsComponent implements OnInit{
+  @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  
+
+  dataSource!: MatTableDataSource<VehicleModel>;
+  isLoading = false;
+  totalVehicles = 0;
 
   displayedColumns: string[] = [
     'make',
@@ -45,14 +62,13 @@ export class VehicleDetailsComponent implements OnInit{
   }
   
   ngOnInit(): void {
-    // Retrieve the parameter from the route
     this.route.paramMap.subscribe((params) => {
       const modelName = params.get('modelName');
       if (modelName) {
+        this.isLoading = true;
         this.getCarDetails(modelName);
       }
     });
-
   }
 
 
@@ -93,10 +109,25 @@ export class VehicleDetailsComponent implements OnInit{
     });
   }
   getCarDetails(modelName: string): void {
-    this.vehicleService.getData().subscribe((result: VehicleModel[]) => {
-      this.carDetailsList = result.filter((item) => item.model === modelName);
-      console.log('Filtered car details list:', this.carDetailsList);
+    this.vehicleService.getData().subscribe({
+      next: (result: VehicleModel[]) => {
+        this.carDetailsList = result.filter((item) => item.model === modelName);
+        this.dataSource = new MatTableDataSource(this.carDetailsList);
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
+        this.totalVehicles = this.carDetailsList.length;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error fetching data:', error);
+        this.isLoading = false;
+      }
     });
+  }
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
 }

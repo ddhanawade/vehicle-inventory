@@ -8,6 +8,13 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/AuthService';
 import { UserModel } from '../../models/UserModel';
 
+interface AgeResult {
+  days: number;
+  status: string;
+  label: string;
+}
+
+
 @Component({
   selector: 'app-dashboard',
   imports: [CommonModule, FormsModule, ReactiveFormsModule, DatePipe, RouterLink],
@@ -38,8 +45,8 @@ throw new Error('Method not implemented.');
   editVehicleData: any = {};
 
   user: UserModel | null = null;
-showLeftScroll: any;
-showRightScroll: any;
+  showLeftScroll: any;
+  showRightScroll: any;
 
   constructor(private fb: FormBuilder,
     private vehicleService: DataService,
@@ -258,32 +265,38 @@ showRightScroll: any;
     return this.user?.roles?.includes(role) || false;
   }
 
-  // Add this method to your component class
-  calculateVehicleAge(receivedDate: string): { days: number; status: string } {
-    if (!receivedDate) {
-      return { days: 0, status: 'recent' };
+  calculateVehicleAge(receivedDate: string | Date): AgeResult {
+    try {
+      // Convert string date to Date object if needed
+      const received = typeof receivedDate === 'string' ? new Date(receivedDate) : receivedDate;
+      const today = new Date();
+  
+      // Check if we have a valid date
+      if (!receivedDate || isNaN(received.getTime())) {
+        return { days: 0, status: 'recent', label: 'Invalid Date' };
+      }
+  
+      const diffTime = Math.abs(today.getTime() - received.getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  
+      let status: string;
+      let label: string;
+  
+      if (diffDays <= 15) {
+        status = 'recent';
+        label = 'New Arrival';
+      } else if (diffDays <= 30) {
+        status = 'moderate';
+        label = 'Medium Age';
+      } else {
+        status = 'aged';
+        label = 'Aged Stock';
+      }
+  
+      return { days: diffDays, status, label };
+    } catch (error) {
+      console.error('Error calculating vehicle age:', error);
+      return { days: 0, status: 'recent', label: 'Error' };
     }
-  
-    const received = new Date(receivedDate);
-    const today = new Date();
-    
-    // Ensure valid date
-    if (isNaN(received.getTime())) {
-      return { days: 0, status: 'recent' };
-    }
-  
-    const diffTime = Math.abs(today.getTime() - received.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  
-    let status: string;
-    if (diffDays <= 15) {
-      status = 'recent';
-    } else if (diffDays <= 30) {
-      status = 'moderate';
-    } else {
-      status = 'aged';
-    }
-  
-    return { days: diffDays, status };
   }
 }

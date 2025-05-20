@@ -76,7 +76,7 @@
           </div>
           <div class="stat-content">
             <h3>{{ cityData.city }}</h3>
-            <p class="stat-value">{{ cityData.count }}</p>
+            <a routerLink="" class="hidelink"><p class="stat-value">{{ cityData.count }}</p></a>
             <p class="stat-label">Vehicles</p>
           </div>
         </div>
@@ -126,12 +126,15 @@
           <span class="label">Location:</span>
           <span>{{ stock.location }}</span>
         </div> -->
-        <!-- <div class="detail-row">
-          <span class="label">Age:</span>
-          <span [class]="'age-badge ' + calculateVehicleAge(stock.receivedDate.toDateString()).status">
-            {{ calculateVehicleAge(stock.receivedDate.toDateString()).days }} days
-          </span>
-        </div> -->
+       <!-- Replace the commented age section with this -->
+<!-- Replace the age section with this corrected version -->
+<div class="detail-row">
+  <span class="label">Age:</span>
+  <span [class]="'age-badge ' + calculateVehicleAge(stock.receivedDate).status">
+    {{ calculateVehicleAge(stock.receivedDate).days }} days
+    <span class="age-label">{{ calculateVehicleAge(stock.receivedDate).label }}</span>
+  </span>
+</div>
         <div class="detail-row">
           <span class="label">Date:</span>
           <span>{{ stock.receivedDate | date: 'dd-MM-yyyy' }}</span>
