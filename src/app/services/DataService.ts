@@ -29,6 +29,10 @@ export class DataService {
     return this.http.delete(`${this.baseUrl}/${id}`);
   }
 
+  getUnqiueVehicleModels(): Observable<VehicleModel[]> {
+    return this.http.get<VehicleModel[]>(`${this.baseUrl}/getUniqueVehicles`);
+  }
+
   private modelNameSubject = new Subject<string>();
 
   // Observable to listen for model name changes

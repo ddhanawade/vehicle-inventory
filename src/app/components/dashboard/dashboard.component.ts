@@ -37,6 +37,8 @@ throw new Error('Method not implemented.');
   vehicleForm!: FormGroup;
   carDetailsList: VehicleModel[] = [];
   filteredStocksList: VehicleModel[] = [];
+  uniqueVehicleModel: VehicleModel[] = [];
+  filteredModelStockList: VehicleModel[] = [];
   searchTerm: string = '';
   selectedMake: string = ''; // Selected make for filtering
   successMessage: string = '';
@@ -62,7 +64,7 @@ throw new Error('Method not implemented.');
       this.user = JSON.parse(storedUser);
       console.log('Retrieved User from Storage:', this.user);
     }
-
+    this.getUniqueModelDetails(); // Fetch unique vehicle models
     this.getCarDetails();
 
     // Subscribe to the user observable to get the current user
@@ -101,7 +103,7 @@ throw new Error('Method not implemented.');
 
   filterVehicles(): void {
     const searchTermLower = this.searchTerm.toLowerCase();
-    this.filteredStocksList = this.carDetailsList.filter((stock) => {
+    this.filteredModelStockList = this.uniqueVehicleModel.filter((stock) => {
       const matchesMake = this.selectedMake ? stock.make.toLowerCase() === this.selectedMake.toLowerCase() : true;
       const matchesSearch = stock.make.toLowerCase().includes(searchTermLower) ||
         stock.model.toLowerCase().includes(searchTermLower) ||
@@ -116,17 +118,17 @@ throw new Error('Method not implemented.');
     // Apply role-based filtering first
     let roleFilteredList: VehicleModel[] = [];
     if (this.hasRole('ADMIN')) {
-      roleFilteredList = [...this.carDetailsList]; // Show all data for ADMIN
+      roleFilteredList = [...this.uniqueVehicleModel]; // Show all data for ADMIN
     } else if (this.hasRole('TATA')) {
-      roleFilteredList = this.carDetailsList.filter(car => car.make === 'Tata');
+      roleFilteredList = this.uniqueVehicleModel.filter(car => car.make === 'Tata');
     } else if (this.hasRole('TOYOTA')) {
-      roleFilteredList = this.carDetailsList.filter(car => car.make === 'Toyota');
+      roleFilteredList = this.uniqueVehicleModel.filter(car => car.make === 'Toyota');
     } else if (this.hasRole('EICHER')) {
-      roleFilteredList = this.carDetailsList.filter(car => car.make === 'Eicher');
+      roleFilteredList = this.uniqueVehicleModel.filter(car => car.make === 'Eicher');
     }
   
     // Apply search term filtering on the role-filtered list
-    this.filteredStocksList = roleFilteredList.filter((stock) => {
+    this.filteredModelStockList = roleFilteredList.filter((stock) => {
       return stock.make.toLowerCase().includes(searchTermLower) ||
              stock.model.toLowerCase().includes(searchTermLower) ||
              stock.location.toLowerCase().includes(searchTermLower);
@@ -298,5 +300,25 @@ throw new Error('Method not implemented.');
       console.error('Error calculating vehicle age:', error);
       return { days: 0, status: 'recent', label: 'Error' };
     }
+  }
+
+  getUniqueModelDetails(): void {
+    this.vehicleService.getUnqiueVehicleModels().subscribe((data: VehicleModel[]) => {
+      this.uniqueVehicleModel = data;
+
+      // Filter the data based on roles
+      if (this.hasRole('ADMIN')) {
+        this.filteredModelStockList = [...this.uniqueVehicleModel]; // Show all data for ADMIN
+      } else if (this.hasRole('TATA')) {
+        this.filteredModelStockList = this.uniqueVehicleModel.filter(car => car.make === 'Tata');
+      } else if (this.hasRole('TOYOTA')) {
+        this.filteredModelStockList = this.uniqueVehicleModel.filter(car => car.make === 'Toyota');
+      } else if (this.hasRole('EICHER')) {
+        this.filteredModelStockList = this.uniqueVehicleModel.filter(car => car.make === 'Eicher');
+      } else {
+        this.filteredModelStockList = []; // Default to an empty list if no roles match
+      }
+      this.cdr.markForCheck(); // Notify Angular about data changes
+    });
   }
 }
