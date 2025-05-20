@@ -7,14 +7,14 @@ $transition: all 0.3s ease;
 // Main Container
 .dashboard-container {
   padding: 24px;
-  margin-left: 220px;
+  margin-left: 150px;
   min-height: 100vh;
   background: #f8fafc;
-  transition: $transition;
+  transition: all 0.3s ease;
 
   @media (max-width: 768px) {
     margin-left: 0;
-    padding: 80px 16px 24px;
+    padding: 16px;
   }
 }
 
@@ -22,15 +22,15 @@ $transition: all 0.3s ease;
 .welcome-section {
   background: white;
   padding: 20px;
-  border-radius: $border-radius;
-  box-shadow: $card-shadow;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   margin-bottom: 24px;
 
   h1 {
-    margin: 0;
     display: flex;
     align-items: center;
     gap: 12px;
+    margin: 0;
     color: #1e293b;
     font-size: 1.5rem;
 
@@ -45,22 +45,8 @@ $transition: all 0.3s ease;
 .brand-filters {
   display: flex;
   gap: 16px;
-  overflow-x: auto;
-  padding: 8px 4px;
   margin-bottom: 24px;
-
-  &::-webkit-scrollbar {
-    height: 4px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: #f1f5f9;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 2px;
-  }
+  flex-wrap: wrap;
 
   .brand-item {
     display: flex;
@@ -68,11 +54,10 @@ $transition: all 0.3s ease;
     gap: 8px;
     padding: 12px 20px;
     background: white;
-    border-radius: $border-radius;
+    border-radius: 8px;
     cursor: pointer;
-    transition: $transition;
-    box-shadow: $card-shadow;
-    white-space: nowrap;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 
     i {
       color: #2193b0;
@@ -83,7 +68,7 @@ $transition: all 0.3s ease;
     }
 
     &.active {
-      background: $primary-gradient;
+      background: linear-gradient(135deg, #2193b0, #6dd5ed);
       color: white;
 
       i {
@@ -98,30 +83,23 @@ $transition: all 0.3s ease;
   margin-bottom: 24px;
 
   .stats-container {
-    display: flex;
+    display: grid;
+    grid-template-columns: 300px 1fr;
     gap: 24px;
-    min-height: 180px; // Set minimum height for container
 
     @media (max-width: 768px) {
-      flex-direction: column;
+      grid-template-columns: 1fr;
     }
   }
 
   .total-stats {
-    flex: 0 0 300px;
-
-    @media (max-width: 768px) {
-      flex: none;
-      min-height: 180px; // Maintain height on mobile
-    }
-
     .stat-card.primary {
-      background: $primary-gradient;
+      background: linear-gradient(135deg, #2193b0, #6dd5ed);
       color: white;
       padding: 24px;
-      border-radius: $border-radius;
-      height: 100%; // This will make it match city-stats height
-      min-height: 180px; // Set minimum height to match city-stats
+      border-radius: 12px;
+      height: 100%;
+      min-height: 180px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -130,15 +108,17 @@ $transition: all 0.3s ease;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 16px;
 
         .stat-icon {
           font-size: 24px;
+          background: rgba(255, 255, 255, 0.2);
+          padding: 12px;
+          border-radius: 12px;
         }
 
         .stat-badge {
           background: rgba(255, 255, 255, 0.2);
-          padding: 4px 12px;
+          padding: 6px 12px;
           border-radius: 20px;
           font-size: 0.875rem;
         }
@@ -148,7 +128,7 @@ $transition: all 0.3s ease;
         h3 {
           font-size: 1.1rem;
           opacity: 0.9;
-          margin-bottom: 8px;
+          margin: 16px 0 8px;
         }
 
         .stat-value {
@@ -171,10 +151,8 @@ $transition: all 0.3s ease;
   }
 
   .city-stats {
-    flex: 1;
     position: relative;
-    min-height: 180px; // Match height with total-stats
-
+    
     .stats-slider {
       display: flex;
       gap: 16px;
@@ -183,15 +161,25 @@ $transition: all 0.3s ease;
       scroll-behavior: smooth;
 
       &::-webkit-scrollbar {
-        display: none;
+        height: 6px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 3px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 3px;
       }
 
       .stat-card {
         flex: 0 0 250px;
         background: white;
         padding: 20px;
-        border-radius: $border-radius;
-        box-shadow: $card-shadow;
+        border-radius: 12px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 
         .stat-icon {
           color: #2193b0;
@@ -199,20 +187,29 @@ $transition: all 0.3s ease;
           margin-bottom: 16px;
         }
 
-        h3 {
-          color: #1e293b;
-          margin-bottom: 8px;
-        }
+        .stat-content {
+          h3 {
+            color: #1e293b;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+          }
 
-        .stat-value {
-          font-size: 1.8rem;
-          font-weight: 600;
-          color: #2193b0;
-        }
+          .stat-value {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #2193b0;
+            margin-bottom: 4px;
+          }
 
-        .stat-label {
-          color: #64748b;
-          font-size: 0.875rem;
+          .stat-label {
+            color: #64748b;
+            font-size: 0.875rem;
+          }
+
+          a.hidelink {
+            text-decoration: none;
+            color: inherit;
+          }
         }
       }
     }
@@ -226,16 +223,12 @@ $transition: all 0.3s ease;
       border-radius: 50%;
       background: white;
       border: none;
-      box-shadow: $card-shadow;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       cursor: pointer;
+      z-index: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: $transition;
-
-      &:hover {
-        background: #f8fafc;
-      }
 
       &.left {
         left: -16px;
@@ -243,6 +236,10 @@ $transition: all 0.3s ease;
 
       &.right {
         right: -16px;
+      }
+
+      &:hover {
+        background: #f8fafc;
       }
     }
   }
@@ -302,91 +299,65 @@ $transition: all 0.3s ease;
 // Vehicle Grid
 .vehicle-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 24px;
-  padding: 20px 0;
-  max-width: 1400px;
-  margin: 0 auto;
 
-  @media (max-width: 1200px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  .vehicle-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
 
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-}
-
-.vehicle-card {
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
-  border: 1px solid #edf2f7;
-
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 16px rgba(33, 147, 176, 0.12);
-  }
-
-  .card-header {
-    padding: 16px;
-    background: #f8fafc;
-    border-bottom: 1px solid #edf2f7;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-
-    i {
-      color: #2193b0;
-      font-size: 1.2rem;
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
     }
 
-    h3 {
-      color: #1e293b;
-      margin: 0;
-      font-size: 1.1rem;
-      font-weight: 500;
-    }
-  }
-
-  .card-content {
-    padding: 16px;
-
-    .detail-row {
+    .card-header {
+      padding: 16px;
+      background: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      padding: 8px 0;
-      border-bottom: 1px solid #f1f5f9;
+      gap: 12px;
 
-      &:last-child {
-        border-bottom: none;
-      }
-
-      .label {
-        color: #64748b;
-        //font-size: 0.9rem;
-        font-weight: 500;
-      }
-
-      a {
+      i {
         color: #2193b0;
-        text-decoration: none;
-        font-size: 0.9rem;
-        font-weight: 500;
-        transition: color 0.2s ease;
-        
-        &:hover {
-          color: #1a7490;
-        }
       }
 
-      span:not(.label) {
-        color: #334155;
-        font-size: 0.9rem;
+      h3 {
+        margin: 0;
+        color: #1e293b;
+      }
+    }
+
+    .card-content {
+      padding: 16px;
+
+      .detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid #e2e8f0;
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        .label {
+          color: #64748b;
+        }
+
+        a {
+          color: #2193b0;
+          text-decoration: none;
+          
+          &:hover {
+            text-decoration: underline;
+          }
+        }
       }
     }
   }
