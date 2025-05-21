@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, NgModule, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, NgModule, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FormGroup } from '@angular/forms';
 import { CommonModule, DatePipe } from '@angular/common';
@@ -7,6 +7,9 @@ import { VehicleModel } from '../../models/VehicleModel';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/AuthService';
 import { UserModel } from '../../models/UserModel';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatSort, MatSortModule } from '@angular/material/sort';
 
 interface AgeResult {
   days: number;
@@ -17,22 +20,41 @@ interface AgeResult {
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, DatePipe, RouterLink],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, DatePipe, RouterLink, 
+    MatPaginatorModule,  MatTableModule, MatSortModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, AfterViewInit {
+  
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+
   stocksList: any;
-selectedAgeFilter: any;
-scrollLeft() {
-throw new Error('Method not implemented.');
-}
-scrollRight() {
-throw new Error('Method not implemented.');
-}
-clearSearch() {
-throw new Error('Method not implemented.');
-}
+  selectedAgeFilter: any;
+  
+  scrollLeft() {
+    throw new Error('Method not implemented.');
+  }
+  scrollRight() {
+    throw new Error('Method not implemented.');
+  }
+  clearSearch() {
+    throw new Error('Method not implemented.');
+  }
+
+  displayedColumns: string[] = [
+    'make',
+    'model',
+    'grade',
+    'chassisNumber',
+    'engineNumber',
+    'fuelType',
+    'exteriorColor',
+    'status',
+    'age',
+    'receivedDate'
+  ];
 
   vehicleForm!: FormGroup;
   carDetailsList: VehicleModel[] = [];
@@ -49,6 +71,16 @@ throw new Error('Method not implemented.');
   user: UserModel | null = null;
   showLeftScroll: any;
   showRightScroll: any;
+
+  selectedLocation: string | null = null;
+  locationVehicles: VehicleModel[] = [];
+  showLocationDetails = false;
+
+  locationDataSource!: MatTableDataSource<VehicleModel>;
+
+  pageSize = 10;
+  currentPage = 0;
+  pageSizeOptions = [5, 10, 25, 50];
 
   constructor(private fb: FormBuilder,
     private vehicleService: DataService,
@@ -114,7 +146,7 @@ throw new Error('Method not implemented.');
 
   filterStocks(): void {
     const searchTermLower = this.searchTerm.toLowerCase();
-  
+
     // Apply role-based filtering first
     let roleFilteredList: VehicleModel[] = [];
     if (this.hasRole('ADMIN')) {
@@ -126,12 +158,12 @@ throw new Error('Method not implemented.');
     } else if (this.hasRole('EICHER')) {
       roleFilteredList = this.uniqueVehicleModel.filter(car => car.make === 'Eicher');
     }
-  
+
     // Apply search term filtering on the role-filtered list
     this.filteredModelStockList = roleFilteredList.filter((stock) => {
       return stock.make.toLowerCase().includes(searchTermLower) ||
-             stock.model.toLowerCase().includes(searchTermLower) ||
-             stock.location.toLowerCase().includes(searchTermLower);
+        stock.model.toLowerCase().includes(searchTermLower) ||
+        stock.location.toLowerCase().includes(searchTermLower);
     });
   }
 
@@ -229,13 +261,13 @@ throw new Error('Method not implemented.');
     } else if (this.hasRole('EICHER')) {
       filteredList = this.carDetailsList.filter(car => car.make === 'Eicher');
     }
-  
+
     // Group by city and count vehicles
     const cityCounts = filteredList.reduce((acc, car) => {
       acc[car.location] = (acc[car.location] || 0) + 1;
       return acc;
     }, {} as { [key: string]: number });
-  
+
     return Object.keys(cityCounts).map(city => ({
       city,
       count: cityCounts[city]
@@ -272,18 +304,18 @@ throw new Error('Method not implemented.');
       // Convert string date to Date object if needed
       const received = typeof receivedDate === 'string' ? new Date(receivedDate) : receivedDate;
       const today = new Date();
-  
+
       // Check if we have a valid date
       if (!receivedDate || isNaN(received.getTime())) {
         return { days: 0, status: 'recent', label: 'Invalid Date' };
       }
-  
+
       const diffTime = Math.abs(today.getTime() - received.getTime());
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  
+
       let status: string;
       let label: string;
-  
+
       if (diffDays <= 15) {
         status = 'recent';
         label = 'New Arrival';
@@ -294,7 +326,7 @@ throw new Error('Method not implemented.');
         status = 'aged';
         label = 'Aged Stock';
       }
-  
+
       return { days: diffDays, status, label };
     } catch (error) {
       console.error('Error calculating vehicle age:', error);
@@ -320,5 +352,52 @@ throw new Error('Method not implemented.');
       }
       this.cdr.markForCheck(); // Notify Angular about data changes
     });
+  }
+
+  // Add this method to your DashboardComponent class
+  getModelCount(model: string): number {
+    return this.carDetailsList.filter(car => car.model === model).length;
+  }
+
+  // Add this method to get vehicles for a specific location
+  getVehiclesByLocation(location: string): void {
+    this.selectedLocation = location;
+    this.locationVehicles = this.carDetailsList.filter(car => car.location === location);
+    this.locationDataSource = new MatTableDataSource<VehicleModel>(this.locationVehicles);
+    
+    // Set up sorting and pagination
+    setTimeout(() => {
+      this.locationDataSource.paginator = this.paginator;
+      this.locationDataSource.sort = this.sort;
+    });
+    
+    this.showLocationDetails = true;
+  }
+
+  // Add method to close location details
+  closeLocationDetails(): void {
+    this.showLocationDetails = false;
+    this.selectedLocation = null;
+    this.locationVehicles = [];
+    this.locationDataSource = new MatTableDataSource<VehicleModel>([]);
+  }
+
+  // Method to get paginated vehicles
+  getPaginatedVehicles(): VehicleModel[] {
+    const startIndex = this.currentPage * this.pageSize;
+    return this.locationVehicles.slice(startIndex, startIndex + this.pageSize);
+  }
+
+  // Method to handle page changes
+  onPageChange(event: any): void {
+    this.currentPage = event.pageIndex;
+    this.pageSize = event.pageSize;
+  }
+
+  ngAfterViewInit() {
+    if (this.locationDataSource) {
+      this.locationDataSource.paginator = this.paginator;
+      this.locationDataSource.sort = this.sort;
+    }
   }
 }

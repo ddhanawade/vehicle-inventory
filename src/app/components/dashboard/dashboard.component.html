@@ -11,145 +11,241 @@
 <body>
   <div class="dashboard-container" *ngIf="user">
     <!-- Welcome Section -->
-  <div class="welcome-section">
-    <h1><i class="fas fa-user-circle"></i> Welcome, {{ user.username }}</h1>
-  </div>
+    <div class="welcome-section">
+      <h1><i class="fas fa-user-circle"></i> Welcome, {{ user.username }}</h1>
+    </div>
 
-  <!-- Brand Filter Section -->
-  <div class="brand-filters">
-    <div *ngIf="hasRole('TATA')" class="brand-item" [class.active]="selectedMake === 'Tata'" (click)="filterByMake('Tata')">
-      <i class="fas fa-car"></i>
-      <span>Tata</span>
+    <!-- Brand Filter Section -->
+    <div class="brand-filters">
+      <div *ngIf="hasRole('TATA')" class="brand-item" [class.active]="selectedMake === 'Tata'"
+        (click)="filterByMake('Tata')">
+        <i class="fas fa-car"></i>
+        <span>Tata</span>
+      </div>
+      <div *ngIf="hasRole('EICHER')" class="brand-item" [class.active]="selectedMake === 'Eicher'"
+        (click)="filterByMake('Eicher')">
+        <i class="fas fa-truck"></i>
+        <span>Eicher</span>
+      </div>
+      <div *ngIf="hasRole('TOYOTA')" class="brand-item" [class.active]="selectedMake === 'Toyota'"
+        (click)="filterByMake('Toyota')">
+        <i class="fas fa-car-side"></i>
+        <span>Toyota</span>
+      </div>
+      <div *ngIf="hasRole('ADMIN')" class="brand-item" [class.active]="!selectedMake" (click)="filterByMake('')">
+        <i class="fas fa-list"></i>
+        <span>All</span>
+      </div>
     </div>
-    <div *ngIf="hasRole('EICHER')" class="brand-item" [class.active]="selectedMake === 'Eicher'" (click)="filterByMake('Eicher')">
-      <i class="fas fa-truck"></i>
-      <span>Eicher</span>
-    </div>
-    <div *ngIf="hasRole('TOYOTA')" class="brand-item" [class.active]="selectedMake === 'Toyota'" (click)="filterByMake('Toyota')">
-      <i class="fas fa-car-side"></i>
-      <span>Toyota</span>
-    </div>
-    <div *ngIf="hasRole('ADMIN')" class="brand-item" [class.active]="!selectedMake" (click)="filterByMake('')">
-      <i class="fas fa-list"></i>
-      <span>All</span>
-    </div>
-  </div>
 
-  <!-- Stats Section -->
-<div class="stats-section">
-  <div class="stats-container">
-    <!-- Total Stats -->
-    <!-- Total Stats -->
-<div class="total-stats">
-  <div class="stat-card primary">
-    <div class="stat-header">
-      <div class="stat-icon">
-        <i class="fas fa-car-alt"></i>
-      </div>
-      <div class="stat-badge">
-        <span>Total</span>
-      </div>
-    </div>
-    <div class="stat-content">
-      <h3>Total Vehicles</h3>
-      <p class="stat-value">{{ getTotalCarsAvailable() }}</p>
-      <div class="stat-footer">
-        <span class="trend-up" *ngIf="getTotalCarsAvailable() > 0">
-          <i class="fas fa-arrow-up"></i>
-          Active Fleet
-        </span>
-      </div>
-    </div>
-  </div>
-</div>
-    
-    <!-- City Stats with Slider -->
-    <div class="city-stats">
-      <button class="scroll-button left" (click)="scrollLeft()" *ngIf="showLeftScroll">
-        <i class="fas fa-chevron-left"></i>
-      </button>
-      
-      <div class="stats-slider" #cityStatsContainer>
-        <div class="stat-card" *ngFor="let cityData of getCityWiseModelCounts()">
-          <div class="stat-icon">
-            <i class="fas fa-city"></i>
-          </div>
-          <div class="stat-content">
-            <h3>{{ cityData.city }}</h3>
-            <a routerLink="" class="hidelink"><p class="stat-value">{{ cityData.count }}</p></a>
-            <p class="stat-label">Vehicles</p>
+    <!-- Stats Section -->
+    <div class="stats-section">
+      <div class="stats-container">
+        <!-- Total Stats -->
+        <!-- Total Stats -->
+        <div class="total-stats">
+          <div class="stat-card primary">
+            <div class="stat-header">
+              <div class="stat-icon">
+                <i class="fas fa-car-alt"></i>
+              </div>
+              <div class="stat-badge">
+                <span>Total</span>
+              </div>
+            </div>
+            <div class="stat-content">
+              <h3>Total Vehicles</h3>
+              <p class="stat-value">{{ getTotalCarsAvailable() }}</p>
+              <div class="stat-footer">
+                <span class="trend-up" *ngIf="getTotalCarsAvailable() > 0">
+                  <i class="fas fa-arrow-up"></i>
+                  Active Fleet
+                </span>
+              </div>
+            </div>
           </div>
         </div>
+
+        <!-- City Stats with Slider -->
+        <div class="city-stats">
+          <div class="stats-slider" #cityStatsContainer>
+            <div class="stat-card" *ngFor="let cityData of getCityWiseModelCounts()">
+              <div class="stat-icon">
+                <i class="fas fa-city"></i>
+              </div>
+              <div class="stat-content">
+                <h3>{{ cityData.city }}</h3>
+                <button class="count-button" (click)="getVehiclesByLocation(cityData.city)">
+                  <span class="stat-value">{{ cityData.count }}</span>
+                  <span class="stat-label">Vehicles</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add this new section for location details -->
+        <!-- Location Details Modal -->
+        <div class="location-details" *ngIf="showLocationDetails">
+          <div class="location-overlay"></div>
+          <div class="location-modal">
+            <div class="modal-header">
+              <h2><i class="fas fa-map-marker-alt"></i> {{ selectedLocation }} Vehicles</h2>
+              <button class="close-button" (click)="closeLocationDetails()">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <div class="modal-content">
+              <div class="responsive-table">
+                <table mat-table [dataSource]="locationDataSource" matSort>
+                  <!-- Make Column -->
+                  <ng-container matColumnDef="make">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Make</th>
+                    <td mat-cell *matCellDef="let vehicle" class="column-make">{{vehicle.make}}</td>
+                  </ng-container>
+
+                  <!-- Model Column -->
+                  <ng-container matColumnDef="model">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Model</th>
+                    <td mat-cell *matCellDef="let vehicle" class="column-model">{{vehicle.model}}</td>
+                  </ng-container>
+
+                  <!-- Grade Column -->
+                  <ng-container matColumnDef="grade">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Grade</th>
+                    <td mat-cell *matCellDef="let vehicle" class="column-grade">{{vehicle.grade}}</td>
+                  </ng-container>
+
+                  <!-- Chassis Number Column -->
+                  <ng-container matColumnDef="chassisNumber">
+                    <th mat-header-cell *matHeaderCellDef>Chassis No.</th>
+                    <td mat-cell *matCellDef="let vehicle" class="truncate" class="column-chassisNumber">{{vehicle.chassisNumber}}</td>
+                  </ng-container>
+
+                  <!-- Engine Number Column -->
+                  <ng-container matColumnDef="engineNumber">
+                    <th mat-header-cell *matHeaderCellDef>Engine No.</th>
+                    <td mat-cell *matCellDef="let vehicle" class="truncate" class="column-engineNumber">{{vehicle.engineNumber}}</td>
+                  </ng-container>
+
+                  <!-- Fuel Type Column -->
+                  <ng-container matColumnDef="fuelType">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Fuel Type</th>
+                    <td mat-cell *matCellDef="let vehicle" class="column-fuelType">{{vehicle.fuelType}}</td>
+                  </ng-container>
+
+                  <!-- Color Column -->
+                  <ng-container matColumnDef="exteriorColor">
+                    <th mat-header-cell *matHeaderCellDef>Color</th>
+                    <td mat-cell *matCellDef="let vehicle" class="column-exteriorColor">{{vehicle.exteriorColor}}</td>
+                  </ng-container>
+
+                  <!-- Status Column -->
+                  <ng-container matColumnDef="status">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+                    <td mat-cell *matCellDef="let vehicle">
+                      <span class="status-badge" [class.active]="vehicle.status === 'Active'" class="column-status">
+                        {{vehicle.status}}
+                      </span>
+                    </td>
+                  </ng-container>
+
+                  <!-- Age Column -->
+                  <ng-container matColumnDef="age">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Age</th>
+                    <td mat-cell *matCellDef="let vehicle" class="column-age">
+                      <span [class]="'age-badge ' + calculateVehicleAge(vehicle.receivedDate).status">
+                        {{calculateVehicleAge(vehicle.receivedDate).days}} days
+                      </span>
+                    </td>
+                  </ng-container>
+
+                  <!-- Received Date Column -->
+                  <ng-container matColumnDef="receivedDate">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Received Date</th>
+                    <td mat-cell *matCellDef="let vehicle" class="column-receivedDate">{{vehicle.receivedDate | date:'mediumDate'}}</td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+                  <!-- No Data Row -->
+                  <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell" colspan="10">No vehicles found for this location</td>
+                  </tr>
+                </table>
+              </div>
+
+              <mat-paginator #paginator [length]="locationVehicles.length" [pageSize]="10"
+                [pageSizeOptions]="[5, 10, 25, 50]" showFirstLastButtons>
+              </mat-paginator>
+            </div>
+          </div>
+        </div>
+
       </div>
-
-      <button class="scroll-button right" (click)="scrollRight()" *ngIf="showRightScroll">
-        <i class="fas fa-chevron-right"></i>
-      </button>
     </div>
-  </div>
-</div>
 
-  <!-- Search Section -->
-  <div class="search-section">
-    <div class="search-container">
-      <div class="search-wrapper">
-        <i class="fas fa-search"></i>
-        <input 
-          type="text" 
-          placeholder="Search vehicles by make, model, or city..." 
-          [(ngModel)]="searchTerm"
-          (input)="filterStocks()" 
-          class="search-input"
-        />
-        <!-- <button class="search-clear" *ngIf="searchTerm" (click)="clearSearch()">
+    <!-- Search Section -->
+    <div class="search-section">
+      <div class="search-container">
+        <div class="search-wrapper">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Search vehicles by make, model, or city..." [(ngModel)]="searchTerm"
+            (input)="filterStocks()" class="search-input" />
+          <!-- <button class="search-clear" *ngIf="searchTerm" (click)="clearSearch()">
           <i class="fas fa-times"></i>
         </button> -->
+        </div>
       </div>
     </div>
-  </div>
-  <div *ngIf="successMessage" class="small-success-message">
-    <p>{{ successMessage }}</p>
-</div>
-  <!-- Vehicle Grid -->
-  <div class="vehicle-grid">
-    <div class="vehicle-card" *ngFor="let stock of filteredModelStockList">
-      <div class="card-header">
-        <i class="fas fa-car"></i>
-        <h3>{{ stock.make }}</h3>
-      </div>
-      <div class="card-content">
-        <div class="detail-row">
-          <span class="label">Model:</span>
-          <a [routerLink]="['/vehicle-page', stock.model]">{{ stock.model }}</a>
+    <div *ngIf="successMessage" class="small-success-message">
+      <p>{{ successMessage }}</p>
+    </div>
+    <!-- Vehicle Grid -->
+    <div class="vehicle-grid">
+      <div class="vehicle-card" *ngFor="let stock of filteredModelStockList">
+        <div class="card-header">
+          <i class="fas fa-car"></i>
+          <h3>{{ stock.make }}</h3>
         </div>
-        <!-- <div class="detail-row">
+        <div class="card-content">
+          <div class="detail-row">
+            <span class="label">Model:</span>
+            <a [routerLink]="['/vehicle-page', stock.model]">{{ stock.model }}</a>
+          </div>
+          <div class="detail-row">
+            <span class="label">Total Units:</span>
+            <span class="count-badge">{{ getModelCount(stock.model) }}</span>
+          </div>
+          <!-- <div class="detail-row">
           <span class="label">Location:</span>
           <span>{{ stock.location }}</span>
         </div> -->
-       <!-- Replace the commented age section with this -->
-<!-- Replace the age section with this corrected version -->
-<div class="detail-row">
-  <span class="label">Age:</span>
-  <span [class]="'age-badge ' + calculateVehicleAge(stock.receivedDate).status">
-    {{ calculateVehicleAge(stock.receivedDate).days }} days
-    <span class="age-label">{{ calculateVehicleAge(stock.receivedDate).label }}</span>
-  </span>
-</div>
-        <div class="detail-row">
-          <span class="label">Date:</span>
-          <span>{{ stock.receivedDate | date: 'dd-MM-yyyy' }}</span>
+          <!-- Replace the commented age section with this -->
+          <!-- Replace the age section with this corrected version -->
+          <div class="detail-row">
+            <span class="label">Age:</span>
+            <span [class]="'age-badge ' + calculateVehicleAge(stock.receivedDate).status">
+              {{ calculateVehicleAge(stock.receivedDate).days }} days
+              <span class="age-label">{{ calculateVehicleAge(stock.receivedDate).label }}</span>
+            </span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Date:</span>
+            <span>{{ stock.receivedDate | date: 'dd-MM-yyyy' }}</span>
+          </div>
+        </div>
+        <div class="card-actions">
+          <button class="btn-edit" (click)="openEditVehiclePopup(stock)">
+            <i class="fas fa-edit"></i> Edit
+          </button>
+          <button class="btn-delete" (click)="onDelete(stock)">
+            <i class="fas fa-trash"></i> Delete
+          </button>
         </div>
       </div>
-      <div class="card-actions">
-        <button class="btn-edit" (click)="openEditVehiclePopup(stock)">
-          <i class="fas fa-edit"></i> Edit
-        </button>
-        <button class="btn-delete" (click)="onDelete(stock)">
-          <i class="fas fa-trash"></i> Delete
-        </button>
-      </div>
     </div>
-  </div>
 
     <!-- Add Vehicle Popup -->
     <div *ngIf="showPopup" class="popup">
@@ -201,7 +297,8 @@
             placeholder="Enter city" required>
 
           <label for="editVehicleYear">Vehicle Year:</label>
-          <input type="date" id="editVehicleYear" [(ngModel)]="editVehicleData.receivedDate" name="vehicleYear" required>
+          <input type="date" id="editVehicleYear" [(ngModel)]="editVehicleData.receivedDate" name="vehicleYear"
+            required>
 
           <button type="submit" class="button">Update Vehicle</button>
         </form>
