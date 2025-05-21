@@ -8,10 +8,12 @@ import { ActivatedRoute } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
+import { EditVehicleDialogComponent } from '../edit-vehicle-dialog-component/edit-vehicle-dialog.component';
 @Component({
   selector: 'app-vehicle-details',
   imports: [
@@ -57,7 +59,8 @@ export class VehicleDetailsComponent implements OnInit{
     'age',
     'interest',
     'status',
-    'make'
+    'make',
+    'actions'
   ];
 
   carDetailsList: VehicleModel[] = [];
@@ -65,7 +68,7 @@ export class VehicleDetailsComponent implements OnInit{
   filters: { [key: string]: string } = {};
   activeFilter: string | null = null;
 
-  constructor(private route: ActivatedRoute, private vehicleService: DataService, private cdr: ChangeDetectorRef){
+  constructor(private route: ActivatedRoute, private vehicleService: DataService, private cdr: ChangeDetectorRef,  private dialog: MatDialog){
     
   }
   
@@ -87,6 +90,24 @@ export class VehicleDetailsComponent implements OnInit{
     });
   }
 
+  editVehicle(vehicle: any): void {
+    console.log("vehicle data to be edited " + JSON.stringify(vehicle));
+    const dialogRef = this.dialog.open(EditVehicleDialogComponent, {
+      width: '600px',
+      data: { ...vehicle }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Update the vehicle in your data source
+        const index = this.dataSource.data.findIndex(item => item.id === result.id);
+        if (index > -1) {
+          this.dataSource.data[index] = result;
+          this.dataSource._updateChangeSubscription(); // Refresh the table
+        }
+      }
+    });
+  }
 
   exportToPDF() {
     const doc = new jsPDF();
