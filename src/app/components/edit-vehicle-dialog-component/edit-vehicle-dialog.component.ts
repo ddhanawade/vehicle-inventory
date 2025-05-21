@@ -57,6 +57,8 @@ export class EditVehicleDialogComponent {
   isSaving = false;
   successMessage = '';
 
+  orderId: Number | null = null;
+
   // Sample data - replace with actual data from your service
   teamLeaders = ['John Doe', 'Jane Smith', 'Mike Johnson'];
   salesOfficers = ['Alice Brown', 'Bob Wilson', 'Carol White'];
@@ -119,7 +121,7 @@ export class EditVehicleDialogComponent {
           // Disable form fields except status and remarks
           Object.keys(this.vehicleForm.controls).forEach(key => {
             if (key !== 'status' && key !== 'remarks') {
-              this.vehicleForm.get(key)?.disable();
+              //this.vehicleForm.get(key)?.disable();
             }
           });
           
@@ -162,18 +164,37 @@ export class EditVehicleDialogComponent {
     this.dialogRef.close();
   }
 
+  // getOrderByVehicleId(id: String): Observable<OrderModel> {
+  //   return this.orderService.getOrdersByVehicleId(id).pipe(
+  //     tap(response => {
+  //       this.orderId = response.orderId;
+  //       // Handle the response data if needed
+  //       console.log('Order details:', response);
+  //     }),
+  //     catchError(error => {
+  //       console.error('Error fetching order:', error);
+  //       return throwError(() => error);
+  //     })
+  //   );
+  // }
+
   getOrderByVehicleId(id: String): Observable<OrderModel> {
     return this.orderService.getOrdersByVehicleId(id).pipe(
       tap(response => {
-        // Handle the response data if needed
-        console.log('Order details:', response);
+        if (Array.isArray(response) && response.length > 0) {
+          this.orderId = response[0].orderId;
+          console.log('Order details:', response[0].orderId);
+        } else {
+          console.error('Unexpected response format: ', response);
+        }
       }),
       catchError(error => {
         console.error('Error fetching order:', error);
         return throwError(() => error);
       })
     );
-  }
+}
+
 
   onSave(vehicleId: string): void {
     if (this.vehicleForm.valid) {
@@ -209,9 +230,9 @@ export class EditVehicleDialogComponent {
 
       const formData = {
         ...this.vehicleForm.value,
-        orderId: this.vehicleForm.get('orderId')?.value
+        orderId: this.orderId
       };
-
+      console.log("order Id " + JSON.stringify(formData)); 
       this.orderService.updateOrder(formData.orderId, formData).subscribe({
         next: (response) => {
           this.isUpdated = true;
