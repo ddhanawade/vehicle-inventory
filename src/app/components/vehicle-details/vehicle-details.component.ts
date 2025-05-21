@@ -91,7 +91,6 @@ export class VehicleDetailsComponent implements OnInit{
   }
 
   editVehicle(vehicle: any): void {
-    console.log("vehicle data to be edited " + JSON.stringify(vehicle));
     const dialogRef = this.dialog.open(EditVehicleDialogComponent, {
       width: '600px',
       data: { ...vehicle }

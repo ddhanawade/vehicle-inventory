@@ -21,12 +21,16 @@ export class OrderService {
         return this.http.post<any>(this.baseUrl, order);
     }
 
-    updateOrder(order: any, formData: any) {
-        return this.http.put(`${this.baseUrl}/${order.id}`, order);
+    updateOrder(id: any, formData: any) {
+        return this.http.put(`${this.baseUrl}/${id}`, formData);
     }
 
     deleteOrder(id: number) {
         return this.http.delete(`${this.baseUrl}/${id}`);
+    }
+
+    getOrdersByVehicleId(id : String): Observable<OrderModel>{
+        return this.http.get<OrderModel>(`${this.baseUrl}/vehicle/${id}`)
     }
 
 }

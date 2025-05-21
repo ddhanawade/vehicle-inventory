@@ -10,6 +10,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { OrderService } from '../../services/OrderService';
+import { catchError, Observable, tap, throwError } from 'rxjs';
+import { OrderModel } from '../../models/order.model';
 
 // Add custom date formats
 export const MY_DATE_FORMATS = {
@@ -68,6 +70,7 @@ export class EditVehicleDialogComponent {
     private orderService: OrderService
   ) {
     this.vehicleForm = this.fb.group({
+      orderId: [''],
       vehicleId: [''],  // Add vehicleId to form controls
       customerName: ['', [Validators.required]],
       leadName: ['', [Validators.required]],
@@ -84,12 +87,70 @@ export class EditVehicleDialogComponent {
 
   ngOnInit() {
     if (this.data) {
-      // Set vehicleId along with other form data
+      console.log("data to be updated " + JSON.stringify(this.data));
+      // Set form data
       this.vehicleForm.patchValue({
         ...this.data,
         vehicleId: this.data.vehicleId
       });
     }
+    if (this.data && this.data.id) {
+      this.checkExistingOrder(this.data.id);
+    }
+  }
+
+  private checkExistingOrder(vehicleId: string) {
+    console.log("Checking for existing order with vehicle ID:", vehicleId);
+    
+    this.getOrderByVehicleId(vehicleId).subscribe({
+      next: (response) => {
+        // Enhanced condition to check for null, undefined, or an empty object
+        if (response && Object.keys(response).length) {
+          console.log("Existing order found:", response);
+          this.isSaved = true;
+          
+          // Populate form with existing data
+          this.vehicleForm.patchValue({
+            ...response,
+            vehicleId: vehicleId,
+            orderId: response.orderId
+          });
+    
+          // Disable form fields except status and remarks
+          Object.keys(this.vehicleForm.controls).forEach(key => {
+            if (key !== 'status' && key !== 'remarks') {
+              this.vehicleForm.get(key)?.disable();
+            }
+          });
+          
+        } else {
+          this.isSaved = false;
+          console.log("No existing order found");
+          this.resetForm(vehicleId);
+        }
+      },
+      error: (error) => {
+        console.error('Error checking for existing order:', error);
+        this.resetForm(vehicleId);
+      }
+    });
+    
+  }
+
+  private resetForm(vehicleId: string) {
+    this.isSaved = false;
+    this.isUpdated = false;
+    
+    // Reset and enable all form controls
+    this.vehicleForm.reset();
+    Object.keys(this.vehicleForm.controls).forEach(key => {
+      this.vehicleForm.get(key)?.enable();
+    });
+    
+    // Set only the vehicle ID
+    this.vehicleForm.patchValue({
+      vehicleId: vehicleId
+    });
   }
 
   formatPhoneNumber(event: any) {
@@ -101,31 +162,36 @@ export class EditVehicleDialogComponent {
     this.dialogRef.close();
   }
 
-  onSave(vehicleId: String): void {
+  getOrderByVehicleId(id: String): Observable<OrderModel> {
+    return this.orderService.getOrdersByVehicleId(id).pipe(
+      tap(response => {
+        // Handle the response data if needed
+        console.log('Order details:', response);
+      }),
+      catchError(error => {
+        console.error('Error fetching order:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  onSave(vehicleId: string): void {
     if (this.vehicleForm.valid) {
-      this.vehicleForm.patchValue({ vehicleId: vehicleId });
       this.isSaving = true;
       const formData = this.vehicleForm.value;
       
       this.orderService.createOrder(formData).subscribe({
         next: (response) => {
-          this.isSaved = true; // This enables the update button
+          this.isSaved = true;
           this.isSaving = false;
           this.successMessage = 'Order created successfully!';
           
-          // Disable all form controls except status and remarks
-          Object.keys(this.vehicleForm.controls).forEach(key => {
-            if (key !== 'status' && key !== 'remarks') {
-              this.vehicleForm.get(key)?.disable();
-            }
-          });
-  
-          // Don't close the dialog, just update the UI state
-          // this.dialogRef.close() removed to keep dialog open
+          // After successful save, check existing order again
+          this.checkExistingOrder(vehicleId);
         },
         error: (error) => {
           this.isSaving = false;
-          this.isSaved = false; // Ensure save button remains enabled on error
+          this.isSaved = false;
           console.error('Error occurred while saving order details:', error);
         }
       });
@@ -133,24 +199,33 @@ export class EditVehicleDialogComponent {
   }
 
   onUpdate(): void {
-    if (this.vehicleForm.valid && this.isSaved) {
+    if (this.vehicleForm.valid) {
       this.isSaving = true;
-      const formData = this.vehicleForm.value; // vehicleId is now part of form data
       
-      this.orderService.updateOrder(formData.vehicleId, formData).subscribe({
+      // Enable all controls temporarily to get complete form value
+      Object.keys(this.vehicleForm.controls).forEach(key => {
+        this.vehicleForm.get(key)?.enable();
+      });
+
+      const formData = {
+        ...this.vehicleForm.value,
+        orderId: this.vehicleForm.get('orderId')?.value
+      };
+
+      this.orderService.updateOrder(formData.orderId, formData).subscribe({
         next: (response) => {
           this.isUpdated = true;
           this.isSaving = false;
           this.successMessage = 'Order details updated successfully!';
-          this.dialogRef.close({
-            ...formData,
-            isSuccess: true,
-            isUpdate: true
-          });
+          
+          // After successful update, check existing order again
+          this.checkExistingOrder(formData.vehicleId);
         },
         error: (error) => {
           this.isSaving = false;
           console.error('Error updating order details:', error);
+          // Re-disable fields on error
+          this.checkExistingOrder(formData.vehicleId);
         }
       });
     }
