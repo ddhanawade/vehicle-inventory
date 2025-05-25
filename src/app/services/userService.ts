@@ -8,7 +8,7 @@ import { Injectable } from "@angular/core";
   })
 export class userService {
 
-private baseUrl = 'http://localhost:8080/api/users';
+private baseUrl = 'http://authorization.us-east-2.elasticbeanstalk.com/api/users';
 
   constructor(private http: HttpClient) { }
 

@@ -89,7 +89,6 @@ export class EditVehicleDialogComponent {
 
   ngOnInit() {
     if (this.data) {
-      console.log("data to be updated " + JSON.stringify(this.data));
       // Set form data
       this.vehicleForm.patchValue({
         ...this.data,
@@ -115,9 +114,10 @@ export class EditVehicleDialogComponent {
           this.vehicleForm.patchValue({
             ...response,
             vehicleId: vehicleId,
-            orderId: response.orderId
+            orderId: response.orderId,
+            customerName : response.customerName
           });
-    
+          
           // Disable form fields except status and remarks
           Object.keys(this.vehicleForm.controls).forEach(key => {
             if (key !== 'status' && key !== 'remarks') {
@@ -232,7 +232,7 @@ export class EditVehicleDialogComponent {
         ...this.vehicleForm.value,
         orderId: this.orderId
       };
-      console.log("order Id " + JSON.stringify(formData)); 
+
       this.orderService.updateOrder(formData.orderId, formData).subscribe({
         next: (response) => {
           this.isUpdated = true;

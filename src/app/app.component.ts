@@ -10,7 +10,7 @@ import { HeaderComponent } from "./components/header/header.component";
   selector: 'app-root',
   imports: [CommonModule, RouterOutlet, MatToolbarModule, HeaderComponent],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrl: './app.component.css',
 })
 export class AppComponent implements AfterViewInit, OnInit {
   title = 'vehicle-inventory';

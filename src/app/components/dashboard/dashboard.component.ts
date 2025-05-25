@@ -90,13 +90,15 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
 
+    this.getUniqueModelDetails(); // Fetch unique vehicle models
+
     // Retrieve the user from localStorage if available
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       this.user = JSON.parse(storedUser);
-      console.log('Retrieved User from Storage:', this.user);
+      //console.log('Retrieved User from Storage:', this.user);
     }
-    this.getUniqueModelDetails(); // Fetch unique vehicle models
+    
     this.getCarDetails();
 
     // Subscribe to the user observable to get the current user
@@ -277,7 +279,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   logout(): void {
     const token = this.authService.getToken();
     if (token) {
-      this.authService.logout(token).subscribe({
+      this.authService.logout().subscribe({
         next: () => {
           this.authService.clearToken();
           this.router.navigate(['/login']); // Redirect to login page

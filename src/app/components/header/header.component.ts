@@ -33,7 +33,7 @@ export class HeaderComponent implements OnInit {
     // Subscribe to the user observable to get the current user
     this.authService.getUser().subscribe((user) => {
       this.user = user;
-      console.log('Current User:', this.user);
+     // console.log('Current User:', this.user);
     });
   }
 
@@ -54,7 +54,7 @@ export class HeaderComponent implements OnInit {
       return;
     }
   
-    this.authService.logout(token).subscribe({
+    this.authService.logout().subscribe({
       next: () => {
         this.authService.clearToken(); // Clear the token
         this.authService.clearUser(); // Clear the user globally
