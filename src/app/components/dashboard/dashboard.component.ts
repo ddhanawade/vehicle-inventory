@@ -309,27 +309,22 @@ getObjectKeys(obj: any): string[] {
     return this.user?.roles?.includes(role) || false;
   }
 
-  calculateVehicleAge(receivedDate: string | Date): AgeResult {
+  calculateVehicleAge(count: string): AgeResult {
     try {
-      // Convert string date to Date object if needed
-      const received = typeof receivedDate === 'string' ? new Date(receivedDate) : receivedDate;
-      const today = new Date();
-
+      
       // Check if we have a valid date
-      if (!receivedDate || isNaN(received.getTime())) {
+      if (!count || isNaN(Number(count))) {
         return { days: 0, status: 'recent', label: 'Invalid Date' };
       }
 
-      const diffTime = Math.abs(today.getTime() - received.getTime());
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
+      const parsedCount = parseInt(count.toString(), 10); // For integers
       let status: string;
       let label: string;
 
-      if (diffDays <= 15) {
+      if (parsedCount <= 30) {
         status = 'recent';
         label = 'New Arrival';
-      } else if (diffDays <= 30) {
+      } else if (parsedCount > 30 && parsedCount <=60) {
         status = 'moderate';
         label = 'Medium Age';
       } else {
@@ -337,28 +332,13 @@ getObjectKeys(obj: any): string[] {
         label = 'Aged Stock';
       }
 
-      return { days: diffDays, status, label };
+      return { days: parsedCount, status, label };
     } catch (error) {
       console.error('Error calculating vehicle age:', error);
       return { days: 0, status: 'recent', label: 'Error' };
     }
   }
   
-  calculateAgeCounts(): void {
-    this.ageCounts = { lessThan30: 0, between30And60: 0, greaterThan60: 0 };
-
-    this.filteredModelStockList.forEach(vehicle => {
-      const age = vehicle.age; // Assuming `age` is already calculated in days
-      console.log("bsdv age " + age);
-      if (age < 30) {
-        this.ageCounts.lessThan30++;
-      } else if (age >= 30 && age <= 60) {
-        this.ageCounts.between30And60++;
-      } else if (age > 60) {
-        this.ageCounts.greaterThan60++;
-      }
-    });
-  }
 
   getUniqueModelDetails(): void {
     this.vehicleService.getUnqiueVehicleModels().subscribe((data: VehicleModel[]) => {
@@ -424,7 +404,9 @@ getObjectKeys(obj: any): string[] {
     this.currentPage = event.pageIndex;
     this.pageSize = event.pageSize;
   }
-
+  parseToNumber(value: string): number {
+    return Number(value);
+  }
   ngAfterViewInit() {
     if (this.locationDataSource) {
       this.locationDataSource.paginator = this.paginator;

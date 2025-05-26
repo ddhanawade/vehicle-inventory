@@ -14,6 +14,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { EditVehicleDialogComponent } from '../edit-vehicle-dialog-component/edit-vehicle-dialog.component';
+import { OrderService } from '../../services/OrderService';
 @Component({
   selector: 'app-vehicle-details',
   imports: [
@@ -68,7 +69,9 @@ export class VehicleDetailsComponent implements OnInit{
   filters: { [key: string]: string } = {};
   activeFilter: string | null = null;
 
-  constructor(private route: ActivatedRoute, private vehicleService: DataService, private cdr: ChangeDetectorRef,  private dialog: MatDialog){
+  constructor(private route: ActivatedRoute, private vehicleService: DataService, private cdr: ChangeDetectorRef,  private dialog: MatDialog,
+    private orderService: OrderService
+  ){
     
   }
   
@@ -90,21 +93,39 @@ export class VehicleDetailsComponent implements OnInit{
     });
   }
 
-  editVehicle(vehicle: any): void {
-    const dialogRef = this.dialog.open(EditVehicleDialogComponent, {
-      width: '600px',
-      data: { ...vehicle }
-    });
+  // editVehicle(vehicle: any): void {
+  //   this.orderService.getOrdersByVehicleId(vehicle.vehicleId).subscribe(orderData => {
+  //     console.log("dddd " + JSON.stringify(vehicle))
+  //     const dialogRef = this.dialog.open(EditVehicleDialogComponent, {
+  //       width: '600px',
+  //       data: orderData // Pass the fetched data to the dialog
+  //     });
+    
+  //   dialogRef.afterClosed().subscribe(result => {
+  //     if (result) {
+  //       // Update the vehicle in your data source
+  //       const index = this.dataSource.data.findIndex(item => item.id === result.id);
+  //       if (index > -1) {
+  //         this.dataSource.data[index] = result;
+  //         this.dataSource._updateChangeSubscription(); // Refresh the table
+  //       }
+  //     }
+  //   });
+  // }
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        // Update the vehicle in your data source
-        const index = this.dataSource.data.findIndex(item => item.id === result.id);
-        if (index > -1) {
-          this.dataSource.data[index] = result;
-          this.dataSource._updateChangeSubscription(); // Refresh the table
+  editVehicle(vehicle: any): void {
+    this.orderService.getOrdersByVehicleId(vehicle.id).subscribe(vehicleData => {
+      const dialogRef = this.dialog.open(EditVehicleDialogComponent, {
+        width: '600px',
+        data: vehicleData // Pass the fetched data to the dialog
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          console.log('Updated Vehicle Data:', result);
+          // Handle the updated data here
         }
-      }
+      });
     });
   }
 

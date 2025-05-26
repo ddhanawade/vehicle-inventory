@@ -226,28 +226,45 @@
           <!-- Replace the age section with this corrected version -->
           <div class="detail-row">
             <span class="label">Age:</span>
-            <span [class]="'age-badge ' + calculateVehicleAge(stock.receivedDate).status">
+            <!-- <span [class]="'age-badge ' + calculateVehicleAge(stock.receivedDate).status">
               {{ calculateVehicleAge(stock.receivedDate).days }} days
-              <!-- <span class="age-label">{{ calculateVehicleAge(stock.receivedDate).label }}</span> -->
-            </span> 
-          </div>
-          <div class="detail-row">
-            <span class="label"><30:</span>
-            <span [class]="'age-badge ' + (stock.lessThan30DaysCount)">
-              {{ stock.lessThan30DaysCount }} days
-            </span> 
-          </div>
-          <div class="detail-row">
-            <span class="label">30to60:</span>
-            <span [class]="'age-badge ' + (stock.between30And60DaysCount)">
-              {{ (stock.between30And60DaysCount) }} days
-            </span> 
-          </div>
-          <div class="detail-row">
-            <span class="label">>60:</span>
-            <span [class]="'age-badge ' + (stock.greaterThan60DaysCount)">
-              {{ (stock.greaterThan60DaysCount) }} days
-            </span> 
+              <span class="age-label">{{ calculateVehicleAge(stock.receivedDate).label }}</span>
+            </span> -->
+            <span class="detail-item">
+              <span class="label">&lt;30:</span>
+              <span 
+                class="age-badge" 
+                [ngClass]="{
+                  'low-count': parseToNumber(stock.lessThan30DaysCount) > 0,
+                  'no-count': parseToNumber(stock.lessThan30DaysCount) === 0
+                }">
+                {{ stock.lessThan30DaysCount }}
+              </span>
+            </span>
+            <span class="detail-item">
+              <span class="label">30-60:</span>
+              <span 
+                class="age-badge" 
+                [ngClass]="{
+                  'medium-count': parseToNumber(stock.between30And60DaysCount) > 0,
+                  'no-count': parseToNumber(stock.between30And60DaysCount) === 0
+                }">
+                {{ stock.between30And60DaysCount }}
+              </span>
+            </span>
+            <span class="detail-item">
+              <span class="label">&gt;60:</span>
+              <span 
+                class="age-badge" 
+                [ngClass]="{
+                  'high-count': parseToNumber(stock.greaterThan60DaysCount) > 0,
+                  'no-count': parseToNumber(stock.greaterThan60DaysCount) === 0
+                }">
+                {{ stock.greaterThan60DaysCount }}
+              </span>
+            
+              <!-- <span class="age-badge">{{ calculateVehicleAge(stock.greaterThan60DaysCount).days }}</span> -->
+            </span>
           </div>
           <!-- <div class="detail-row">
             <span class="label">Date:</span>

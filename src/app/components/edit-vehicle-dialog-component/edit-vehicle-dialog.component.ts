@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, JsonPipe } from '@angular/common';
 import { Component, Inject } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -57,6 +57,8 @@ export class EditVehicleDialogComponent {
   isSaving = false;
   successMessage = '';
 
+  editOrderData: any = {};
+
   orderId: Number | null = null;
 
   // Sample data - replace with actual data from your service
@@ -87,14 +89,20 @@ export class EditVehicleDialogComponent {
   }
 
 
-  ngOnInit() {
+  ngOnInit(): void {
     if (this.data) {
-      // Set form data
-      this.vehicleForm.patchValue({
+      console.log("Data received:", this.data); // Debugging
+  
+      // Convert deliveryDate to a Date object if it exists
+      const formattedData = {
         ...this.data,
-        vehicleId: this.data.vehicleId
-      });
+        deliveryDate: this.data.deliveryDate ? new Date(this.data.deliveryDate) : null
+      };
+  
+      // Patch the form with the formatted data
+      this.vehicleForm.patchValue(formattedData);
     }
+  
     if (this.data && this.data.id) {
       this.checkExistingOrder(this.data.id);
     }
