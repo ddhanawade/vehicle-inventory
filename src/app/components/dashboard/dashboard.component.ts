@@ -32,6 +32,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   stocksList: any;
   selectedAgeFilter: any;
+
   
   scrollLeft() {
     throw new Error('Method not implemented.');
@@ -78,9 +79,13 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   locationDataSource!: MatTableDataSource<VehicleModel>;
 
+  ageCounts = { lessThan30: 0, between30And60: 0, greaterThan60: 0 };
+
   pageSize = 10;
   currentPage = 0;
   pageSizeOptions = [5, 10, 25, 50];
+
+  ageCountsByModel: { [key: string]: { [key: string]: number } } = {};
 
   constructor(private fb: FormBuilder,
     private vehicleService: DataService,
@@ -100,7 +105,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     }
     
     this.getCarDetails();
-
+    this.getAgeCountByModel();
     // Subscribe to the user observable to get the current user
     this.authService.getUser().subscribe((user) => {
       this.user = user;
@@ -134,7 +139,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.selectedMake = make; // Set the selected make
     this.filterVehicles(); // Apply the filter
   }
-
+// Helper method to get object keys
+getObjectKeys(obj: any): string[] {
+  return Object.keys(obj);
+}
   filterVehicles(): void {
     const searchTermLower = this.searchTerm.toLowerCase();
     this.filteredModelStockList = this.uniqueVehicleModel.filter((stock) => {
@@ -335,6 +343,22 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       return { days: 0, status: 'recent', label: 'Error' };
     }
   }
+  
+  calculateAgeCounts(): void {
+    this.ageCounts = { lessThan30: 0, between30And60: 0, greaterThan60: 0 };
+
+    this.filteredModelStockList.forEach(vehicle => {
+      const age = vehicle.age; // Assuming `age` is already calculated in days
+      console.log("bsdv age " + age);
+      if (age < 30) {
+        this.ageCounts.lessThan30++;
+      } else if (age >= 30 && age <= 60) {
+        this.ageCounts.between30And60++;
+      } else if (age > 60) {
+        this.ageCounts.greaterThan60++;
+      }
+    });
+  }
 
   getUniqueModelDetails(): void {
     this.vehicleService.getUnqiueVehicleModels().subscribe((data: VehicleModel[]) => {
@@ -361,6 +385,11 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     return this.carDetailsList.filter(car => car.model === model).length;
   }
 
+  getAgeCountByModel(): void {
+    this.vehicleService.getAgeCountByModel().subscribe((data) => {
+      this.ageCountsByModel = data;
+    });
+}
   // Add this method to get vehicles for a specific location
   getVehiclesByLocation(location: string): void {
     this.selectedLocation = location;

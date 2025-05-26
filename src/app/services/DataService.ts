@@ -31,6 +31,10 @@ export class DataService {
     return this.http.get<VehicleModel[]>(`${this.baseUrl}/getUniqueVehicles`);
   }
 
+  getAgeCountByModel(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/ageCountByModel`);
+  }
+
   private modelNameSubject = new Subject<string>();
 
   modelName$ = this.modelNameSubject.asObservable();

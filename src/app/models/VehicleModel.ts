@@ -20,5 +20,8 @@ export interface VehicleModel {
     tkmInvoiceValue: string;
     age: number;
     interest: string;
+    lessThan30DaysCount : string;
+    between30And60DaysCount: string;
+    greaterThan60DaysCount : string
     [key: string]: string | number; // Index signature for dynamic access
   }
