@@ -13,6 +13,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { NgChartsModule } from 'ng2-charts';
+import { MatNativeDateModule } from '@angular/material/core';
+import { ReportingService } from '../../services/ReportingService';
+import { ReportParams } from '../../models/ReportParams';
 // import { ChartsModule } from 'ng2-charts';
 
 @Component({
@@ -27,6 +30,7 @@ import { NgChartsModule } from 'ng2-charts';
     MatSelectModule,
     MatIconModule,
     MatDatepickerModule,
+    MatNativeDateModule,
     FormsModule,
     MatCardModule,
     NgChartsModule
@@ -43,79 +47,152 @@ export class VehicleReportComponent implements OnInit {
   model: string = '';
 
   // Monthly Sales Chart
-  monthlySalesLabels: string[] = [];
-  monthlySalesData: ChartDataset[] = [];
-  monthlySalesOptions: ChartOptions = { responsive: true };
+  //monthlySalesLabels: string[] = [];
+  //monthlySalesData: ChartDataset[] = [];
+  //monthlySalesOptions: ChartOptions = { responsive: true };
   monthlySalesType: ChartType = 'bar';
 
-  // Top Model Sold Chart
-  topModelLabels: string[] = [];
-  topModelOptions: ChartOptions<'pie'> = {
+  monthlySalesLabels: string[] = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']; // Default labels
+  monthlySalesData: ChartDataset[] = [{
+    data: [0, 0, 0, 0, 0, 0], // Default data
+    label: 'Monthly Sales'
+  }];
+  monthlySalesOptions: ChartOptions = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
+        display: true,
         position: 'top'
-      },
-      tooltip: {
-        enabled: true
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true
       }
     }
   };
-  topModelType: ChartType = 'pie';
 
-  constructor(private http: HttpClient) {}
+  // Top Model Chart configuration
+  topModelData: ChartData<'pie'> = {
+    labels: ['No Data'],
+    datasets: [{
+      data: [100],
+      label: 'Top Models'
+    }]
+  };
+  topModelOptions: ChartOptions<'pie'> = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'top',
+        display: true
+      }
+    }
+  };
+  topModelType: 'pie' = 'pie';
+topModelLabels: string [] = [];
 
-  ngOnInit(): void {
-    this.fetchMonthlySales();
-    this.fetchTopModelSold();
-  }
+  constructor(private http: HttpClient, private reportService : ReportingService) {}
 
-  fetchMonthlySales(): void {
-    const params = {
-      dateRange: `${this.startDate?.toISOString().split('T')[0]}_to_${this.endDate?.toISOString().split('T')[0]}`,
-      city: this.city,
-      make: this.make,
-      model: this.model
+  ngOnInit() {
+    // Ensure charts are responsive
+    this.monthlySalesOptions = {
+      responsive: true,
+      maintainAspectRatio: false
     };
 
-    this.http.get<any>('/api/analytics/monthly-sales', { params }).subscribe(response => {
-      this.monthlySalesLabels = response.labels; // e.g., ['Jan', 'Feb', 'Mar']
-      this.monthlySalesData = [{ data: response.data, label: 'Monthly Sales' }]; // e.g., [100, 200, 300]
+    this.topModelOptions = {
+      responsive: true,
+      maintainAspectRatio: false
+    };
+  }
+
+  // Update your fetchMonthlySales method
+  fetchMonthlySales(): void {
+    const params: ReportParams = {
+      dateRange: this.startDate && this.endDate ? 
+        `${this.formatDate(this.startDate)}_to_${this.formatDate(this.endDate)}` : undefined,
+      city: this.city || undefined,
+      make: this.make || undefined,
+      model: this.model || undefined
+    };
+
+    this.reportService.getMonthlySalesReport(params).subscribe({
+      next: (response) => {
+        if (response && response.labels && response.data) {
+          this.monthlySalesLabels = response.labels;
+          this.monthlySalesData = [{
+            data: response.data,
+            label: 'Monthly Sales',
+            backgroundColor: 'rgba(25, 118, 210, 0.5)',
+            borderColor: 'rgb(25, 118, 210)',
+            borderWidth: 1
+          }];
+        }
+      },
+      error: (error) => {
+        console.error('Error fetching monthly sales:', error);
+        // Reset to default state on error
+        this.monthlySalesLabels = ['No Data'];
+        this.monthlySalesData = [{
+          data: [0],
+          label: 'Monthly Sales'
+        }];
+      }
     });
   }
 
-  topModelData: ChartData<'pie', number[]> = {
-    labels: [],
-    datasets: []
-  };
+  private formatDate(date: Date): string {
+    return date.toISOString().split('T')[0];
+  }
 
+  // topModelData: ChartData<'pie', number[]> = {
+  //   labels: [],
+  //   datasets: []
+  // };
+
+  // Update your fetchTopModelSold method
   fetchTopModelSold(): void {
-    const params = {
-      startDate: this.startDate?.toISOString().split('T')[0] || '',
-      endDate: this.endDate?.toISOString().split('T')[0] || '',
-      city: this.city,
-      make: this.make,
-      model: this.model
+    const params: ReportParams = {
+      dateRange: this.startDate && this.endDate ? 
+        `${this.formatDate(this.startDate)}_to_${this.formatDate(this.endDate)}` : undefined,
+      city: this.city || undefined,
+      make: this.make || undefined,
+      model: this.model || undefined
     };
 
-    interface TopModelResponse {
-      labels: string[];
-      data: number[];
-    }
-
-    this.http.get<TopModelResponse>('/api/analytics/top-model-sold', {
-      params,
-      responseType: 'json'
-    }).subscribe(response => {
-      this.topModelData = {
-        labels: response.labels, // e.g., ['Model A', 'Model B']
-        datasets: [
-          {
-            data: response.data, // e.g., [50, 30]
+    this.reportService.getTopModelSold(params).subscribe({
+      next: (response) => {
+        if (response && response.labels && response.data) {
+          this.topModelData = {
+            labels: response.labels,
+            datasets: [{
+              data: response.data,
+              label: 'Top Models',
+              backgroundColor: [
+                'rgba(25, 118, 210, 0.5)',
+                'rgba(76, 175, 80, 0.5)',
+                'rgba(33, 150, 243, 0.5)',
+                'rgba(156, 39, 176, 0.5)',
+                'rgba(233, 30, 99, 0.5)'
+              ]
+            }]
+          };
+        }
+      },
+      error: (error) => {
+        console.error('Error fetching top models:', error);
+        // Reset to default state on error
+        this.topModelData = {
+          labels: ['No Data'],
+          datasets: [{
+            data: [100],
             label: 'Top Models'
-          }
-        ]
-      };
+          }]
+        };
+      }
     });
   }
 

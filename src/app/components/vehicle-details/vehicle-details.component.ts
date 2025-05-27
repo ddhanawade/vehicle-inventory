@@ -114,20 +114,35 @@ export class VehicleDetailsComponent implements OnInit{
   // }
 
   editVehicle(vehicle: any): void {
-    this.orderService.getOrdersByVehicleId(vehicle.id).subscribe(vehicleData => {
-      const dialogRef = this.dialog.open(EditVehicleDialogComponent, {
-        width: '600px',
-        data: vehicleData // Pass the fetched data to the dialog
-      });
-
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          console.log('Updated Vehicle Data:', result);
-          // Handle the updated data here
-        }
-      });
+    console.log("Editing vehicle:", JSON.stringify(vehicle));
+    const dialogRef = this.dialog.open(EditVehicleDialogComponent, {
+      width: '600px',
+      data: { ...vehicle }
     });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Update the vehicle in your data source
+        const index = this.dataSource.data.findIndex(item => item.id === result.id);
+        if (index > -1) {
+          this.dataSource.data[index] = result;
+          this.dataSource._updateChangeSubscription();
+    // this.orderService.getOrdersByVehicleId(vehicle.id).subscribe(vehicleData => {
+    //   const dialogRef = this.dialog.open(EditVehicleDialogComponent, {
+    //     width: '600px',
+    //     data: vehicleData // Pass the fetched data to the dialog
+    //   });
+
+    //   dialogRef.afterClosed().subscribe(result => {
+    //     if (result) {
+    //       console.log('Updated Vehicle Data:', result);
+    //       // Handle the updated data here
+    //     }
+    //   });
+    // });
+        }
   }
+});
+}
 
   exportToPDF() {
     const doc = new jsPDF();

@@ -15,40 +15,52 @@
 
   <mat-form-field appearance="outline">
     <mat-label>City</mat-label>
-    <input matInput [(ngModel)]="city">
+    <input matInput [(ngModel)]="city" placeholder="Enter city">
+    <mat-icon matSuffix>location_city</mat-icon>
   </mat-form-field>
 
   <mat-form-field appearance="outline">
     <mat-label>Make</mat-label>
-    <input matInput [(ngModel)]="make">
+    <input matInput [(ngModel)]="make" placeholder="Enter make">
+    <mat-icon matSuffix>directions_car</mat-icon>
   </mat-form-field>
 
   <mat-form-field appearance="outline">
     <mat-label>Model</mat-label>
-    <input matInput [(ngModel)]="model">
+    <input matInput [(ngModel)]="model" placeholder="Enter model">
+    <mat-icon matSuffix>model_training</mat-icon>
   </mat-form-field>
 
-  <button mat-raised-button color="primary" (click)="applyFilters()">Apply Filters</button>
+  <button mat-raised-button color="primary" (click)="applyFilters()">
+    <mat-icon>filter_alt</mat-icon>
+    Apply Filters
+  </button>
 </div>
 
 <div class="charts-section">
   <mat-card>
-    <mat-card-title>Monthly Sales</mat-card-title>
+    <mat-card-title>
+      <mat-icon>timeline</mat-icon>
+      Monthly Sales
+    </mat-card-title>
     <canvas baseChart
             [datasets]="monthlySalesData"
             [labels]="monthlySalesLabels"
             [options]="monthlySalesOptions"
-            [chartType]="monthlySalesType">
+            [type]="monthlySalesType">
     </canvas>
   </mat-card>
 
   <mat-card>
-    <mat-card-title>Top Models Sold</mat-card-title>
+    <mat-card-title>
+      <mat-icon>bar_chart</mat-icon>
+      Top Models Sold
+    </mat-card-title>
     <canvas baseChart
             [data]="topModelData"
             [labels]="topModelLabels"
             [options]="topModelOptions"
-            [chartType]="topModelType">
+            [type]="topModelType">
     </canvas>
   </mat-card>
 </div>

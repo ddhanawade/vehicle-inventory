@@ -96,6 +96,7 @@ export class EditVehicleDialogComponent {
       // Convert deliveryDate to a Date object if it exists
       const formattedData = {
         ...this.data,
+        vehicleId: this.data.vehicleId,
         deliveryDate: this.data.deliveryDate ? new Date(this.data.deliveryDate) : null
       };
   
