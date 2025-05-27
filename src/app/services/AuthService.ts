@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, BehaviorSubject, throwError } from 'rxjs';
 import { UserModel } from '../models/UserModel';
+import { tap, catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class AuthService {
   private userKey = 'authUser';
 
   private userSubject = new BehaviorSubject<UserModel | null>(this.getStoredUser());
-  user$ = this.userSubject.asObservable(); // Observable for components to subscribe to
+  user$ = this.userSubject.asObservable();
 
   private isLoggedInSubject = new BehaviorSubject<boolean>(this.isAuthenticated());
   isLoggedIn$ = this.isLoggedInSubject.asObservable();
@@ -20,7 +21,20 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   login(username: string, password: string): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/login`, { username, password });
+    return this.http.post<any>(`${this.baseUrl}/login`, { username, password }).pipe(
+      tap(response => {
+        if (response.token) {
+          this.saveToken(response.token);
+          console.log('JWT token stored in localStorage:', response.token);
+        } else {
+          console.error('Token not found in login response');
+        }
+      }),
+      catchError(error => {
+        console.error('Login error:', error);
+        return throwError(() => error);
+      })
+    );
   }
 
   saveToken(token: string): void {
@@ -42,9 +56,25 @@ export class AuthService {
     return user ? JSON.parse(user) : null;
   }
 
-  logout(token: string): Observable<any> {
-    const headers = { Authorization: `Bearer ${token}` };
-    return this.http.post(`${this.baseUrl}/logout`, {}, { headers, responseType: 'text' as 'json' });
+  logout(): Observable<any> {
+    const token = this.getToken();
+    if (!token) {
+      console.error('No token found for logout');
+      return new Observable(observer => {
+        observer.complete();
+      });
+    }
+
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    return this.http.post(`${this.baseUrl}/logout`, {}, { headers, responseType: 'text' as 'json' }).pipe(
+      tap(() => {
+        this.clearToken();
+      }),
+      catchError(error => {
+        console.error('Logout error:', error);
+        return throwError(() => error);
+      })
+    );
   }
 
   clearToken(): void {
@@ -55,11 +85,17 @@ export class AuthService {
   }
 
   registerUser(userData: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/register`, userData, { responseType: 'text' });
+    return this.http.post(`${this.baseUrl}/register`, userData, { responseType: 'text' }).pipe(
+      catchError(error => {
+        console.error('Registration error:', error);
+        return throwError(() => error);
+      })
+    );
   }
 
   getUserByName(username: string): Observable<UserModel> {
-    return this.http.get<UserModel>(`${this.baseUrl}/${username}`);
+    const url = `${this.baseUrl}/${username}`;
+    return this.http.get<UserModel>(url); // No headers added here
   }
 
   isAuthenticated(): boolean {

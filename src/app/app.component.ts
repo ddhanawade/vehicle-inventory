@@ -1,19 +1,32 @@
-import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, NgModule } from '@angular/core';
+import { CommonModule, PlatformLocation } from '@angular/common';
+import { AfterViewInit, Component, NgModule, OnInit } from '@angular/core';
 import { FormsModule, NgSelectOption } from '@angular/forms';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { BrowserModule } from '@angular/platform-browser';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { HeaderComponent } from "./components/header/header.component";
 
 @Component({
   selector: 'app-root',
   imports: [CommonModule, RouterOutlet, MatToolbarModule, HeaderComponent],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrl: './app.component.css',
 })
-export class AppComponent implements AfterViewInit{
+export class AppComponent implements AfterViewInit, OnInit {
   title = 'vehicle-inventory';
+
+  private history: string[] = [];
+
+  constructor(
+    private router: Router,
+    private location: Location,
+    private platformLocation: PlatformLocation
+  ) {
+    // Prevent back navigation
+    this.platformLocation.onPopState(() => {
+      history.forward();
+    });
+  }
 
   classList: any;
 
@@ -21,6 +34,14 @@ export class AppComponent implements AfterViewInit{
 
   toggleNav() {
     this.isNavCollapsed = !this.isNavCollapsed; // Toggle the nav bar visibility
+  }
+
+  ngOnInit() {
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.history.push(event.urlAfterRedirects);
+      }
+    });
   }
 
   ngAfterViewInit() {

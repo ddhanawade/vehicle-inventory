@@ -7,13 +7,11 @@ import { VehicleModel } from '../models/VehicleModel';
   providedIn: 'root'
 })
 export class DataService {
-
-  //private baseUrl = 'http://fleet-manager-env.eba-5vfuueih.us-east-2.elasticbeanstalk.com/api/vehicles';
   private baseUrl = 'http://localhost:8080/api/vehicles';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  getData(): Observable<VehicleModel[]>{
+  getData(): Observable<VehicleModel[]> {
     return this.http.get<VehicleModel[]>(this.baseUrl);
   }
 
@@ -21,11 +19,11 @@ export class DataService {
     return this.http.post<any>(this.baseUrl, vehicle);
   }
 
-  updateVehicleDetails(vehicleData: any){
+  updateVehicleDetails(vehicleData: any): Observable<any> {
     return this.http.put(`${this.baseUrl}/${vehicleData.id}`, vehicleData);
   }
 
-  deleteVehicleDetails(id : number){
+  deleteVehicleDetails(id: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/${id}`);
   }
 
@@ -33,14 +31,15 @@ export class DataService {
     return this.http.get<VehicleModel[]>(`${this.baseUrl}/getUniqueVehicles`);
   }
 
+  getAgeCountByModel(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/ageCountByModel`);
+  }
+
   private modelNameSubject = new Subject<string>();
 
-  // Observable to listen for model name changes
   modelName$ = this.modelNameSubject.asObservable();
 
-  // Method to emit the model name
-  setModelName(modelName: string) {
+  setModelName(modelName: string): void {
     this.modelNameSubject.next(modelName);
   }
-  
 }

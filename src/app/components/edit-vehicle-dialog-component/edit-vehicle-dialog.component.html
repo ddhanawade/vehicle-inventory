@@ -1,0 +1,135 @@
+<div class="edit-dialog-container">
+  <h2 mat-dialog-title>
+    <i class="fas fa-car"></i> Edit Vehicle Details
+  </h2>
+  
+  <mat-dialog-content>
+    <form [formGroup]="vehicleForm" class="vehicle-form">
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Customer Name</mat-label>
+          <input matInput formControlName="customerName" placeholder="Enter customer name">
+          <mat-icon matSuffix>person</mat-icon>
+          <mat-error *ngIf="vehicleForm.get('customerName')?.hasError('required')">
+            Customer name is required
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Customer Mobile Number</mat-label>
+          <input matInput formControlName="phoneNumber" placeholder="Enter mobile number" 
+                 [maxlength]="10" (input)="formatPhoneNumber($event)">
+          <mat-icon matSuffix>phone</mat-icon>
+          <mat-error *ngIf="vehicleForm.get('phoneNumber')?.hasError('pattern')">
+            Please enter a valid mobile number
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Team Leader</mat-label>
+          <mat-select formControlName="leadName">
+            <mat-option *ngFor="let leader of teamLeaders" [value]="leader">
+              {{leader}}
+            </mat-option>
+          </mat-select>
+          <mat-icon matSuffix>supervisor_account</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Sales Officer</mat-label>
+          <mat-select formControlName="salesPersonName">
+            <mat-option *ngFor="let officer of salesOfficers" [value]="officer">
+              {{officer}}
+            </mat-option>
+          </mat-select>
+          <mat-icon matSuffix>badge</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Delivery Date</mat-label>
+          <input matInput [matDatepicker]="deliveryDatePicker" formControlName="deliveryDate">
+          <mat-hint>MM/DD/YYYY</mat-hint>
+          <mat-datepicker-toggle matIconSuffix [for]="deliveryDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #deliveryDatePicker></mat-datepicker>
+          <mat-error *ngIf="vehicleForm.get('deliveryDate')?.hasError('required')">
+            Delivery date is required
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Financer</mat-label>
+          <mat-select formControlName="financerName">
+            <mat-option *ngFor="let financer of financers" [value]="financer">
+              {{financer}}
+            </mat-option>
+          </mat-select>
+          <mat-icon matSuffix>account_balance</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Finance Type</mat-label>
+        <mat-select formControlName="financeType">
+          <mat-option value="inhouse">In-House</mat-option>
+          <mat-option value="self">Self</mat-option>
+        </mat-select>
+        <mat-icon matSuffix>payments</mat-icon>
+      </mat-form-field>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Status</mat-label>
+          <mat-select formControlName="status">
+            <mat-option value="Active">Active</mat-option>
+            <mat-option value="Inactive">Inactive</mat-option>
+            <mat-option value="Pending">Pending</mat-option>
+            <mat-option value="Delivered">Delivered</mat-option>
+          </mat-select>
+          <mat-icon matSuffix>info</mat-icon>
+          <mat-error *ngIf="vehicleForm.get('status')?.hasError('required')">
+            Status is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Remarks</mat-label>
+        <textarea matInput formControlName="remarks" rows="3" 
+                  placeholder="Enter any additional remarks"></textarea>
+        <mat-icon matSuffix>note</mat-icon>
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button 
+            (click)="onCancel()" 
+            class="cancel-button"
+            [disabled]="isSaving">
+      <mat-icon>close</mat-icon> Cancel
+    </button>
+    
+    <button mat-raised-button 
+            color="primary" 
+            (click)="onSave(data.id)" 
+            [disabled]="!vehicleForm.valid || isSaving || isSaved"
+            class="save-button">
+      <mat-icon>save</mat-icon> 
+      {{isSaving ? 'Saving...' : 'Save Changes'}}
+    </button>
+    
+    <button mat-stroked-button 
+            color="primary" 
+            (click)="onUpdate()" 
+            [disabled]="!vehicleForm.valid || isSaving || !isSaved"
+            class="update-button"
+            [class.enabled]="isSaved">
+      <mat-icon>update</mat-icon> 
+      Update
+    </button>
+  </mat-dialog-actions>
+</div>

@@ -156,3 +156,24 @@
     }
   }
 }
+
+
+.action-button {
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  
+  i {
+    font-size: 18px;
+    color: #2193b0;
+  }
+
+  &:hover {
+    background-color: rgba(33, 147, 176, 0.1);
+  }
+}
+
+.mat-column-actions {
+  width: 80px;
+  text-align: center;
+}

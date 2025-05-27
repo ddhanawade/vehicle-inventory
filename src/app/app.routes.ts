@@ -8,6 +8,7 @@ import { VehicleDetailsComponent } from './components/vehicle-details/vehicle-de
 import { AddVehicleComponent } from './components/add-vehicle/add-vehicle.component';
 import { AuthGuard } from './services/AuthGuard';
 import { VehicleReportComponent } from './components/vehicle-report/vehicle-report.component';
+import { PreventBackGuard } from './services/PreventBackGuard';
 
 export const routes: Routes = [
     {
