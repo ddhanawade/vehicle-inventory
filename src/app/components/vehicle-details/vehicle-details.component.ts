@@ -16,7 +16,6 @@ import { MatTableModule } from '@angular/material/table';
   selector: 'app-vehicle-details',
   imports: [
     CommonModule,
-    DatePipe,
     MatTableModule,
     MatButtonModule,
     MatSortModule,
@@ -26,12 +25,13 @@ import { MatTableModule } from '@angular/material/table';
     MatInputModule
   ],
   templateUrl: './vehicle-details.component.html',
+  standalone: true,
   styleUrl: './vehicle-details.component.scss'
 })
 export class VehicleDetailsComponent implements OnInit{
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  
+
 
   dataSource!: MatTableDataSource<VehicleModel>;
   isLoading = false;
@@ -66,9 +66,9 @@ export class VehicleDetailsComponent implements OnInit{
   activeFilter: string | null = null;
 
   constructor(private route: ActivatedRoute, private vehicleService: DataService, private cdr: ChangeDetectorRef){
-    
+
   }
-  
+
   ngAfterViewInit() {
     if (this.dataSource) {
       this.dataSource.sort = this.sort;
@@ -91,7 +91,7 @@ export class VehicleDetailsComponent implements OnInit{
   exportToPDF() {
     const doc = new jsPDF();
     const table = document.querySelector('.responsive-table') as HTMLElement;
-  
+
     html2canvas(table).then((canvas) => {
       const imgData = canvas.toDataURL('image/png');
       const pdfWidth = doc.internal.pageSize.getWidth();
@@ -112,7 +112,7 @@ export class VehicleDetailsComponent implements OnInit{
 
 
   }
-  
+
   toggleFilter(column: string): void {
     this.activeFilter = this.activeFilter === column ? null : column;
   }
@@ -130,11 +130,11 @@ export class VehicleDetailsComponent implements OnInit{
       next: (result: VehicleModel[]) => {
         this.carDetailsList = result.filter((item) => item.model === modelName);
         this.dataSource = new MatTableDataSource<VehicleModel>(this.carDetailsList);
-        
+
         // Set up sorting and pagination
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
-        
+
         // Configure custom sorting
         this.dataSource.sortingDataAccessor = (item: VehicleModel, property: string) => {
           switch (property) {
@@ -154,8 +154,8 @@ export class VehicleDetailsComponent implements OnInit{
 this.dataSource.filterPredicate = (data: VehicleModel, filter: string) => {
   return Object.keys(data).some(key => {
     const value = data[key];
-    return value !== null && 
-           value !== undefined && 
+    return value !== null &&
+           value !== undefined &&
            value.toString().toLowerCase().includes(filter.toLowerCase());
   });
 };
@@ -192,11 +192,11 @@ this.dataSource.filterPredicate = (data: VehicleModel, filter: string) => {
   // Update the getColumnValue method
 getColumnValue(item: VehicleModel, column: string): string {
   const value = item[column as keyof VehicleModel];
-  
+
   if (column.includes('Date') && value) {
     return new Date(value).toLocaleDateString();
   }
-  
+
   return value?.toString() || '';
 }
 

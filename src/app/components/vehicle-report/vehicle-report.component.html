@@ -1,84 +1,54 @@
-<!DOCTYPE html>
-<html lang="en">
+<div class="filter-section">
+  <mat-form-field appearance="outline">
+    <mat-label>Start Date</mat-label>
+    <input matInput [matDatepicker]="startPicker" [(ngModel)]="startDate">
+    <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+    <mat-datepicker #startPicker></mat-datepicker>
+  </mat-form-field>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vehicle Inventory Management - Services</title>
-    <!-- <link rel="stylesheet" href="styles.css"> -->
-</head>
+  <mat-form-field appearance="outline">
+    <mat-label>End Date</mat-label>
+    <input matInput [matDatepicker]="endPicker" [(ngModel)]="endDate">
+    <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+    <mat-datepicker #endPicker></mat-datepicker>
+  </mat-form-field>
 
-<body>
-  <div class="page-container">
-    <div class="report-container">
-      <div class="report-header">
-        <h2><i class="fas fa-chart-line"></i> Vehicle Sales Report</h2>
-      </div>
-  
-      <!-- Filter Section -->
-      <div class="filter-section">
-        <div class="filter-group">
-          <mat-form-field appearance="outline">
-            <mat-label>Model</mat-label>
-            <mat-select [(ngModel)]="selectedModel">
-              <mat-option *ngFor="let model of models" [value]="model">{{ model }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-  
-          <mat-form-field appearance="outline">
-            <mat-label>Start Date</mat-label>
-            <input matInput [matDatepicker]="startPicker" [(ngModel)]="startDate">
-            <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
-            <mat-datepicker #startPicker></mat-datepicker>
-          </mat-form-field>
-  
-          <mat-form-field appearance="outline">
-            <mat-label>End Date</mat-label>
-            <input matInput [matDatepicker]="endPicker" [(ngModel)]="endDate">
-            <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
-            <mat-datepicker #endPicker></mat-datepicker>
-          </mat-form-field>
-  
-          <button mat-raised-button class="apply-button" (click)="applyFilters()">
-            <i class="fas fa-filter"></i> Apply Filters
-          </button>
-        </div>
-      </div>
-  
-      <!-- Data Table -->
-      <div class="table-container mat-elevation-z8">
-        <table mat-table [dataSource]="filteredVehicles">
-          <ng-container matColumnDef="model">
-            <th mat-header-cell *matHeaderCellDef> Model </th>
-            <td mat-cell *matCellDef="let vehicle"> {{ vehicle.model }} </td>
-          </ng-container>
-  
-          <ng-container matColumnDef="salePrice">
-            <th mat-header-cell *matHeaderCellDef> Sale Price </th>
-            <td mat-cell *matCellDef="let vehicle" class="price-cell"> 
-              {{ vehicle.salePrice | currency }} 
-            </td>
-          </ng-container>
-  
-          <ng-container matColumnDef="soldDate">
-            <th mat-header-cell *matHeaderCellDef> Sold Date </th>
-            <td mat-cell *matCellDef="let vehicle"> {{ vehicle.soldDate | date:'mediumDate' }} </td>
-          </ng-container>
-  
-          <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>
-      </div>
-  
-      <!-- Total Sales Summary -->
-      <div class="summary-card">
-        <div class="summary-content">
-          <span class="summary-label">Total Sales</span>
-          <span class="summary-value">{{ totalSales | currency }}</span>
-        </div>
-      </div>
-    </div>
-  </div>
+  <mat-form-field appearance="outline">
+    <mat-label>City</mat-label>
+    <input matInput [(ngModel)]="city">
+  </mat-form-field>
 
-  </body>
-  </html>
+  <mat-form-field appearance="outline">
+    <mat-label>Make</mat-label>
+    <input matInput [(ngModel)]="make">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Model</mat-label>
+    <input matInput [(ngModel)]="model">
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" (click)="applyFilters()">Apply Filters</button>
+</div>
+
+<div class="charts-section">
+  <mat-card>
+    <mat-card-title>Monthly Sales</mat-card-title>
+    <canvas baseChart
+            [datasets]="monthlySalesData"
+            [labels]="monthlySalesLabels"
+            [options]="monthlySalesOptions"
+            [chartType]="monthlySalesType">
+    </canvas>
+  </mat-card>
+
+  <mat-card>
+    <mat-card-title>Top Models Sold</mat-card-title>
+    <canvas baseChart
+            [data]="topModelData"
+            [labels]="topModelLabels"
+            [options]="topModelOptions"
+            [chartType]="topModelType">
+    </canvas>
+  </mat-card>
+</div>

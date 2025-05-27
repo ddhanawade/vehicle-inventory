@@ -1,53 +1,126 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { ChartOptions, ChartType, ChartDataset, ChartData } from 'chart.js';
+import { CommonModule, JsonPipe } from '@angular/common';
+import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
-
+import { MatCardModule } from '@angular/material/card';
+import { NgChartsModule } from 'ng2-charts';
+// import { ChartsModule } from 'ng2-charts';
 
 @Component({
   selector: 'app-vehicle-report',
-  imports: [BrowserModule,FormsModule,MatTableModule, MatFormFieldModule, MatInputModule, MatButtonModule, CommonModule, MatSelectModule, MatDatepickerModule, MatNativeDateModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatButtonModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatIconModule,
+    MatDatepickerModule,
+    FormsModule,
+    MatCardModule,
+    NgChartsModule
+  ],
   templateUrl: './vehicle-report.component.html',
   styleUrls: ['./vehicle-report.component.scss']
 })
 export class VehicleReportComponent implements OnInit {
-  models: string[] = ['Tata', 'Toyota', 'Eicher'];
-  selectedModel: string = '';
+  // Filters
   startDate: Date | null = null;
   endDate: Date | null = null;
+  city: string = '';
+  make: string = '';
+  model: string = '';
 
-  vehicles = [
-    { model: 'Tata', salePrice: 500000, soldDate: new Date('2023-10-01') },
-    { model: 'Toyota', salePrice: 700000, soldDate: new Date('2023-10-05') },
-    { model: 'Eicher', salePrice: 800000, soldDate: new Date('2023-10-10') },
-  ];
+  // Monthly Sales Chart
+  monthlySalesLabels: string[] = [];
+  monthlySalesData: ChartDataset[] = [];
+  monthlySalesOptions: ChartOptions = { responsive: true };
+  monthlySalesType: ChartType = 'bar';
 
-  filteredVehicles = [...this.vehicles];
-  displayedColumns: string[] = ['model', 'salePrice', 'soldDate'];
-  totalSales: number = 0;
+  // Top Model Sold Chart
+  topModelLabels: string[] = [];
+  topModelOptions: ChartOptions<'pie'> = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top'
+      },
+      tooltip: {
+        enabled: true
+      }
+    }
+  };
+  topModelType: ChartType = 'pie';
 
-  ngOnInit() {
-    this.calculateTotalSales();
+  constructor(private http: HttpClient) {}
+
+  ngOnInit(): void {
+    this.fetchMonthlySales();
+    this.fetchTopModelSold();
   }
 
-  applyFilters() {
-    this.filteredVehicles = this.vehicles.filter(vehicle => {
-      const matchesModel = this.selectedModel ? vehicle.model === this.selectedModel : true;
-      const matchesStartDate = this.startDate ? vehicle.soldDate >= this.startDate : true;
-      const matchesEndDate = this.endDate ? vehicle.soldDate <= this.endDate : true;
-      return matchesModel && matchesStartDate && matchesEndDate;
+  fetchMonthlySales(): void {
+    const params = {
+      dateRange: `${this.startDate?.toISOString().split('T')[0]}_to_${this.endDate?.toISOString().split('T')[0]}`,
+      city: this.city,
+      make: this.make,
+      model: this.model
+    };
+
+    this.http.get<any>('/api/analytics/monthly-sales', { params }).subscribe(response => {
+      this.monthlySalesLabels = response.labels; // e.g., ['Jan', 'Feb', 'Mar']
+      this.monthlySalesData = [{ data: response.data, label: 'Monthly Sales' }]; // e.g., [100, 200, 300]
     });
-    this.calculateTotalSales();
   }
 
-  calculateTotalSales() {
-    this.totalSales = this.filteredVehicles.reduce((sum, vehicle) => sum + vehicle.salePrice, 0);
+  topModelData: ChartData<'pie', number[]> = {
+    labels: [],
+    datasets: []
+  };
+
+  fetchTopModelSold(): void {
+    const params = {
+      startDate: this.startDate?.toISOString().split('T')[0] || '',
+      endDate: this.endDate?.toISOString().split('T')[0] || '',
+      city: this.city,
+      make: this.make,
+      model: this.model
+    };
+
+    interface TopModelResponse {
+      labels: string[];
+      data: number[];
+    }
+
+    this.http.get<TopModelResponse>('/api/analytics/top-model-sold', {
+      params,
+      responseType: 'json'
+    }).subscribe(response => {
+      this.topModelData = {
+        labels: response.labels, // e.g., ['Model A', 'Model B']
+        datasets: [
+          {
+            data: response.data, // e.g., [50, 30]
+            label: 'Top Models'
+          }
+        ]
+      };
+    });
+  }
+
+  applyFilters(): void {
+    this.fetchMonthlySales();
+    this.fetchTopModelSold();
   }
 }
