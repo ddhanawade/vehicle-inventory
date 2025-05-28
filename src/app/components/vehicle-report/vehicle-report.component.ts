@@ -165,6 +165,7 @@ topModelLabels: string [] = [];
 
     this.reportService.getTopModelSold(params).subscribe({
       next: (response) => {
+        // Check if response contains labels and data
         if (response && response.labels && response.data) {
           this.topModelData = {
             labels: response.labels,
@@ -181,6 +182,7 @@ topModelLabels: string [] = [];
             }]
           };
         }
+        console.log('Top Model Response:', JSON.stringify(this.topModelData));
       },
       error: (error) => {
         console.error('Error fetching top models:', error);
