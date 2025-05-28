@@ -145,3 +145,23 @@
     }
   }
 }
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.success-message {
+  color: #4caf50;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+  background-color: rgba(76, 175, 80, 0.1);
+}
+
+.form-fields {
+  &.disabled {
+    opacity: 0.7;
+    pointer-events: none;
+  }
+}

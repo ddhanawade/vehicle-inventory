@@ -2,9 +2,19 @@
   <h2 mat-dialog-title>
     <i class="fas fa-car"></i> Edit Vehicle Details
   </h2>
-  
+  <h2 mat-dialog-title>{{ isSaved ? 'Edit Order Details' : 'Create New Order' }}</h2>
   <mat-dialog-content>
     <form [formGroup]="vehicleForm" class="vehicle-form">
+       <!-- Show loading spinner while fetching data -->
+    <div *ngIf="isSaving" class="loading-spinner">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <!-- Success message -->
+    <div *ngIf="successMessage" class="success-message">
+      {{ successMessage }}
+    </div>
+    <div class="form-fields" [class.disabled]="isSaving">
       <div class="form-row">
         <mat-form-field appearance="outline">
           <mat-label>Customer Name</mat-label>
@@ -102,34 +112,25 @@
                   placeholder="Enter any additional remarks"></textarea>
         <mat-icon matSuffix>note</mat-icon>
       </mat-form-field>
+      </div>
     </form>
   </mat-dialog-content>
 
   <mat-dialog-actions align="end">
-    <button mat-button 
-            (click)="onCancel()" 
-            class="cancel-button"
-            [disabled]="isSaving">
-      <mat-icon>close</mat-icon> Cancel
+    <button mat-button (click)="onCancel()">Cancel</button>
+    
+    <button mat-raised-button color="primary" 
+            *ngIf="!isSaved" 
+            [disabled]="!vehicleForm.valid || isSaving"
+            (click)="onSave(vehicleForm.get('vehicleId')?.value)">
+      {{ isSaving ? 'Saving...' : 'Save' }}
     </button>
     
-    <button mat-raised-button 
-            color="primary" 
-            (click)="onSave(data.id)" 
-            [disabled]="!vehicleForm.valid || isSaving || isSaved"
-            class="save-button">
-      <mat-icon>save</mat-icon> 
-      {{isSaving ? 'Saving...' : 'Save Changes'}}
-    </button>
-    
-    <button mat-stroked-button 
-            color="primary" 
-            (click)="onUpdate()" 
-            [disabled]="!vehicleForm.valid || isSaving || !isSaved"
-            class="update-button"
-            [class.enabled]="isSaved">
-      <mat-icon>update</mat-icon> 
-      Update
+    <button mat-raised-button color="primary" 
+            *ngIf="isSaved" 
+            [disabled]="!vehicleForm.valid || isSaving"
+            (click)="onUpdate()">
+      {{ isSaving ? 'Updating...' : 'Update' }}
     </button>
   </mat-dialog-actions>
 </div>

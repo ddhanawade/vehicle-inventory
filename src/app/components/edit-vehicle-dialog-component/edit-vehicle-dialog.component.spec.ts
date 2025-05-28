@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { EditVehicleDialogComponentComponent } from './edit-vehicle-dialog.component';
+import { EditVehicleDialogComponent } from './edit-vehicle-dialog.component';
 
-describe('EditVehicleDialogComponentComponent', () => {
-  let component: EditVehicleDialogComponentComponent;
-  let fixture: ComponentFixture<EditVehicleDialogComponentComponent>;
+describe('EditVehicleDialogComponent', () => {
+  let component: EditVehicleDialogComponent;
+  let fixture: ComponentFixture<EditVehicleDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EditVehicleDialogComponentComponent]
+      imports: [EditVehicleDialogComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(EditVehicleDialogComponentComponent);
+    fixture = TestBed.createComponent(EditVehicleDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
