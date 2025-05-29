@@ -13,7 +13,7 @@
             <div class="form-header">
                 <h2><i class="fas fa-plus-circle"></i> Add Vehicle Details</h2>
             </div>
-
+            
             <form [formGroup]="vehicleForm" (ngSubmit)="onSubmit()">
                 <div class="tab-container">
                     <!-- Tab Navigation -->
@@ -37,33 +37,33 @@
                     <!-- Basic Details Tab -->
                     <div class="tab-content" *ngIf="currentTab === 0">
                         <div class="form-group">
-                            <label for="make">Make</label>
+                            <label for="make">Make <span class="required">*</span></label>
                             <select id="make" formControlName="make">
                                 <option value="" disabled>Select Make</option>
                                 <option *ngFor="let make of makes" [value]="make">{{ make }}</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="model">Model Name</label>
+                            <label for="model">Model Name <span class="required">*</span></label>
                             <input type="text" id="model" formControlName="model" placeholder="Enter Model Name" />
                         </div>
                         <div class="form-group">
-                            <label for="grade">Grade</label>
+                            <label for="grade">Grade <span class="required">*</span></label>
                             <input type="text" id="grade" formControlName="grade" placeholder="Enter Grade" />
                         </div>
                         <div class="form-group">
-                            <label for="fuelType">Fuel Type</label>
+                            <label for="fuelType">Fuel Type <span class="required">*</span></label>
                             <select id="fuelType" formControlName="fuelType">
                                 <option value="" disabled>Select Fuel Type</option>
                                 <option *ngFor="let fuel of fuelTypes" [value]="fuel">{{ fuel }}</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="suffix">Suffix</label>
+                            <label for="suffix">Suffix <span class="required">*</span></label>
                             <input type="text" id="suffix" formControlName="suffix" placeholder="Enter Suffix" />
                         </div>
                         <div class="form-group">
-                            <label for="manufactureDate">Manufacture Date</label>
+                            <label for="manufactureDate">Manufacture Date <span class="required">*</span></label>
                             <input type="date" id="manufactureDate" formControlName="manufactureDate" />
                         </div>
                     </div>
@@ -71,27 +71,27 @@
                     <!-- Specifications Tab -->
                     <div class="tab-content" *ngIf="currentTab === 1">
                         <div class="form-group">
-                            <label for="exteriorColor">Exterior Color</label>
+                            <label for="exteriorColor">Exterior Color <span class="required">*</span></label>
                             <input type="text" id="exteriorColor" formControlName="exteriorColor"
                                 placeholder="Enter Exterior Color" />
                         </div>
                         <div class="form-group">
-                            <label for="interiorColor">Interior Color</label>
+                            <label for="interiorColor">Interior Color <span class="required">*</span></label>
                             <input type="text" id="interiorColor" formControlName="interiorColor"
                                 placeholder="Enter Interior Color" />
                         </div>
                         <div class="form-group">
-                            <label for="chassisNumber">Chassis Number</label>
+                            <label for="chassisNumber">Chassis Number <span class="required">*</span></label>
                             <input type="text" id="chassisNumber" formControlName="chassisNumber"
                                 placeholder="Enter Chassis Number" />
                         </div>
                         <div class="form-group">
-                            <label for="engineNumber">Engine Number</label>
+                            <label for="engineNumber">Engine Number <span class="required">*</span></label>
                             <input type="text" id="engineNumber" formControlName="engineNumber"
                                 placeholder="Enter Engine Number" />
                         </div>
                         <div class="form-group">
-                            <label for="keyNumber">Key Number</label>
+                            <label for="keyNumber">Key Number <span class="required">*</span></label>
                             <input type="text" id="keyNumber" formControlName="keyNumber"
                                 placeholder="Enter Key Number" />
                         </div>
@@ -101,41 +101,41 @@
                     <!-- Additional Info Tab -->
                     <div class="tab-content" *ngIf="currentTab === 2">
                         <div class="form-group">
-                            <label for="location">Location</label>
+                            <label for="location">Location <span class="required">*</span></label>
                             <input type="text" id="location" formControlName="location" placeholder="Enter Location" />
                         </div>
                         <div class="form-group">
-                            <label for="status">Status</label>
+                            <label for="status">Status <span class="required">*</span></label>
                             <select id="status" formControlName="status">
                                 <option value="" disabled>Select Status</option>
                                 <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="receivedDate">Received Date</label>
+                            <label for="receivedDate">Received Date <span class="required">*</span></label>
                             <input type="date" id="receivedDate" formControlName="receivedDate" />
                         </div>
                         <div class="form-group">
-                            <label for="invoiceDate">Invoice Date</label>
+                            <label for="invoiceDate">Invoice Date <span class="required">*</span></label>
                             <input type="date" id="invoiceDate" formControlName="invoiceDate" />
                         </div>
                         <div class="form-group">
-                            <label for="invoiceNumber">Invoice Number</label>
+                            <label for="invoiceNumber">Invoice Number <span class="required">*</span></label>
                             <input type="text" id="invoiceNumber" formControlName="invoiceNumber"
                                 placeholder="Enter Invoice Number" />
                         </div>
                         <div class="form-group">
-                            <label for="purchaseDealer">Purchase Dealer</label>
+                            <label for="purchaseDealer">Purchase Dealer <span class="required">*</span></label>
                             <input type="text" id="purchaseDealer" formControlName="purchaseDealer"
                                 placeholder="Enter Purchase Dealer" />
                         </div>
                         <div class="form-group">
-                            <label for="tkmInvoiceValue">TKM Invoice Value</label>
+                            <label for="tkmInvoiceValue">Invoice Value <span class="required">*</span></label>
                             <input type="text" id="tkmInvoiceValue" formControlName="tkmInvoiceValue"
                                 placeholder="Enter TKM Invoice Value" />
                         </div>
                         <div class="form-group">
-                            <label for="interest">Interest</label>
+                            <label for="interest">Interest <span class="required">*</span></label>
                             <input type="text" id="interest" formControlName="interest" placeholder="Enter Interest" />
                         </div>
                     </div>
@@ -153,10 +153,11 @@
                         <i class="fas fa-check-circle"></i> Add Vehicle
                     </button>
                 </div>
+                <div *ngIf="successMessage" class="success-message">
+                    {{ successMessage }}
+                  </div>
             </form>
-            <div *ngIf="successMessage" class="small-success-message">
-                <p>{{ successMessage }}</p>
-            </div>
+            
         </div>
     </div>
     <!-- Load external scripts if needed -->
