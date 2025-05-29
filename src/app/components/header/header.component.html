@@ -11,13 +11,13 @@
             </a>
         </li>
         <li>
-            <a routerLink="/user-page" routerLinkActive="active" data-title="Users">
+            <a routerLink="/user-page" routerLinkActive="active" data-title="Users" *ngIf="user?.roles?.includes('ADMIN')">
                 <i class="fas fa-user"></i>
                 <span>Users</span>
             </a>
         </li>
         <li>
-            <a routerLink="/add-vehicle" routerLinkActive="active" data-title="Add Vehicle">
+            <a routerLink="/add-vehicle" routerLinkActive="active" data-title="Add Vehicle" >
                 <i class="fas fa-plus-circle"></i>
                 <span>Add Vehicle</span>
             </a>

@@ -6,6 +6,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
 import { userService } from '../../services/userService';
 import { UserModel } from '../../models/UserModel';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -20,9 +21,34 @@ export class LoginComponent  {
   successMessage: string = '';
   showPassword: boolean = false;
   user: UserModel | null = null;
+  showEditPopup: boolean = false;
+  email : string = ''
 
   constructor(private authService: AuthService, private userservice: userService, private router: Router, private snackBar: MatSnackBar) {}
 
+  showPopup(): void {
+      this.showEditPopup = true;
+    }
+
+  closeEditPopup(): void {
+    this.showEditPopup = false;
+  }
+
+  onReset(): void{
+    this.authService.resetPassword(this.email).subscribe({
+      next: (response) => {
+        console.log("Email reset link shared on email...");
+      },
+      error: (err) => {
+        this.errorMessage = 'Email not exist...';
+        setTimeout(() => {
+          this.errorMessage = '';
+          //this.router.navigate(['/']); // Redirect to a different page if needed
+        }, 2000);
+        console.error('Login failed:', err);
+      }
+    })
+  }
 
   login() {
     if (this.username == ''|| this.password == '') {
