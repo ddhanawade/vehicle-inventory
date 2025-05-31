@@ -33,7 +33,7 @@ export class HeaderComponent implements OnInit {
     // Subscribe to the user observable to get the current user
     this.authService.getUser().subscribe((user) => {
       this.user = user;
-      console.log('Current User:', this.user);
+      // console.log('Current User:', this.user);
     });
   }
 

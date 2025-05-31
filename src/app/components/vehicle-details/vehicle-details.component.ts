@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, Renderer2, ViewChild } from '@angular/core';
 import jsPDF from 'jspdf';
 import * as XLSX from 'xlsx';
 import { VehicleModel } from '../../models/VehicleModel';
@@ -15,6 +15,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { EditVehicleDialogComponent } from '../edit-vehicle-dialog-component/edit-vehicle-dialog.component';
 import { OrderService } from '../../services/OrderService';
+import { UpdateVehicleComponent } from '../update-vehicle/update-vehicle.component';
+import { MatIcon } from '@angular/material/icon';
 @Component({
   selector: 'app-vehicle-details',
   imports: [
@@ -26,12 +28,13 @@ import { OrderService } from '../../services/OrderService';
     MatPaginatorModule,
     MatFormFieldModule,
     MatInputModule,
-    MatInputModule
+    MatInputModule,
+    MatIcon
   ],
   templateUrl: './vehicle-details.component.html',
   styleUrl: './vehicle-details.component.scss'
 })
-export class VehicleDetailsComponent implements OnInit{
+export class VehicleDetailsComponent implements OnInit {
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -69,9 +72,9 @@ export class VehicleDetailsComponent implements OnInit{
   filters: { [key: string]: string } = {};
   activeFilter: string | null = null;
 
-  constructor(private route: ActivatedRoute, private vehicleService: DataService, private cdr: ChangeDetectorRef,  private dialog: MatDialog,
-    private orderService: OrderService
-  ){
+  constructor(private route: ActivatedRoute, private vehicleService: DataService, private cdr: ChangeDetectorRef, private dialog: MatDialog,
+    private orderService: OrderService, private renderer: Renderer2
+  ) {
 
   }
 
@@ -93,28 +96,8 @@ export class VehicleDetailsComponent implements OnInit{
     });
   }
 
-  // editVehicle(vehicle: any): void {
-  //   this.orderService.getOrdersByVehicleId(vehicle.vehicleId).subscribe(orderData => {
-  //     console.log("dddd " + JSON.stringify(vehicle))
-  //     const dialogRef = this.dialog.open(EditVehicleDialogComponent, {
-  //       width: '600px',
-  //       data: orderData // Pass the fetched data to the dialog
-  //     });
-
-  //   dialogRef.afterClosed().subscribe(result => {
-  //     if (result) {
-  //       // Update the vehicle in your data source
-  //       const index = this.dataSource.data.findIndex(item => item.id === result.id);
-  //       if (index > -1) {
-  //         this.dataSource.data[index] = result;
-  //         this.dataSource._updateChangeSubscription(); // Refresh the table
-  //       }
-  //     }
-  //   });
-  // }
-
   editVehicle(vehicle: any): void {
-    console.log("Editing vehicle:", JSON.stringify(vehicle));
+    // console.log("Editing vehicle:", JSON.stringify(vehicle));
     const dialogRef = this.dialog.open(EditVehicleDialogComponent, {
       width: '600px',
       data: { ...vehicle }
@@ -126,36 +109,82 @@ export class VehicleDetailsComponent implements OnInit{
         if (index > -1) {
           this.dataSource.data[index] = result;
           this.dataSource._updateChangeSubscription();
-    // this.orderService.getOrdersByVehicleId(vehicle.id).subscribe(vehicleData => {
-    //   const dialogRef = this.dialog.open(EditVehicleDialogComponent, {
-    //     width: '600px',
-    //     data: vehicleData // Pass the fetched data to the dialog
-    //   });
-
-    //   dialogRef.afterClosed().subscribe(result => {
-    //     if (result) {
-    //       console.log('Updated Vehicle Data:', result);
-    //       // Handle the updated data here
-    //     }
-    //   });
-    // });
         }
+      }
+    });
   }
-});
-}
+
+  updateVehicle(vehicle: any): void {
+    console.log("Update vehicle:", JSON.stringify(vehicle));
+    const dialogRef = this.dialog.open(UpdateVehicleComponent, {
+      width: '80%', // Adjust width for responsiveness
+      maxWidth: '600px', // Set a maximum width
+      height: 'auto', // Adjust height dynamically
+      data: { ...vehicle }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Update the vehicle in your data source
+        const index = this.dataSource.data.findIndex(item => item.id === result.id);
+        if (index > -1) {
+          this.dataSource.data[index] = result;
+          this.dataSource._updateChangeSubscription();
+        }
+      }
+    });
+  }
+
+  // exportToPDF() {
+  //   const doc = new jsPDF();
+  //   const table = document.querySelector('.responsive-table') as HTMLElement;
+
+  //   html2canvas(table).then((canvas) => {
+  //     const imgData = canvas.toDataURL('image/png');
+  //     const pdfWidth = doc.internal.pageSize.getWidth();
+  //     const pdfHeight = (canvas.height * pdfWidth) / canvas.width; // Calculate height proportionally
+  //     doc.addImage(imgData, 'PNG', 10, 10, pdfWidth - 20, pdfHeight); // Add image to PDF
+  //     doc.save('vehicle-details.pdf'); // Save the PDF
+  //   }).catch((error) => {
+  //     console.error('Error generating PDF:', error);
+  //   });
+  // }
 
   exportToPDF() {
-    const doc = new jsPDF();
-    const table = document.querySelector('.responsive-table') as HTMLElement;
-
-    html2canvas(table).then((canvas) => {
+    const table = document.querySelector('table') as HTMLElement;
+  
+    if (!table) {
+      console.error('Table element not found');
+      return;
+    }
+  
+    // Save original styles for excluded columns
+    const excludedColumns = table.querySelectorAll('.Actions');
+    const originalDisplayStyles: string[] = [];
+    excludedColumns.forEach((col) => {
+      originalDisplayStyles.push((col as HTMLElement).style.display);
+      (col as HTMLElement).style.display = 'none'; // Hide the column
+    });
+  
+    html2canvas(table, { scale: 2, useCORS: true }).then((canvas) => {
       const imgData = canvas.toDataURL('image/png');
-      const pdfWidth = doc.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width; // Calculate height proportionally
-      doc.addImage(imgData, 'PNG', 10, 10, pdfWidth - 20, pdfHeight); // Add image to PDF
-      doc.save('vehicle-details.pdf'); // Save the PDF
+      const pdf = new jsPDF();
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+  
+      pdf.addImage(imgData, 'PNG', 10, 10, pdfWidth - 20, pdfHeight);
+      pdf.save('vehicle-data.pdf');
+  
+      // Restore original styles for excluded columns
+      excludedColumns.forEach((col, index) => {
+        (col as HTMLElement).style.display = originalDisplayStyles[index];
+      });
     }).catch((error) => {
       console.error('Error generating PDF:', error);
+  
+      // Restore original styles in case of error
+      excludedColumns.forEach((col, index) => {
+        (col as HTMLElement).style.display = originalDisplayStyles[index];
+      });
     });
   }
 
@@ -207,14 +236,14 @@ export class VehicleDetailsComponent implements OnInit{
         };
 
         // Update the filter predicate
-this.dataSource.filterPredicate = (data: VehicleModel, filter: string) => {
-  return Object.keys(data).some(key => {
-    const value = data[key];
-    return value !== null &&
-           value !== undefined &&
-           value.toString().toLowerCase().includes(filter.toLowerCase());
-  });
-};
+        this.dataSource.filterPredicate = (data: VehicleModel, filter: string) => {
+          return Object.keys(data).some(key => {
+            const value = data[key];
+            return value !== null &&
+              value !== undefined &&
+              value.toString().toLowerCase().includes(filter.toLowerCase());
+          });
+        };
 
         this.totalVehicles = this.carDetailsList.length;
         this.isLoading = false;
@@ -246,15 +275,15 @@ this.dataSource.filterPredicate = (data: VehicleModel, filter: string) => {
   }
 
   // Update the getColumnValue method
-getColumnValue(item: VehicleModel, column: string): string {
-  const value = item[column as keyof VehicleModel];
+  getColumnValue(item: VehicleModel, column: string): string {
+    const value = item[column as keyof VehicleModel];
 
-  if (column.includes('Date') && value) {
-    return new Date(value).toLocaleDateString();
+    if (column.includes('Date') && value) {
+      return new Date(value).toLocaleDateString();
+    }
+
+    return value?.toString() || '';
   }
-
-  return value?.toString() || '';
-}
 
   shouldTruncate(column: string): boolean {
     // Add columns that should be truncated
@@ -263,7 +292,7 @@ getColumnValue(item: VehicleModel, column: string): string {
   }
 
 }
-function html2canvas(table: HTMLElement): Promise<HTMLCanvasElement> {
+function html2canvas(table: HTMLElement, p0: { scale: number; useCORS: boolean; }): Promise<HTMLCanvasElement> {
   return new Promise((resolve, reject) => {
     try {
       import('html2canvas').then((html2canvas) => {

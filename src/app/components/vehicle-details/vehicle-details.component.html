@@ -56,6 +56,9 @@
               <button mat-icon-button color="primary" (click)="editVehicle(row)" class="action-button">
                 <i class="fas fa-edit"></i>
               </button>
+              <button mat-icon-button color="primary" (click)="updateVehicle(row)" class="action-button">
+                <mat-icon>edit_note</mat-icon>
+              </button>
             </td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>

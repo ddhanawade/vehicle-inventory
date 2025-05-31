@@ -1,0 +1,324 @@
+.page-container {
+    padding: 20px;
+    padding-left: 280px; // Account for header width
+    min-height: 100vh;
+    background: #f8fafc;
+  
+    @media (max-width: 768px) {
+      padding-left: 20px;
+      padding-top: 80px; // Account for mobile header
+    }
+  }
+  
+  .add-vehicle-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+  
+  .form-header {
+    background: linear-gradient(135deg, #2193b0, #6dd5ed);
+    padding: 20px;
+    color: white;
+  
+    h2 {
+      margin: 0;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+  }
+  
+  .tab-container {
+    padding: 20px;
+  }
+  
+  .tab-header {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+  
+    &::-webkit-scrollbar {
+      height: 4px;
+    }
+  
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+  
+    &::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 2px;
+    }
+  }
+  
+  .tab-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    background: #f1f5f9;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+  
+    i {
+      font-size: 1.1rem;
+    }
+  
+    &:hover {
+      background: #e2e8f0;
+    }
+  
+    &.active {
+      background: #2193b0;
+      color: white;
+    }
+  }
+  
+  .form-group {
+    margin-bottom: 1.5rem;
+    position: relative;
+
+    label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #1e293b;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: color 0.3s ease;
+    }
+  
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+  
+      &:focus {
+        outline: none;
+        border-color: #2193b0;
+        box-shadow: 0 0 0 3px rgba(33, 147, 176, 0.1);
+      }
+  
+      &:disabled {
+        background: #f8fafc;
+        cursor: not-allowed;
+      }
+    }
+    
+  }
+  
+  .form-actions {
+    display: flex;
+    gap: 10px;
+    padding: 20px;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+  
+    .nav-button, .submit-button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+  
+      &:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+    }
+  
+    .nav-button {
+      background: #e2e8f0;
+      color: #64748b;
+  
+      &:hover:not(:disabled) {
+        background: #cbd5e1;
+      }
+    }
+  
+    .submit-button {
+      background: #2193b0;
+      color: white;
+      margin-left: auto;
+  
+      &:hover:not(:disabled) {
+        background: #1a7490;
+      }
+    }
+  }
+  
+  .success-message {
+    color: #4caf50;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    background-color: rgba(76, 175, 80, 0.1);
+  }
+  
+  @media (max-width: 640px) {
+    .tab-button span {
+      display: none;
+    }
+  
+    .form-actions {
+      flex-direction: column;
+  
+      .submit-button {
+        margin-left: 0;
+      }
+    }
+  
+    .form-group {
+      margin-bottom: 16px;
+  
+      input, select {
+        padding: 10px;
+      }
+    }
+  }
+  .small-success-message {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(to right, #31B978, #40CF8E);
+    color: white;
+    padding: 16px 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+    box-shadow: 0 4px 12px rgba(49, 185, 120, 0.2);
+    transform: translateY(0);
+    animation: slideIn 0.3s ease-out;
+  
+    &::before {
+      content: '\f058'; // Font Awesome checkmark icon
+      font-family: 'Font Awesome 5 Free';
+      font-weight: 900;
+      font-size: 1.2rem;
+    }
+  
+    p {
+      margin: 0;
+      font-size: 0.95rem;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+  }
+  
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .required {
+    color: red;
+    font-weight: bold;
+  }
+
+  .edit-dialog-container {
+  padding: 20px;
+  max-width: 800px;
+  overflow-y: scroll; // Enable scrolling
+
+  // Hide scrollbar for WebKit browsers
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  // Hide scrollbar for Firefox
+  scrollbar-width: none;
+
+  mat-dialog-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #2193b0;
+    margin-bottom: 24px;
+
+    i {
+      font-size: 24px;
+    }
+  }
+
+  .vehicle-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .form-row {
+      display: flex;
+      gap: 16px;
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+      }
+
+      mat-form-field {
+        flex: 1;
+      }
+    }
+
+    .full-width {
+      width: 100%;
+    }
+
+    mat-form-field {
+      .mat-icon {
+        color: #64748b;
+      }
+
+      &.mat-focused {
+        .mat-icon {
+          color: #2193b0;
+        }
+      }
+    }
+  }
+
+  mat-dialog-actions {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #e2e8f0;
+
+    button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+
+      &.save-button {
+        background: #2193b0;
+        color: white;
+
+        &:disabled {
+          background: #94a3b8;
+        }
+      }
+
+      &.cancel-button:hover {
+        background: #fee2e2;
+      }
+    }
+  }
+}

@@ -8,13 +8,14 @@
 </head>
 
 <body>
-    <div class="page-container">
-        <div class="add-vehicle-container">
+    <mat-dialog-content>
+    <!-- <div class="page-container"> -->
+        <div class="edit-dialog-container">
             <div class="form-header">
-                <h2><i class="fas fa-plus-circle"></i> Add Vehicle Details</h2>
+                <h2><i class="fas fa-plus-circle"></i> Update Vehicle Details</h2>
             </div>
             
-            <form [formGroup]="vehicleForm" (ngSubmit)="onSubmit()">
+            <form [formGroup]="vehicleForm" (ngSubmit)="onUpdate()">
                 <div class="tab-container">
                     <!-- Tab Navigation -->
                     <div class="tab-header">
@@ -55,7 +56,7 @@
                             <label for="fuelType">Fuel Type <span class="required">*</span></label>
                             <select id="fuelType" formControlName="fuelType">
                                 <option value="" disabled>Select Fuel Type</option>
-                                <option *ngFor="let fuel of fuelTypes" [value]="fuel">{{ fuel }}</option>
+                                <option *ngFor="let fuelType of fuelTypes" [value]="fuelType">{{ fuelType }}</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -148,9 +149,12 @@
                     <button type="button" class="nav-button" *ngIf="currentTab < 2" (click)="nextTab()">
                         Next <i class="fas fa-arrow-right"></i>
                     </button>
+                    <button type="button" class="nav-button" (click)="onCancel()">
+                         Cancel
+                    </button>
                     <button type="submit" class="submit-button" *ngIf="currentTab === 2"
                         [disabled]="vehicleForm.invalid">
-                        <i class="fas fa-check-circle"></i> Add Vehicle
+                        <i class="fas fa-check-circle"></i> Update Vehicle
                     </button>
                 </div>
                 <div *ngIf="successMessage" class="success-message">
@@ -159,7 +163,8 @@
             </form>
             
         </div>
-    </div>
+    <!-- </div> -->
+</mat-dialog-content>
     <!-- Load external scripts if needed -->
     <script src="script.js"></script>
 </body>
