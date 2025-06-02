@@ -373,7 +373,19 @@ getObjectKeys(obj: any): string[] {
   // Add this method to get vehicles for a specific location
   getVehiclesByLocation(location: string): void {
     this.selectedLocation = location;
-    this.locationVehicles = this.carDetailsList.filter(car => car.location === location);
+
+    if (this.hasRole('ADMIN')) {
+      this.locationVehicles = this.carDetailsList.filter(car => car.location === location);
+    } else if (this.hasRole('TATA')) {
+      this.locationVehicles = this.carDetailsList.filter(car => (car.location === location && car.make === 'Tata'));
+    } else if (this.hasRole('TOYOTA')) {
+      this.locationVehicles = this.carDetailsList.filter(car => (car.location === location && car.make === 'Toyota'));
+    } else if (this.hasRole('EICHER')) {
+      this.locationVehicles = this.carDetailsList.filter(car => (car.location === location && car.make === 'Eicher'));
+    } else {
+      this.locationVehicles = []; // Default to an empty list if no roles match
+    }
+
     this.locationDataSource = new MatTableDataSource<VehicleModel>(this.locationVehicles);
     
     // Set up sorting and pagination
