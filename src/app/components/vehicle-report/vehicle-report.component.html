@@ -1,4 +1,24 @@
-<div class="filter-section">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monthly Sales Report</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+  <div class="vehicle-details-container">
+    <div class="header-section">
+      <!-- <h2 class="table-heading">
+        <i class="fas fa-car"></i> -->
+        Vehicle Details
+        <!-- <span class="total-count" *ngIf="totalVehicles">
+          (Total: {{totalVehicles}})
+        </span> -->
+      <!-- </h2> -->
+  <div class="filter-section">
   <mat-form-field appearance="outline">
     <mat-label>Start Date</mat-label>
     <input matInput [matDatepicker]="startPicker" [(ngModel)]="startDate">
@@ -36,31 +56,61 @@
     Apply Filters
   </button>
 </div>
-
-<div class="charts-section">
-  <mat-card>
-    <mat-card-title>
-      <mat-icon>timeline</mat-icon>
-      Monthly Sales
-    </mat-card-title>
-    <canvas baseChart
-            [datasets]="monthlySalesData"
-            [labels]="monthlySalesLabels"
-            [options]="monthlySalesOptions"
-            [type]="monthlySalesType">
-    </canvas>
-  </mat-card>
-
-  <mat-card>
-    <mat-card-title>
-      <mat-icon>bar_chart</mat-icon>
-      Top Models Sold
-    </mat-card-title>
-    <canvas baseChart
-            [data]="topModelData"
-            [labels]="topModelLabels"
-            [options]="topModelOptions"
-            [type]="topModelType">
-    </canvas>
-  </mat-card>
-</div>
+      <div class="table-actions">
+        <div class="search-box">
+          <!-- <mat-form-field appearance="outline">
+            <mat-label>Search</mat-label>
+            <input matInput (keyup)="applyFilter($event)" placeholder="Search vehicles..." #input>
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field> -->
+        </div>
+  
+        <!-- <div class="export-buttons">
+          <button mat-raised-button color="primary" (click)="exportToPDF()">
+            <i class="fas fa-file-pdf"></i> Export to PDF
+          </button>
+          <button mat-raised-button color="accent" (click)="exportToExcel()">
+            <i class="fas fa-file-excel"></i> Export to Excel
+          </button>
+        </div> -->
+      </div>
+    </div>
+    <div class="table-container">
+      <div class="responsive-table">
+        <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+          <!-- Your column definitions -->
+          <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> 
+              {{ getColumnHeader(column) }} 
+            </th>
+            <td mat-cell *matCellDef="let item" [class.truncate]="shouldTruncate(column)">
+              {{ getColumnValue(item, column) }}
+            </td>
+          </ng-container>
+          <!-- <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef> Actions </th>
+            <td mat-cell *matCellDef="let row">
+              <button mat-icon-button color="primary" (click)="editVehicle(row)" class="action-button">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button mat-icon-button color="primary" (click)="updateVehicle(row)" class="action-button">
+                <mat-icon>edit_note</mat-icon>
+              </button>
+            </td>
+          </ng-container> -->
+          <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </div>
+    
+      <mat-paginator 
+        [pageSizeOptions]="[5, 10, 25, 100]"
+        [pageSize]="10"
+        [length]="totalVehicles"
+        showFirstLastButtons
+        aria-label="Select page of vehicles">
+      </mat-paginator>
+    </div>
+    </div>
+  </body>
+</html>

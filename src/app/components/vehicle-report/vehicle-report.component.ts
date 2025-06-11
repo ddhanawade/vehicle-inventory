@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ChartOptions, ChartType, ChartDataset, ChartData } from 'chart.js';
-import { CommonModule, JsonPipe } from '@angular/common';
+import { CommonModule, DatePipe, JsonPipe } from '@angular/common';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -9,13 +9,17 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatIconModule } from '@angular/material/icon';
+import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { NgChartsModule } from 'ng2-charts';
 import { MatNativeDateModule } from '@angular/material/core';
 import { ReportingService } from '../../services/ReportingService';
 import { ReportParams } from '../../models/ReportParams';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { VehicleModel } from '../../models/VehicleModel';
 // import { ChartsModule } from 'ng2-charts';
 
 @Component({
@@ -33,7 +37,12 @@ import { ReportParams } from '../../models/ReportParams';
     MatNativeDateModule,
     FormsModule,
     MatCardModule,
-    NgChartsModule
+    NgChartsModule,
+    DatePipe,
+    MatTableModule,
+    MatSortModule,
+    MatPaginatorModule,
+    MatIcon
   ],
   templateUrl: './vehicle-report.component.html',
   styleUrls: ['./vehicle-report.component.scss']
@@ -46,100 +55,104 @@ export class VehicleReportComponent implements OnInit {
   make: string = '';
   model: string = '';
 
-  // Monthly Sales Chart
-  //monthlySalesLabels: string[] = [];
-  //monthlySalesData: ChartDataset[] = [];
-  //monthlySalesOptions: ChartOptions = { responsive: true };
-  monthlySalesType: ChartType = 'bar';
+  carDetailsList: VehicleModel[] = [];
+  filteredCarDetailsList: VehicleModel[] = [];
+  filters: { [key: string]: string } = {};
+  activeFilter: string | null = null;
 
-  monthlySalesLabels: string[] = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']; // Default labels
-  monthlySalesData: ChartDataset[] = [{
-    data: [0, 0, 0, 0, 0, 0], // Default data
-    label: 'Monthly Sales'
-  }];
-  monthlySalesOptions: ChartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: true,
-        position: 'top'
-      }
-    },
-    scales: {
-      y: {
-        beginAtZero: true
-      }
-    }
-  };
+  displayedColumns: string[] = [
+    'invoiceDate',
+    'invoiceNumber',
+    'purchaseDealer',
+    'receivedDate',
+    'manufactureDate',
+    'model',
+    'grade',
+    'fuelType',
+    'suffix',
+    'exteriorColor',
+    'interiorColor',
+    'chassisNumber',
+    'engineNumber',
+    'keyNumber',
+    'location',
+    'tkmInvoiceValue',
+    'age',
+    'interest',
+    'status',
+    'make',
+    'actions'
+  ];
+  dataSource: any;
+  sort: any;
+  paginator: any;
+  totalVehicles!: number;
+  isLoading!: boolean;
+  
+  topModelData!: { labels: any; datasets: { data: any; label: string; backgroundColor: string[]; }[]; };
 
-  // Top Model Chart configuration
-  topModelData: ChartData<'pie'> = {
-    labels: ['No Data'],
-    datasets: [{
-      data: [100],
-      label: 'Top Models'
-    }]
-  };
-  topModelOptions: ChartOptions<'pie'> = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: 'top',
-        display: true
-      }
-    }
-  };
-  topModelType: 'pie' = 'pie';
-topModelLabels: string [] = [];
-
-  constructor(private http: HttpClient, private reportService : ReportingService) {}
+  constructor(
+    private http: HttpClient, 
+    private reportService: ReportingService, 
+    private cdr: ChangeDetectorRef // Inject ChangeDetectorRef
+  ) { }
 
   ngOnInit() {
-    // Ensure charts are responsive
-    this.monthlySalesOptions = {
-      responsive: true,
-      maintainAspectRatio: false
-    };
-
-    this.topModelOptions = {
-      responsive: true,
-      maintainAspectRatio: false
-    };
+  //this.fetchMonthlySales();
   }
 
-  // Update your fetchMonthlySales method
   fetchMonthlySales(): void {
     const params: ReportParams = {
-      dateRange: this.startDate && this.endDate ? 
-        `${this.formatDate(this.startDate)}_to_${this.formatDate(this.endDate)}` : undefined,
+      dateRange: this.startDate && this.endDate
+        ? `${this.formatDate(this.startDate)}_to_${this.formatDate(this.endDate)}`
+        : undefined,
       city: this.city || undefined,
       make: this.make || undefined,
       model: this.model || undefined
     };
-
+  
     this.reportService.getMonthlySalesReport(params).subscribe({
-      next: (response) => {
-        if (response && response.labels && response.data) {
-          this.monthlySalesLabels = response.labels;
-          this.monthlySalesData = [{
-            data: response.data,
-            label: 'Monthly Sales',
-            backgroundColor: 'rgba(25, 118, 210, 0.5)',
-            borderColor: 'rgb(25, 118, 210)',
-            borderWidth: 1
-          }];
-        }
+      next: (result: VehicleModel[]) => {
+        this.carDetailsList = result;
+        this.dataSource = new MatTableDataSource<VehicleModel>(this.carDetailsList);
+        console.log("monthly sales data", this.dataSource);
+  
+        // Set up sorting and pagination
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
+  
+        // Configure custom sorting
+        this.dataSource.sortingDataAccessor = (item: VehicleModel, property: string) => {
+          switch (property) {
+            case 'receivedDate':
+            case 'invoiceDate':
+            case 'manufactureDate':
+              return new Date(item[property] || '').getTime();
+            case 'age':
+            case 'tkmInvoiceValue':
+              return typeof item[property] === 'number' ? item[property] : 0;
+            default:
+              return item[property]?.toString() || '';
+          }
+        };
+  
+        // Update the filter predicate
+        this.dataSource.filterPredicate = (data: VehicleModel, filter: string) => {
+          return Object.keys(data).some(key => {
+            const value = data[key];
+            return value !== null &&
+              value !== undefined &&
+              value.toString().toLowerCase().includes(filter.toLowerCase());
+          });
+        };
+  
+        this.totalVehicles = this.carDetailsList.length;
+        this.isLoading = false;
+        this.cdr.detectChanges(); // Trigger change detection
       },
       error: (error) => {
-        console.error('Error fetching monthly sales:', error);
-        // Reset to default state on error
-        this.monthlySalesLabels = ['No Data'];
-        this.monthlySalesData = [{
-          data: [0],
-          label: 'Monthly Sales'
-        }];
+        console.error('Error fetching data:', error);
+        this.isLoading = false;
       }
     });
   }
@@ -148,58 +161,82 @@ topModelLabels: string [] = [];
     return date.toISOString().split('T')[0];
   }
 
-  // topModelData: ChartData<'pie', number[]> = {
-  //   labels: [],
-  //   datasets: []
-  // };
-
+  
   // Update your fetchTopModelSold method
-  fetchTopModelSold(): void {
-    const params: ReportParams = {
-      dateRange: this.startDate && this.endDate ? 
-        `${this.formatDate(this.startDate)}_to_${this.formatDate(this.endDate)}` : undefined,
-      city: this.city || undefined,
-      make: this.make || undefined,
-      model: this.model || undefined
-    };
+  // fetchTopModelSold(): void {
+  //   const params: ReportParams = {
+  //     dateRange: this.startDate && this.endDate ?
+  //       `${this.formatDate(this.startDate)}_to_${this.formatDate(this.endDate)}` : undefined,
+  //     city: this.city || undefined,
+  //     make: this.make || undefined,
+  //     model: this.model || undefined
+  //   };
 
-    this.reportService.getTopModelSold(params).subscribe({
-      next: (response) => {
-        // Check if response contains labels and data
-        if (response && response.labels && response.data) {
-          this.topModelData = {
-            labels: response.labels,
-            datasets: [{
-              data: response.data,
-              label: 'Top Models',
-              backgroundColor: [
-                'rgba(25, 118, 210, 0.5)',
-                'rgba(76, 175, 80, 0.5)',
-                'rgba(33, 150, 243, 0.5)',
-                'rgba(156, 39, 176, 0.5)',
-                'rgba(233, 30, 99, 0.5)'
-              ]
-            }]
-          };
-        }
-        console.log('Top Model Response:', JSON.stringify(this.topModelData));
-      },
-      error: (error) => {
-        console.error('Error fetching top models:', error);
-        // Reset to default state on error
-        this.topModelData = {
-          labels: ['No Data'],
-          datasets: [{
-            data: [100],
-            label: 'Top Models'
-          }]
-        };
-      }
-    });
+  //   this.reportService.getTopModelSold(params).subscribe({
+  //     next: (response) => {
+  //       // Check if response contains labels and data
+  //       if (response && response.labels && response.data) {
+  //         this.topModelData = {
+  //           labels: response.labels,
+  //           datasets: [{
+  //             data: response.data,
+  //             label: 'Top Models',
+  //             backgroundColor: [
+  //               'rgba(25, 118, 210, 0.5)',
+  //               'rgba(76, 175, 80, 0.5)',
+  //               'rgba(33, 150, 243, 0.5)',
+  //               'rgba(156, 39, 176, 0.5)',
+  //               'rgba(233, 30, 99, 0.5)'
+  //             ]
+  //           }]
+  //         };
+  //       }
+  //       console.log('Top Model Response:', JSON.stringify(this.topModelData));
+  //     },
+  //     error: (error) => {
+  //       console.error('Error fetching top models:', error);
+  //       // Reset to default state on error
+  //       this.topModelData = {
+  //         labels: ['No Data'],
+  //         datasets: [{
+  //           data: [100],
+  //           label: 'Top Models'
+  //         }]
+  //       };
+  //     }
+  //   });
+  // }
+
+  // applyFilters(): void {
+  //   this.fetchMonthlySales();
+  //   this.fetchTopModelSold();
+  // }
+
+  getColumnHeader(column: string): string {
+    // Convert camelCase to Title Case with spaces
+    return column.replace(/([A-Z])/g, ' $1')
+      .replace(/^./, str => str.toUpperCase());
+  }
+
+  // Update the getColumnValue method
+  getColumnValue(item: VehicleModel, column: string): string {
+    const value = item[column as keyof VehicleModel];
+
+    if (column.includes('Date') && value) {
+      return new Date(value).toLocaleDateString();
+    }
+
+    return value?.toString() || '';
+  }
+
+  shouldTruncate(column: string): boolean {
+    // Add columns that should be truncated
+    const truncateColumns = ['chassisNumber', 'engineNumber', 'keyNumber'];
+    return truncateColumns.includes(column);
   }
 
   applyFilters(): void {
     this.fetchMonthlySales();
-    this.fetchTopModelSold();
+    //this.fetchTopModelSold();
   }
 }

@@ -7,6 +7,7 @@ import { VehicleModel } from '../models/VehicleModel';
   providedIn: 'root'
 })
 export class DataService {
+
   private baseUrl = 'http://localhost:8080/api/vehicles';
 
   constructor(private http: HttpClient) {}
@@ -20,7 +21,7 @@ export class DataService {
   }
 
   updateVehicleDetails(vehicleData: any): Observable<any> {
-    return this.http.put(`${this.baseUrl}/${vehicleData.id}`, vehicleData);
+    return this.http.put(`${this.baseUrl}/${vehicleData.vehicleId}`, vehicleData);
   }
 
   deleteVehicleDetails(id: number): Observable<any> {
@@ -33,6 +34,19 @@ export class DataService {
 
   getAgeCountByModel(): Observable<any> {
     return this.http.get<any>(`${this.baseUrl}/ageCountByModel`);
+  }
+
+  bulkUpload(formData: FormData): Observable<any>{
+    return this.http.post(`${this.baseUrl}/upload`, formData);
+  }
+
+  getVehicleAndOrderDetailsByModel(model: string): Observable<VehicleModel[]> {
+    const url = `${this.baseUrl}/vehiclesAndOrderDetailsByModel`;
+    return this.http.get<any>(url, { params: { model } });
+  }
+
+  getAllModels(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/model-info`);
   }
 
   private modelNameSubject = new Subject<string>();

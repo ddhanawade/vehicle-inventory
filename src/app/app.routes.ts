@@ -9,6 +9,8 @@ import { AddVehicleComponent } from './components/add-vehicle/add-vehicle.compon
 import { AuthGuard } from './services/AuthGuard';
 import { VehicleReportComponent } from './components/vehicle-report/vehicle-report.component';
 import { PreventBackGuard } from './services/PreventBackGuard';
+import { FileuploadComponent } from './components/fileupload/fileupload.component';
+import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 
 export const routes: Routes = [
     {
@@ -53,6 +55,15 @@ export const routes: Routes = [
         path: "monthly-report",
         component: VehicleReportComponent,
         canActivate: [AuthGuard]
+    },
+    {
+        path: "bulk-upload",
+        component: FileuploadComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: "reset-password",
+        component: ResetPasswordComponent
     },
     {
         path: "**",

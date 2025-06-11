@@ -1,154 +1,136 @@
 .edit-dialog-container {
-    padding: 20px;
-    max-width: 800px;
-  
-    mat-dialog-title {
+  padding: 20px;
+  max-width: 800px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease-in-out;
+
+  mat-dialog-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #2193b0;
+    margin-bottom: 24px;
+    font-size: 1.5rem;
+    font-weight: bold;
+
+    i {
+      font-size: 28px;
+    }
+  }
+
+  .vehicle-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .form-row {
+      display: flex;
+      gap: 16px;
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+      }
+
+      mat-form-field {
+        flex: 1;
+        transition: transform 0.2s ease;
+
+        &:hover {
+          transform: translateY(-2px);
+        }
+      }
+    }
+
+    .full-width {
+      width: 100%;
+    }
+
+    mat-form-field {
+      .mat-icon {
+        color: #64748b;
+        transition: color 0.3s ease;
+      }
+
+      &.mat-focused {
+        .mat-icon {
+          color: #2193b0;
+        }
+      }
+    }
+  }
+
+  mat-dialog-actions {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+
+    button {
       display: flex;
       align-items: center;
-      gap: 12px;
-      color: #2193b0;
-      margin-bottom: 24px;
-      
-      i {
-        font-size: 24px;
-      }
-    }
-  
-    .vehicle-form {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-  
-      .form-row {
-        display: flex;
-        gap: 16px;
-        
-        @media (max-width: 768px) {
-          flex-direction: column;
-        }
-  
-        mat-form-field {
-          flex: 1;
-        }
-      }
-  
-      .full-width {
-        width: 100%;
-      }
-  
-      mat-form-field {
-        .mat-icon {
-          color: #64748b;
-        }
-  
-        &.mat-focused {
-          .mat-icon {
-            color: #2193b0;
-          }
-        }
-      }
-    }
-  
-    mat-dialog-actions {
-      margin-top: 24px;
-      padding-top: 16px;
-      border-top: 1px solid #e2e8f0;
-  
-      button {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 16px;
-        
-        &.save-button {
-          background: #2193b0;
-          color: white;
-          
-          &:disabled {
-            background: #94a3b8;
-          }
-        }
-  
-        &.cancel-button:hover {
-          background: #fee2e2;
-        }
-      }
-    }
-  }
-  
-  .mat-mdc-dialog-content {
-    max-height: 70vh;
-  }
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: background-color 0.3s ease, transform 0.2s ease;
 
-  .mat-dialog-actions {
-    button {
       &.save-button {
-        &[disabled] {
+        background: #2193b0;
+        color: white;
+
+        &:hover {
+          background: #1976d2;
+          transform: translateY(-2px);
+        }
+
+        &:disabled {
           background: #94a3b8;
-          opacity: 0.7;
+          cursor: not-allowed;
         }
       }
-  
-      &.update-button {
-        &[disabled] {
-          border-color: #94a3b8;
-          color: #94a3b8;
-          opacity: 0.7;
-        }
-        
-        &.enabled {
-          border-color: #2193b0;
-          color: #2193b0;
-          opacity: 1;
-        }
-      }
-    }
-  }
-  
-  // Add styles for disabled form fields
-  .vehicle-form {
-    mat-form-field {
-      &.mat-form-field-disabled {
-        opacity: 0.7;
-        
-        .mat-icon {
-          color: #94a3b8;
-        }
-      }
-    }
-  }
 
-// Add status-specific styles
-.mat-form-field.status-field {
-  .mat-select-value {
-    font-weight: 500;
-  }
-  
-  ::ng-deep {
-    .mat-select-value-text {
-      &.Active { color: #22c55e; }
-      &.Inactive { color: #ef4444; }
-      &.Pending { color: #f59e0b; }
-      &.Delivered { color: #3b82f6; }
+      &.cancel-button {
+        background: #f8f9fa;
+        color: #64748b;
+
+        &:hover {
+          background: #fee2e2;
+          color: #ef4444;
+          transform: translateY(-2px);
+        }
+      }
     }
   }
 }
 
-.mat-form-field {
-  &.mat-form-field-appearance-outline {
-    .mat-datepicker-toggle {
-      color: #64748b;
-      
-      &:hover {
-        color: #2193b0;
-      }
-    }
+.mat-mdc-dialog-content {
+  max-height: 70vh;
+  overflow-y: auto;
+  padding-right: 8px;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
   }
 }
+
 .loading-spinner {
   display: flex;
   justify-content: center;
   padding: 20px;
+  animation: fadeIn 0.3s ease-in-out;
 }
 
 .success-message {
@@ -157,11 +139,29 @@
   margin-bottom: 15px;
   border-radius: 4px;
   background-color: rgba(76, 175, 80, 0.1);
+  animation: fadeIn 0.3s ease-in-out;
 }
 
-.form-fields {
-  &.disabled {
-    opacity: 0.7;
-    pointer-events: none;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.form-header {
+  background: linear-gradient(135deg, #2193b0, #6dd5ed);
+  padding: 10px;
+  color: white;
+
+  h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
 }

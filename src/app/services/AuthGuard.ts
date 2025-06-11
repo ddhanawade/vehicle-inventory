@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { AuthService } from './AuthService';
 
 @Injectable({
@@ -8,7 +8,15 @@ import { AuthService } from './AuthService';
 export class AuthGuard implements CanActivate {
   constructor(private authService: AuthService, private router: Router) {}
 
-  canActivate(): boolean {
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+    const publicRoutes = ['/reset-password']; // Add public routes here
+    const baseUrl = state.url.split('?')[0]; // Extract the base path without query parameters
+
+    if (publicRoutes.includes(baseUrl)) {
+      alert("hdsgaghd")
+      return true; // Allow access to public routes
+    }
+
     const token = this.authService.getToken();
     if (token) {
       return true; // Allow access if the token exists

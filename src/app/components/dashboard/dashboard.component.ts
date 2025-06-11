@@ -32,6 +32,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   stocksList: any;
   selectedAgeFilter: any;
+  vehicleOrderDetails: any;
 
   
   scrollLeft() {
@@ -235,7 +236,7 @@ getObjectKeys(obj: any): string[] {
   }
 
   onDelete(stock: VehicleModel): void {
-    this.vehicleService.deleteVehicleDetails(stock.id).subscribe(
+    this.vehicleService.deleteVehicleDetails(stock.vehicleId).subscribe(
       () => {
         this.successMessage = 'Vehicle details deleted successfully!';
         setTimeout(() => {
@@ -424,5 +425,20 @@ getObjectKeys(obj: any): string[] {
       this.locationDataSource.paginator = this.paginator;
       this.locationDataSource.sort = this.sort;
     }
+  }
+
+  // getVehicleOrderDetails(): void {
+  //   this.vehicleService.getVehicleAndOrderDetailsByModel(this.model).subscribe(
+  //     (data: any) => {
+  //       this.vehicleOrderDetails = data;
+  //       console.log('Vehicle Order Details:', this.vehicleOrderDetails);
+  //     },
+  //     (error: any) => {
+  //       console.error('Error fetching vehicle order details:', error);
+  //     }
+  //   );
+  // }
+  model(model: any) {
+    throw new Error('Method not implemented.');
   }
 }

@@ -129,4 +129,8 @@ export class AuthService {
       })
     );
   }
+
+  forgotPassword(token: string, newPassword: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/reset-password`, { token, newPassword });
+  }
 }

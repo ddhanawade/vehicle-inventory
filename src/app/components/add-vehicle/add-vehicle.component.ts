@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DataService } from '../../services/DataService';
+import { UserModel } from '../../models/UserModel';
+import { AuthService } from '../../services/AuthService';
 
 @Component({
   selector: 'app-add-vehicle',
@@ -15,13 +17,32 @@ export class AddVehicleComponent implements OnInit{
   successMessage: string = '';
 
   currentTab: number = 0; // Track the current tab
-
-  makes = ['Tata', 'Toyota', 'Eicher'];
-  models = ['Corolla', 'Civic', 'Focus', 'X5', 'C-Class'];
+  models: any[] = [];
+  makes: any[] = [];
+  //makes = ['Tata', 'Toyota', 'Eicher'];
   fuelTypes = ['Petrol', 'Diesel', 'Electric', 'Hybrid'];
   statuses = ['Available', 'Sold', 'In Transit', 'Booked', 'Free'];
 
+  filteredModels: { make: string; model: string }[] = [];
+  selectedMake: string = '';
+
+  user: UserModel | null = null;
+  holdModel: any[] = [];
+
   ngOnInit() {
+    
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      this.user = JSON.parse(storedUser);
+    }
+
+    this.authService.getUser().subscribe((user) => {
+      this.user = user;
+
+      // Store the user in localStorage for persistence
+      localStorage.setItem('user', JSON.stringify(this.user));
+    });
+
     this.vehicleForm = this.fb.group({
       make: ['', Validators.required],
       model: ['', Validators.required],
@@ -43,9 +64,12 @@ export class AddVehicleComponent implements OnInit{
       tkmInvoiceValue: [''],
       interest: ['']
     });
+
+    this.getModelInfo();
+    this.getVehicleMake();
   }
 
-  constructor(private fb: FormBuilder, private vehicleService: DataService) {
+  constructor(private fb: FormBuilder, private vehicleService: DataService, private authService: AuthService) {
     this.vehicleForm = this.fb.group({
       make: ['', Validators.required],
       model: ['', Validators.required],
@@ -75,6 +99,13 @@ export class AddVehicleComponent implements OnInit{
     const received = new Date(receivedDate);
     const diffTime = Math.abs(today.getTime() - received.getTime());
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  }
+
+  hasRole(role: string): boolean {
+    if (this.user?.roles?.includes('ADMIN')) {
+      return true; // ADMIN can access all menus
+    }
+    return this.user?.roles?.includes(role) || false;
   }
 
   onSubmit() {
@@ -111,6 +142,55 @@ export class AddVehicleComponent implements OnInit{
   previousTab() {
     if (this.currentTab > 0) {
       this.currentTab--;
+    }
+  }
+
+  getModelInfo(): void {
+   
+    this.vehicleService.getAllModels().subscribe({
+      next: (data) => {
+        console.log('Model Info:', data);
+        this.models = data; // Process the data as needed
+      },
+      error: (error) => {
+        console.error('Error fetching model info:', error);
+      }
+    });
+  }
+
+  getVehicleMake(): void {
+    this.vehicleService.getAllModels().subscribe({
+      next: (data) => {
+        console.log('Model Info:', data);
+        this.models = data; // Process the data as needed
+  
+        // Filter the data based on roles
+        if (this.hasRole('ADMIN')) {
+          this.makes = [...new Set(this.models.map(car => car.make))]; // Show unique makes for ADMIN
+          console.log("vehicle type " + JSON.stringify(this.makes))
+        } else if (this.hasRole('TATA')) {
+          this.makes = [...new Set(this.models.filter(car => car.make === 'Tata').map(car => car.make))];
+        } else if (this.hasRole('TOYOTA')) {
+          this.makes = [...new Set(this.models.filter(car => car.make === 'Toyota').map(car => car.make))];
+        } else if (this.hasRole('EICHER')) {
+          this.makes = [...new Set(this.models.filter(car => car.make === 'Eicher').map(car => car.make))];
+        } else {
+          this.makes = []; // Default to an empty list if no roles match
+        }
+        // Notify Angular about data changes if necessary
+        // this.cdr.markForCheck();
+      },
+      error: (error) => {
+        console.error('Error fetching model info:', error);
+      }
+    });
+  }
+
+  onMakeChange(event: Event): void {
+    const target = event.target as HTMLSelectElement; // Explicitly cast EventTarget to HTMLSelectElement
+    const selectedMake = target?.value; // Access the value property safely
+    if (selectedMake) {
+      this.filteredModels = this.models.filter((model) => model.make === selectedMake);
     }
   }
 }

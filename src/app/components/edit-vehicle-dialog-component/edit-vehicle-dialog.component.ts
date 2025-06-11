@@ -66,7 +66,7 @@ export class EditVehicleDialogComponent {
   // Sample data - replace with actual data from your service
   teamLeaders = ['John Doe', 'Jane Smith', 'Mike Johnson'];
   salesOfficers = ['Alice Brown', 'Bob Wilson', 'Carol White'];
-  financers = ['Bank A', 'Bank B', 'Bank C', 'Self'];
+  financers = ['BANK OF MAHARASHTRA', 'TOYOTA FINANCIAL SERVICES INDIA LTD', 'HDFC BANK LTD', 'CANARA BANK', 'PUNJAB NATIONAL BANK', 'CHOLAMANDALAM INVESTMENT AND FINANCE CO LTD', 'STATE BANK OF INDIA', 'SHRI TIRUPATI NAGARI SAH.PATSANSTHA MAYADIT', 'UNION BANK OF INDIA', 'MAHINDRA AND MAHINDRA FINANCIAL SERVICES LTD', 'Not Applicable', 'AU SMALL FINANCE BANK LIMITED', 'KOTAK MAHINDRA BANK LTD', 'ICICI BANK LTD', 'HDB FINANCIAL SERVICES LTD', 'BANK OF INDIA', 'SUNDARAM FINANCE LTD', 'AXIS BANK LTD', 'MADHYA PRADESH GRAMIN BANK', 'THE ANAND MERCANTILE CO-OPERATIVE BANK LIMITED', 'INDIAN OVERSEAS BANK', 'CENTRAL BANK OF INDIA', 'BANK OF BARODA', 'SHRIRAM TRANSPORT FINANCE COMPANY LTD', 'IDBI BANK LTD'];
 
 
   constructor(
@@ -85,7 +85,7 @@ export class EditVehicleDialogComponent {
       financerName: [''],
       financeType: [''],
       phoneNumber: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
-      status: ['', [Validators.required]],
+      orderStatus: ['', [Validators.required]],
       remarks: [''],
     });
   }
@@ -94,9 +94,9 @@ export class EditVehicleDialogComponent {
   // Update the ngOnInit method
 ngOnInit(): void {
   if (this.data) {
-    
+    console.log('Dialog data:', this.data);
     // First set the vehicleId
-    const vehicleId = this.data.id;
+    const vehicleId = this.data.vehicleId;  
     // Check for existing order
     if (vehicleId) {
       this.orderService.getOrdersByVehicleId(vehicleId).subscribe({
@@ -119,7 +119,7 @@ ngOnInit(): void {
               financerName: orderData.financerName,
               financeType: orderData.financeType,
               phoneNumber: orderData.phoneNumber,
-              status: orderData.status,
+              orderStatus: orderData.orderStatus,
               remarks: orderData.remarks
             };
 
@@ -160,7 +160,7 @@ ngOnInit(): void {
           
           // Disable form fields except status and remarks
           Object.keys(this.vehicleForm.controls).forEach(key => {
-            if (key !== 'status' && key !== 'remarks') {
+            if (key !== 'orderStatus' && key !== 'remarks') {
               this.vehicleForm.get(key)?.disable();
             }
           });
@@ -233,6 +233,7 @@ private resetForm(vehicleId: string): void {
 
 
 onSave(vehicleId: string): void {
+  console.log("vehicle id " + vehicleId);
   if (this.vehicleForm.valid) {
     this.isSaving = true;
     const formData = this.vehicleForm.value;
@@ -255,11 +256,12 @@ onSave(vehicleId: string): void {
 
         // Disable form fields except status and remarks
         Object.keys(this.vehicleForm.controls).forEach(key => {
-          if (key !== 'status' && key !== 'remarks') {
+          if (key !== 'orderStatus' && key !== 'remarks') {
             this.vehicleForm.get(key)?.disable();
           }
         });
         // Optional: Refresh the data
+        console.log("ghdfzsf " + vehicleId);
         this.checkExistingOrder(vehicleId);
       },
       error: (error) => {
@@ -298,7 +300,7 @@ onUpdate(): void {
 
           // Disable appropriate fields
           Object.keys(this.vehicleForm.controls).forEach(key => {
-            if (key !== 'status' && key !== 'remarks') {
+            if (key !== 'orderStatus' && key !== 'remarks') {
               this.vehicleForm.get(key)?.disable();
             }
           });
@@ -335,7 +337,7 @@ private displaySavedData(response: any, vehicleId: string): void {
     financerName: response.financerName || '',
     financeType: response.financeType || '',
     phoneNumber: response.phoneNumber || '',
-    status: response.status || '',
+    orderStatus: response.orderStatus || '',
     remarks: response.remarks || ''
   };
 

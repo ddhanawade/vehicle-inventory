@@ -11,6 +11,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTableDataSource } from '@angular/material/table';
+import { VehicleModel } from '../../models/VehicleModel';
 
 @Component({
   selector: 'app-update-vehicle',
@@ -37,19 +39,25 @@ export class UpdateVehicleComponent implements OnInit {
 
   editVehicleData: any = {};
 
+  carDetailsList: VehicleModel[] = [];
+
+  dataSource!: MatTableDataSource<VehicleModel>;
+
   currentTab: number = 0; // Track the current tab
 
   makes = ['Tata', 'Toyota', 'Eicher'];
   models = ['Corolla', 'Civic', 'Focus', 'X5', 'C-Class'];
   fuelTypes = ['PETROL', 'DIESEL', 'ELECTRIC', 'HYBRID'];
   statuses = ['AVAILABLE', 'SOLD', 'IN TRANSIT', 'BOOKED', 'FREE'];
+  sort: any;
+  paginator: any;
 
   constructor(
     private dialogRef: MatDialogRef<UpdateVehicleComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private fb: FormBuilder, private vehicleService: DataService) {
     this.vehicleForm = this.fb.group({
-      id: [null], // Add the id field
+      vehicleId: [null], // Add the id field
       make: ['', Validators.required],
       model: ['', Validators.required],
       grade: ['', Validators.required],
@@ -62,7 +70,7 @@ export class UpdateVehicleComponent implements OnInit {
       engineNumber: ['', Validators.required],
       keyNumber: ['', Validators.required],
       location: ['', Validators.required],
-      status: ['', Validators.required],
+      vehicleStatus: ['', Validators.required],
       receivedDate: ['', Validators.required],
       invoiceDate: ['', Validators.required],
       invoiceNumber: ['', Validators.required],
@@ -73,8 +81,9 @@ export class UpdateVehicleComponent implements OnInit {
 
   ngOnInit() {
     if (this.data) {
+      console.log("sd " + JSON.stringify(this.data));
     // First set the vehicleId
-     const vehicleId = this.data.id;
+     const vehicleId = this.data.vehicleId;
     this.vehicleForm.patchValue(this.data);
   }
   }
@@ -93,7 +102,6 @@ export class UpdateVehicleComponent implements OnInit {
           this.successMessage = '';
           // this.closeEditPopup();
         }, 2000);
-        // this.getCarDetails(); // Refresh the list after update
       },
       (error: any) => {
         console.error('Error updating vehicle:', error); // Debugging log
@@ -123,4 +131,5 @@ export class UpdateVehicleComponent implements OnInit {
   onCancel(): void {
     this.dialogRef.close();
   }
+
 }

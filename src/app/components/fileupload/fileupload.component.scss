@@ -1,0 +1,89 @@
+.file-upload-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+  border: 2px dashed #2193b0;
+  border-radius: 12px;
+  background-color: #f0f9ff;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  margin-top: 250px;
+  max-width: 500px;
+  margin-left: 550px;
+
+  &:hover {
+    background-color: #e0f7ff;
+    border-color: #1976d2;
+  }
+
+  input[type="file"] {
+    display: none;
+  }
+
+  label {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #ffffff;
+    background-color: #2193b0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: #1976d2;
+    }
+  }
+
+  .file-name {
+    font-size: 14px;
+    color: #555;
+    margin-top: -10px;
+    font-weight: 500;
+  }
+
+  button {
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #ffffff;
+    background-color: #2193b0;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+
+    &:hover {
+      background-color: #1976d2;
+      transform: translateY(-2px);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+.success-card {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.error-card {
+  background-color: #ffebee;
+  color: #c62828;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+mat-icon {
+  vertical-align: middle;
+  margin-right: 8px;
+}

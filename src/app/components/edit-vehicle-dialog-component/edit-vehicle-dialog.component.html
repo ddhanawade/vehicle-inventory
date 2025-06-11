@@ -1,8 +1,11 @@
 <div class="edit-dialog-container">
-  <h2 mat-dialog-title>
-    <i class="fas fa-car"></i> Edit Order Details
-  </h2>
-  <h2 mat-dialog-title>{{ isSaved ? 'Edit Order Details' : 'Create New Order' }}</h2>
+  <!-- <h2 mat-dialog-title>
+    <i class="fas fa-car"></i>Order Details
+  </h2> -->
+  <div class="form-header">
+    <h2><i class="fas fa-plus-circle"></i> {{ isSaved ? 'Update Order Details' : 'Create New Order' }}</h2>
+  </div>
+  <!-- <h2 mat-dialog-title>{{ isSaved ? 'Edit Order Details' : 'Create New Order' }}</h2> -->
   <mat-dialog-content>
     <form [formGroup]="vehicleForm" class="vehicle-form">
        <!-- Show loading spinner while fetching data -->
@@ -39,21 +42,23 @@
       <div class="form-row">
         <mat-form-field appearance="outline">
           <mat-label>Team Leader</mat-label>
-          <mat-select formControlName="leadName">
+          <!-- <mat-select formControlName="leadName">
             <mat-option *ngFor="let leader of teamLeaders" [value]="leader">
               {{leader}}
             </mat-option>
-          </mat-select>
+          </mat-select> -->
+          <input matInput formControlName="leadName" placeholder="Enter Lead Name">
           <mat-icon matSuffix>supervisor_account</mat-icon>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>Sales Officer</mat-label>
-          <mat-select formControlName="salesPersonName">
+          <!-- <mat-select formControlName="salesPersonName">
             <mat-option *ngFor="let officer of salesOfficers" [value]="officer">
               {{officer}}
             </mat-option>
-          </mat-select>
+          </mat-select> -->
+          <input matInput formControlName="salesPersonName" placeholder="Enter Sales Officer Name">
           <mat-icon matSuffix>badge</mat-icon>
         </mat-form-field>
       </div>
@@ -93,14 +98,14 @@
       <div class="form-row">
         <mat-form-field appearance="outline">
           <mat-label>Status</mat-label>
-          <mat-select formControlName="status">
-            <mat-option value="Active">Active</mat-option>
-            <mat-option value="Inactive">Inactive</mat-option>
-            <mat-option value="Pending">Pending</mat-option>
-            <mat-option value="Delivered">Delivered</mat-option>
+          <mat-select formControlName="orderStatus">
+            <mat-option value="ACTIVE">Active</mat-option>
+            <mat-option value="INACTIVE">Inactive</mat-option>
+            <mat-option value="PENDING">Pending</mat-option>
+            <mat-option value="DELIVERED">Delivered</mat-option>
           </mat-select>
           <mat-icon matSuffix>info</mat-icon>
-          <mat-error *ngIf="vehicleForm.get('status')?.hasError('required')">
+          <mat-error *ngIf="vehicleForm.get('orderStatus')?.hasError('required')">
             Status is required
           </mat-error>
         </mat-form-field>

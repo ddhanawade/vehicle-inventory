@@ -17,6 +17,7 @@ import { EditVehicleDialogComponent } from '../edit-vehicle-dialog-component/edi
 import { OrderService } from '../../services/OrderService';
 import { UpdateVehicleComponent } from '../update-vehicle/update-vehicle.component';
 import { MatIcon } from '@angular/material/icon';
+import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 @Component({
   selector: 'app-vehicle-details',
   imports: [
@@ -62,7 +63,7 @@ export class VehicleDetailsComponent implements OnInit {
     'tkmInvoiceValue',
     'age',
     'interest',
-    'status',
+    'vehicleStatus',
     'make',
     'actions'
   ];
@@ -71,6 +72,7 @@ export class VehicleDetailsComponent implements OnInit {
   filteredCarDetailsList: VehicleModel[] = [];
   filters: { [key: string]: string } = {};
   activeFilter: string | null = null;
+  successMessage: string = '';
 
   constructor(private route: ActivatedRoute, private vehicleService: DataService, private cdr: ChangeDetectorRef, private dialog: MatDialog,
     private orderService: OrderService, private renderer: Renderer2
@@ -97,7 +99,7 @@ export class VehicleDetailsComponent implements OnInit {
   }
 
   editVehicle(vehicle: any): void {
-    // console.log("Editing vehicle:", JSON.stringify(vehicle));
+    console.log("Editing vehicle:", JSON.stringify(vehicle));
     const dialogRef = this.dialog.open(EditVehicleDialogComponent, {
       width: '600px',
       data: { ...vehicle }
@@ -105,7 +107,7 @@ export class VehicleDetailsComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         // Update the vehicle in your data source
-        const index = this.dataSource.data.findIndex(item => item.id === result.id);
+        const index = this.dataSource.data.findIndex(item => item.vehicleId === result.vehicleId);
         if (index > -1) {
           this.dataSource.data[index] = result;
           this.dataSource._updateChangeSubscription();
@@ -125,7 +127,7 @@ export class VehicleDetailsComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         // Update the vehicle in your data source
-        const index = this.dataSource.data.findIndex(item => item.id === result.id);
+        const index = this.dataSource.data.findIndex(item => item.vehicleId === result.vehicleId);
         if (index > -1) {
           this.dataSource.data[index] = result;
           this.dataSource._updateChangeSubscription();
@@ -133,21 +135,6 @@ export class VehicleDetailsComponent implements OnInit {
       }
     });
   }
-
-  // exportToPDF() {
-  //   const doc = new jsPDF();
-  //   const table = document.querySelector('.responsive-table') as HTMLElement;
-
-  //   html2canvas(table).then((canvas) => {
-  //     const imgData = canvas.toDataURL('image/png');
-  //     const pdfWidth = doc.internal.pageSize.getWidth();
-  //     const pdfHeight = (canvas.height * pdfWidth) / canvas.width; // Calculate height proportionally
-  //     doc.addImage(imgData, 'PNG', 10, 10, pdfWidth - 20, pdfHeight); // Add image to PDF
-  //     doc.save('vehicle-details.pdf'); // Save the PDF
-  //   }).catch((error) => {
-  //     console.error('Error generating PDF:', error);
-  //   });
-  // }
 
   exportToPDF() {
     const table = document.querySelector('table') as HTMLElement;
@@ -211,9 +198,9 @@ export class VehicleDetailsComponent implements OnInit {
   }
 
   getCarDetails(modelName: string): void {
-    this.vehicleService.getData().subscribe({
+    this.vehicleService.getVehicleAndOrderDetailsByModel(modelName).subscribe({
       next: (result: VehicleModel[]) => {
-        this.carDetailsList = result.filter((item) => item.model === modelName);
+        this.carDetailsList = result
         this.dataSource = new MatTableDataSource<VehicleModel>(this.carDetailsList);
 
         // Set up sorting and pagination
@@ -266,6 +253,30 @@ export class VehicleDetailsComponent implements OnInit {
         this.dataSource.paginator.firstPage(); // Reset to first page when filtering
       }
     }
+  }
+
+  onDelete(stock: VehicleModel): void {
+    //console.log("deleting vehicle " + JSON.stringify(stock))
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent);
+
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (confirmed) {
+        this.vehicleService.deleteVehicleDetails(stock.vehicleId).subscribe(
+          () => {
+            this.successMessage = 'Vehicle details deleted successfully!';
+            setTimeout(() => {
+              this.successMessage = '';
+            }, 2000);
+            this.getCarDetails(stock.model);
+          },
+          (error) => console.error('Error deleting vehicle:', error)
+        );
+        console.log(`Entry deleted:`, stock.vehicleId);
+      } else {
+        console.log('Delete operation canceled.');
+      }
+    });
+    
   }
 
   getColumnHeader(column: string): string {

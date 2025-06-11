@@ -1,0 +1,75 @@
+.custom-dialog-container {
+    background-color: #ffffff; /* White background for the dialog */
+    border-radius: 12px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    padding: 24px; /* Padding inside the dialog */
+    max-width: 400px; /* Limit the width */
+    margin: auto; /* Center the dialog horizontally */
+    text-align: center; /* Center-align text */
+  }
+  
+  .custom-dialog-title {
+    font-size: 24px; /* Larger font size for the title */
+    font-weight: bold; /* Bold text for emphasis */
+    color: #1e293b; /* Dark text color */
+    margin-bottom: 16px; /* Space below the title */
+  }
+  
+  mat-dialog-content {
+    font-size: 16px; /* Standard font size for content */
+    color: #475569; /* Neutral text color */
+    margin-bottom: 24px; /* Space below the content */
+  }
+  
+  .custom-dialog-actions {
+    display: flex; /* Flex layout for buttons */
+    justify-content: space-between; /* Space buttons apart */
+    gap: 16px; /* Add spacing between buttons */
+  }
+  
+  button {
+    min-width: 100px; /* Ensure buttons have a consistent width */
+    padding: 8px 16px; /* Add padding for better touch targets */
+    border-radius: 8px; /* Rounded corners for buttons */
+    font-size: 14px; /* Standard font size for buttons */
+    transition: all 0.3s ease; /* Smooth hover effect */
+  
+    &:hover {
+      transform: translateY(-2px); /* Slight lift effect on hover */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Shadow effect on hover */
+    }
+  }
+  
+  button[color="warn"] {
+    background-color: #f87171; /* Red background for delete button */
+    color: #ffffff; /* White text */
+  }
+  
+  button[color="warn"]:hover {
+    background-color: #ef4444; /* Darker red on hover */
+  }
+  
+  button:not([color="warn"]) {
+    background-color: #e2e8f0; /* Light gray background for cancel button */
+    color: #1e293b; /* Dark text color */
+  }
+  
+  button:not([color="warn"]):hover {
+    background-color: #cbd5e1; /* Slightly darker gray on hover */
+  }
+  
+  @media (max-width: 768px) {
+    .custom-dialog-container {
+      padding: 16px; /* Reduce padding for smaller screens */
+      max-width: 90%; /* Adjust width for responsiveness */
+    }
+  
+    .custom-dialog-actions {
+      flex-direction: column; /* Stack buttons vertically */
+      gap: 12px; /* Adjust spacing for smaller screens */
+    }
+  
+    button {
+      width: 100%; /* Make buttons full-width */
+    }
+  }

@@ -1,5 +1,5 @@
 export interface VehicleModel {
-    id: number;
+    vehicleId: number;
     make: string;
     model: string;
     grade: string;
@@ -10,7 +10,7 @@ export interface VehicleModel {
     engineNumber: string;
     keyNumber: string;
     location: string;
-    status: string;
+    vehicleStatus: string;
     receivedDate: string;
     invoiceDate: string;
     invoiceNumber: string;
