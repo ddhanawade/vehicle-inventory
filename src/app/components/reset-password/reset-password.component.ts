@@ -51,10 +51,15 @@ email: any;
     });
   }
 
+  passwordsMatchValidator(formGroup: FormGroup): { [key: string]: boolean } | null {
+    const password = formGroup.get('password')?.value;
+    const confirmPassword = formGroup.get('confirmPassword')?.value;
+    return password === confirmPassword ? null : { passwordsMismatch: true };
+  }
+
   onSubmit(): void {
     if (this.resetPasswordForm.valid) {
       const { password, confirmPassword } = this.resetPasswordForm.value;
-
       if (password !== confirmPassword) {
         alert('Passwords do not match!');
         return;
