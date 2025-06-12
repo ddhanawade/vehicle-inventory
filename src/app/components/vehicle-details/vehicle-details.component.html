@@ -38,6 +38,9 @@
         </div>
       </div>
     </div>
+    <div *ngIf="successMessage" class="small-success-message">
+      <p>{{ successMessage }}</p>
+    </div>
     <div class="table-container">
       <div class="responsive-table">
         <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">

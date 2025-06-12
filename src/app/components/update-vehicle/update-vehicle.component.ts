@@ -48,7 +48,7 @@ export class UpdateVehicleComponent implements OnInit {
   makes = ['Tata', 'Toyota', 'Eicher'];
   models = ['Corolla', 'Civic', 'Focus', 'X5', 'C-Class'];
   fuelTypes = ['PETROL', 'DIESEL', 'ELECTRIC', 'HYBRID'];
-  statuses = ['AVAILABLE', 'SOLD', 'IN TRANSIT', 'BOOKED', 'FREE'];
+  statuses = ['AVAILABLE', 'SOLD', 'IN_TRANSIT', 'BOOKED', 'FREE'];
   sort: any;
   paginator: any;
 
@@ -57,7 +57,7 @@ export class UpdateVehicleComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private fb: FormBuilder, private vehicleService: DataService) {
     this.vehicleForm = this.fb.group({
-      vehicleId: [null], // Add the id field
+      id: [null], // Add the id field
       make: ['', Validators.required],
       model: ['', Validators.required],
       grade: ['', Validators.required],
@@ -75,7 +75,7 @@ export class UpdateVehicleComponent implements OnInit {
       invoiceDate: ['', Validators.required],
       invoiceNumber: ['', Validators.required],
       purchaseDealer: ['', Validators.required],
-      tkmInvoiceValue: ['', Validators.required]
+      invoiceValue: ['', Validators.required]
     });
   }
 
@@ -84,6 +84,7 @@ export class UpdateVehicleComponent implements OnInit {
       console.log("sd " + JSON.stringify(this.data));
     // First set the vehicleId
      const vehicleId = this.data.vehicleId;
+     const id = this.data.vehicleId;
     this.vehicleForm.patchValue(this.data);
   }
   }
@@ -92,9 +93,13 @@ export class UpdateVehicleComponent implements OnInit {
     if (this.vehicleForm.valid) {
       
     const updatedVehicle = this.vehicleForm.value;
-    console.log("Sending updated data to backend:", updatedVehicle); // Debugging log
 
-    this.vehicleService.updateVehicleDetails(updatedVehicle).subscribe(
+    const updateVehicle = { ...updatedVehicle, id: updatedVehicle.id, invoiceDate: this.formatDate(new Date(updatedVehicle.invoiceDate))};
+    delete updateVehicle.vehicleId; // Remove vehicleId if not needed
+
+    console.log("Sending updated data to backend:", updateVehicle); // Debugging log
+
+    this.vehicleService.updateVehicleDetails(updateVehicle).subscribe(
       (response: any) => {
         console.log("Response from backend:", response); // Debugging log
         this.successMessage = 'Vehicle details updated successfully!';
@@ -111,6 +116,13 @@ export class UpdateVehicleComponent implements OnInit {
     console.warn('Form is invalid');
     this.successMessage = 'Please fill in all required fields.';
   }
+  }
+
+  private formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`; // Format as YYYY-MM-DD
   }
 
   setTab(index: number): void {

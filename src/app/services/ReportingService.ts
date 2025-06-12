@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, Subject } from 'rxjs';
 import { VehicleModel } from '../models/VehicleModel';
-import { ReportParams } from '../models/ReportParams';
+import { MonthlySalesRequest } from '../models/MonthlySalesRequest';
 
 @Injectable({
   providedIn: 'root'
@@ -16,28 +16,32 @@ export class ReportingService {
     return this.http.get<VehicleModel[]>(this.baseUrl);
   }
 
-  getMonthlySalesReport(params: ReportParams): Observable<any> {
-    let httpParams = new HttpParams();
+  // getMonthlySalesReport(request: MonthlySalesRequest): Observable<any> {
+  //   let httpParams = new HttpParams();
     
-    if (params.dateRange) httpParams = httpParams.set('dateRange', params.dateRange);
-    if (params.city) httpParams = httpParams.set('city', params.city);
-    if (params.make) httpParams = httpParams.set('make', params.make);
-    if (params.model) httpParams = httpParams.set('model', params.model);
+  //   if (request.dateRange) httpParams = httpParams.set('dateRange', request.dateRange);
+  //   if (request.city) httpParams = httpParams.set('city', request.city);
+  //   if (request.make) httpParams = httpParams.set('make', request.make);
+  //   if (request.model) httpParams = httpParams.set('model', request.model);
 
-    return this.http.get(`${this.baseUrl}/analytics/monthly-sales`, {
-      params: httpParams
-    });
+  //   return this.http.post<any>(`${this.baseUrl}/analytics/monthly-sales`, {
+  //     request: httpParams
+  //   });
+  // }
+
+  getMonthlySalesReport(request: MonthlySalesRequest): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/analytics/monthly-sales`, request);
   }
 
-  getTopModelSold(params: ReportParams): Observable<any> {
-    let httpParams = new HttpParams();
+  // getTopModelSold(request: MonthlySalesRequest): Observable<any> {
+  //   let httpParams = new HttpParams();
     
-    if (params.dateRange) httpParams = httpParams.set('dateRange', params.dateRange);
-    if (params.city) httpParams = httpParams.set('city', params.city);
-    if (params.make) httpParams = httpParams.set('make', params.make);
-    if (params.model) httpParams = httpParams.set('model', params.model);
+  //   if (request.dateRange) httpParams = httpParams.set('dateRange', request.dateRange);
+  //   if (request.city) httpParams = httpParams.set('city', request.city);
+  //   if (request.make) httpParams = httpParams.set('make', request.make);
+  //   if (request.model) httpParams = httpParams.set('model', request.model);
 
-    return this.http.get(`${this.baseUrl}/analytics/top-model-sold`, { params: httpParams });
-  }
+  //   return this.http.get(`${this.baseUrl}/analytics/top-model-sold`, { params: httpParams });
+  // }
   
 }

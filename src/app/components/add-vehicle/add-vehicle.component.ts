@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DataService } from '../../services/DataService';
@@ -8,6 +8,7 @@ import { AuthService } from '../../services/AuthService';
 @Component({
   selector: 'app-add-vehicle',
   imports: [CommonModule, ReactiveFormsModule],
+  providers: [DatePipe],
   templateUrl: './add-vehicle.component.html',
   styleUrl: './add-vehicle.component.scss'
 })
@@ -20,8 +21,8 @@ export class AddVehicleComponent implements OnInit{
   models: any[] = [];
   makes: any[] = [];
   //makes = ['Tata', 'Toyota', 'Eicher'];
-  fuelTypes = ['Petrol', 'Diesel', 'Electric', 'Hybrid'];
-  statuses = ['Available', 'Sold', 'In Transit', 'Booked', 'Free'];
+  fuelTypes = ['PETROL', 'DISEL', 'ELECTRIC', 'HYBRID'];
+  statuses = ['AVAILABLE', 'SOLD', 'IN_TRANSIT', 'BOOKED', 'FREE'];
 
   filteredModels: { make: string; model: string }[] = [];
   selectedMake: string = '';
@@ -61,7 +62,7 @@ export class AddVehicleComponent implements OnInit{
       purchaseDealer: [''],
       manufactureDate: [''],
       suffix: [''],
-      tkmInvoiceValue: [''],
+      invoiceValue: [''],
       interest: ['']
     });
 
@@ -69,7 +70,7 @@ export class AddVehicleComponent implements OnInit{
     this.getVehicleMake();
   }
 
-  constructor(private fb: FormBuilder, private vehicleService: DataService, private authService: AuthService) {
+  constructor(private fb: FormBuilder, private vehicleService: DataService, private authService: AuthService, private datePipe: DatePipe) {
     this.vehicleForm = this.fb.group({
       make: ['', Validators.required],
       model: ['', Validators.required],
@@ -88,19 +89,17 @@ export class AddVehicleComponent implements OnInit{
       purchaseDealer: [''],
       manufactureDate: [''],
       suffix: [''],
-      tkmInvoiceValue: [''],
+      invoiceValue: [''],
       interest: ['']
     });
   }
-
-  // Age will be calculated automatically based on received date
-  calculateAge(receivedDate: Date): number {
-    const today = new Date();
-    const received = new Date(receivedDate);
-    const diffTime = Math.abs(today.getTime() - received.getTime());
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  }
-
+// Age will be calculated automatically based on received date
+calculateAge(receivedDate: Date): number {
+  const today = new Date();
+  const received = new Date(receivedDate);
+  const diffTime = Math.abs(today.getTime() - received.getTime());
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+}
   hasRole(role: string): boolean {
     if (this.user?.roles?.includes('ADMIN')) {
       return true; // ADMIN can access all menus
@@ -111,8 +110,15 @@ export class AddVehicleComponent implements OnInit{
   onSubmit() {
     if (this.vehicleForm.valid) {
       const formData = this.vehicleForm.value;
-      formData.age = this.calculateAge(formData.receivedDate);
-    this.vehicleService.addVehicle(this.vehicleForm.value).subscribe(
+      formData.age = this.calculateAge(formData.invoiceDate);
+      // Format all date fields using DatePipe
+      const formattedData = {
+        ...formData,
+        receivedDate: this.datePipe.transform(formData.receivedDate, 'dd/MM/yy') || '',
+        invoiceDate: this.datePipe.transform(formData.invoiceDate, 'dd/MM/yy') || ''
+      };
+
+      this.vehicleService.addVehicle(formattedData).subscribe(
       response => {
         console.log('Vehicle added:', response);
         this.successMessage = 'Vehicle details added successfully!';

@@ -236,7 +236,7 @@ getObjectKeys(obj: any): string[] {
   }
 
   onDelete(stock: VehicleModel): void {
-    this.vehicleService.deleteVehicleDetails(stock.vehicleId).subscribe(
+    this.vehicleService.deleteVehicleDetails(stock.id).subscribe(
       () => {
         this.successMessage = 'Vehicle details deleted successfully!';
         setTimeout(() => {

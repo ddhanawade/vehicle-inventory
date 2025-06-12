@@ -15,7 +15,7 @@ import { MatCardModule } from '@angular/material/card';
 import { NgChartsModule } from 'ng2-charts';
 import { MatNativeDateModule } from '@angular/material/core';
 import { ReportingService } from '../../services/ReportingService';
-import { ReportParams } from '../../models/ReportParams';
+import { MonthlySalesRequest } from '../../models/MonthlySalesRequest';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -49,8 +49,14 @@ import { VehicleModel } from '../../models/VehicleModel';
 })
 export class VehicleReportComponent implements OnInit {
   // Filters
-  startDate: Date | null = null;
-  endDate: Date | null = null;
+  // startDate: Date | null = null;
+  // endDate: Date | null = null;
+  // city: string = '';
+  // make: string = '';
+  // model: string = '';
+
+  startDate: string = '';
+  endDate: string = '';
   city: string = '';
   make: string = '';
   model: string = '';
@@ -61,34 +67,24 @@ export class VehicleReportComponent implements OnInit {
   activeFilter: string | null = null;
 
   displayedColumns: string[] = [
-    'invoiceDate',
-    'invoiceNumber',
-    'purchaseDealer',
-    'receivedDate',
-    'manufactureDate',
+    'make',
     'model',
-    'grade',
-    'fuelType',
-    'suffix',
-    'exteriorColor',
-    'interiorColor',
+    'purchaseDealer',
     'chassisNumber',
     'engineNumber',
     'keyNumber',
     'location',
-    'tkmInvoiceValue',
-    'age',
+    'invoiceValue',
     'interest',
-    'status',
-    'make',
-    'actions'
+    'status'
+    
   ];
   dataSource: any;
   sort: any;
   paginator: any;
   totalVehicles!: number;
   isLoading!: boolean;
-  
+
   topModelData!: { labels: any; datasets: { data: any; label: string; backgroundColor: string[]; }[]; };
 
   constructor(
@@ -98,20 +94,19 @@ export class VehicleReportComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-  //this.fetchMonthlySales();
+   //this.fetchMonthlySales();
   }
 
   fetchMonthlySales(): void {
-    const params: ReportParams = {
-      dateRange: this.startDate && this.endDate
-        ? `${this.formatDate(this.startDate)}_to_${this.formatDate(this.endDate)}`
-        : undefined,
+    const request: MonthlySalesRequest = {
+      startDate: this.formatDate(new Date(this.startDate)), // Format the startDate
+      endDate: this.formatDate(new Date(this.endDate)),    // Format the endDate
       city: this.city || undefined,
       make: this.make || undefined,
       model: this.model || undefined
     };
-  
-    this.reportService.getMonthlySalesReport(params).subscribe({
+  console.log("sd " + request.startDate);
+    this.reportService.getMonthlySalesReport(request).subscribe({
       next: (result: VehicleModel[]) => {
         this.carDetailsList = result;
         this.dataSource = new MatTableDataSource<VehicleModel>(this.carDetailsList);
@@ -156,23 +151,26 @@ export class VehicleReportComponent implements OnInit {
       }
     });
   }
-
+  
   private formatDate(date: Date): string {
-    return date.toISOString().split('T')[0];
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`; // Format as YYYY-MM-DD
   }
 
   
-  // Update your fetchTopModelSold method
+  //Update your fetchTopModelSold method
   // fetchTopModelSold(): void {
-  //   const params: ReportParams = {
-  //     dateRange: this.startDate && this.endDate ?
-  //       `${this.formatDate(this.startDate)}_to_${this.formatDate(this.endDate)}` : undefined,
+  //   const request: MonthlySalesRequest = {
+  //     startDate: this.startDate,
+  //     endDate: this.endDate,
   //     city: this.city || undefined,
   //     make: this.make || undefined,
   //     model: this.model || undefined
   //   };
 
-  //   this.reportService.getTopModelSold(params).subscribe({
+  //   this.reportService.getTopModelSold(request).subscribe({
   //     next: (response) => {
   //       // Check if response contains labels and data
   //       if (response && response.labels && response.data) {
@@ -207,10 +205,10 @@ export class VehicleReportComponent implements OnInit {
   //   });
   // }
 
-  // applyFilters(): void {
-  //   this.fetchMonthlySales();
-  //   this.fetchTopModelSold();
-  // }
+  applyFilters(): void {
+    this.fetchMonthlySales();
+   // this.fetchTopModelSold();
+  }
 
   getColumnHeader(column: string): string {
     // Convert camelCase to Title Case with spaces
@@ -235,8 +233,4 @@ export class VehicleReportComponent implements OnInit {
     return truncateColumns.includes(column);
   }
 
-  applyFilters(): void {
-    this.fetchMonthlySales();
-    //this.fetchTopModelSold();
-  }
 }

@@ -19,6 +19,7 @@ export class LoginComponent  {
   password: string = '';
   errorMessage: string = '';
   successMessage: string = '';
+  successEmailMessage: string = '';
   showPassword: boolean = false;
   user: UserModel | null = null;
   showEditPopup: boolean = false;
@@ -37,7 +38,12 @@ export class LoginComponent  {
   onReset(): void{
     this.authService.resetPassword(this.email).subscribe({
       next: (response) => {
-        console.log("Email reset link shared on email...");
+        this.successEmailMessage = "Email reset link shared on email...";
+        setTimeout(() => {
+          this.successMessage = '';
+          this.closePopup();
+        }, 3000);
+        this.router.navigate(['/']); // Redirect to a different page if needed
       },
       error: (err) => {
         this.errorMessage = 'Email not exist...';
@@ -48,6 +54,10 @@ export class LoginComponent  {
         console.error('Login failed:', err);
       }
     })
+  }
+
+  closePopup(): void {
+    this.showEditPopup = false;
   }
 
   login() {

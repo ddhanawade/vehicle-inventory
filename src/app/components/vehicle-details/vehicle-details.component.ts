@@ -60,11 +60,15 @@ export class VehicleDetailsComponent implements OnInit {
     'engineNumber',
     'keyNumber',
     'location',
-    'tkmInvoiceValue',
+    'invoiceValue',
     'age',
     'interest',
     'vehicleStatus',
     'make',
+    'customerName',
+    'orderDate',
+    'deliveryDate',
+    'orderStatus',
     'actions'
   ];
 
@@ -107,7 +111,7 @@ export class VehicleDetailsComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         // Update the vehicle in your data source
-        const index = this.dataSource.data.findIndex(item => item.vehicleId === result.vehicleId);
+        const index = this.dataSource.data.findIndex(item => item.id === result.id);
         if (index > -1) {
           this.dataSource.data[index] = result;
           this.dataSource._updateChangeSubscription();
@@ -117,23 +121,38 @@ export class VehicleDetailsComponent implements OnInit {
   }
 
   updateVehicle(vehicle: any): void {
-    console.log("Update vehicle:", JSON.stringify(vehicle));
+    // Map vehicle object to replace vehicleId with id
+     // invoiceDate: this.formatDate(new Date(vehicle.invoiceDate)); // Format the startDate
+     // receivedDate: this.formatDate(new Date(vehicle.receivedDate));   // Format the endDate
+
+      const updatedVehicle = { ...vehicle, id: vehicle.vehicleId, invoiceDate: this.formatDate(new Date(vehicle.invoiceDate)),  receivedDate: this.formatDate(new Date(vehicle.receivedDate)) };
+      delete updatedVehicle.vehicleId; // Remove vehicleId if not needed
+  
+    console.log("Update vehicle:", JSON.stringify(updatedVehicle));
     const dialogRef = this.dialog.open(UpdateVehicleComponent, {
       width: '80%', // Adjust width for responsiveness
       maxWidth: '600px', // Set a maximum width
       height: 'auto', // Adjust height dynamically
-      data: { ...vehicle }
+      data: { ...updatedVehicle }
     });
+  
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         // Update the vehicle in your data source
-        const index = this.dataSource.data.findIndex(item => item.vehicleId === result.vehicleId);
+        const index = this.dataSource.data.findIndex(item => item.id === result.id);
         if (index > -1) {
           this.dataSource.data[index] = result;
           this.dataSource._updateChangeSubscription();
         }
       }
     });
+  }
+
+  private formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`; // Format as YYYY-MM-DD
   }
 
   exportToPDF() {
@@ -201,6 +220,7 @@ export class VehicleDetailsComponent implements OnInit {
     this.vehicleService.getVehicleAndOrderDetailsByModel(modelName).subscribe({
       next: (result: VehicleModel[]) => {
         this.carDetailsList = result
+        console.log("V det " + JSON.stringify( this.carDetailsList))
         this.dataSource = new MatTableDataSource<VehicleModel>(this.carDetailsList);
 
         // Set up sorting and pagination
@@ -255,23 +275,23 @@ export class VehicleDetailsComponent implements OnInit {
     }
   }
 
-  onDelete(stock: VehicleModel): void {
-    //console.log("deleting vehicle " + JSON.stringify(stock))
+  onDelete(vehicle: any): void {
+    console.log("deleting vehicle " + JSON.stringify(vehicle))
     const dialogRef = this.dialog.open(ConfirmationDialogComponent);
-
+    id : vehicle.vehicleId;
     dialogRef.afterClosed().subscribe((confirmed) => {
       if (confirmed) {
-        this.vehicleService.deleteVehicleDetails(stock.vehicleId).subscribe(
+        this.vehicleService.deleteVehicleDetails(vehicle.vehicleId).subscribe(
           () => {
             this.successMessage = 'Vehicle details deleted successfully!';
             setTimeout(() => {
               this.successMessage = '';
             }, 2000);
-            this.getCarDetails(stock.model);
+            this.getCarDetails(vehicle.model);
           },
           (error) => console.error('Error deleting vehicle:', error)
         );
-        console.log(`Entry deleted:`, stock.vehicleId);
+        console.log(`Entry deleted:`, vehicle.id);
       } else {
         console.log('Delete operation canceled.');
       }

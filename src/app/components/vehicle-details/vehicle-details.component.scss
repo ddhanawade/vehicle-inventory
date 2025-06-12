@@ -193,3 +193,44 @@
     }
   }
 }
+
+// Success Message
+.small-success-message {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(to right, #31B978, #40CF8E);
+  color: white;
+  padding: 16px 20px;
+  border-radius: 8px;
+  margin: 20px 0;
+  box-shadow: 0 4px 12px rgba(49, 185, 120, 0.2);
+  transform: translateY(0);
+  animation: slideIn 0.3s ease-out;
+
+  &::before {
+    content: '\f058'; // Font Awesome checkmark icon
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: 1.2rem;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -21,7 +21,7 @@ export class DataService {
   }
 
   updateVehicleDetails(vehicleData: any): Observable<any> {
-    return this.http.put(`${this.baseUrl}/${vehicleData.vehicleId}`, vehicleData);
+    return this.http.put(`${this.baseUrl}/${vehicleData.id}`, vehicleData);
   }
 
   deleteVehicleDetails(id: number): Observable<any> {
