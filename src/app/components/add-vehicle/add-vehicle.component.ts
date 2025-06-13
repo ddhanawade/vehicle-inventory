@@ -114,8 +114,8 @@ calculateAge(receivedDate: Date): number {
       // Format all date fields using DatePipe
       const formattedData = {
         ...formData,
-        receivedDate: this.datePipe.transform(formData.receivedDate, 'dd/MM/yy') || '',
-        invoiceDate: this.datePipe.transform(formData.invoiceDate, 'dd/MM/yy') || ''
+        receivedDate: this.datePipe.transform(formData.receivedDate, 'yyyy-MM-dd') || '',
+        invoiceDate: this.datePipe.transform(formData.invoiceDate, 'yyyy-MM-dd') || ''
       };
 
       this.vehicleService.addVehicle(formattedData).subscribe(
