@@ -115,19 +115,20 @@ export class AuthService {
   }
 
   resetPassword(email: string): Observable<any> {
-    return this.http.post(`${this.baseUrl}/forget-password`, {email}).pipe(
-      tap(response => {
-        if (response) {
-          console.log('Email retrieved successfully:');
-        } else {
-          console.error('Email not found');
-        }
-      }),
-      catchError(error => {
-        console.error('error occured while email search:', error);
-        return throwError(() => error);
-      })
-    );
+    return this.http.post(`${this.baseUrl}/forget-password`, {email});
+    // return this.http.post(`${this.baseUrl}/forget-password`, {email}).pipe(
+    //   tap(response => {
+    //     if (response) {
+    //       console.log('Email retrieved successfully:');
+    //     } else {
+    //       console.error('Email not found');
+    //     }
+    //   }),
+    //   catchError(error => {
+    //     console.error('error occured while email search:', error);
+    //     return throwError(() => error);
+    //   })
+    // );
   }
 
   forgotPassword(token: string, newPassword: string): Observable<any> {

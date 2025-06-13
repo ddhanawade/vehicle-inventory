@@ -80,8 +80,11 @@
         <div *ngIf="showEditPopup" class="popup">
           <div class="popup-content">
             <!-- Success message -->
-            <div *ngIf="successEmailMessage" class="small-success-message">
+            <div *ngIf="successEmailMessage" class="small-success-message" [ngClass]="{'fade-out': isFadingOut}">
               <p>{{ successEmailMessage }}</p>
+            </div>
+            <div *ngIf="errorMessage" class="small-success-message">
+              <p>{{ errorMessage }}</p>
             </div>
             <span class="close" (click)="closeEditPopup()">&times;</span>
             <h2>Reset Password</h2>

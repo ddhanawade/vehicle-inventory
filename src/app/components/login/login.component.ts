@@ -24,6 +24,7 @@ export class LoginComponent  {
   user: UserModel | null = null;
   showEditPopup: boolean = false;
   email : string = ''
+isFadingOut: any;
 
   constructor(private authService: AuthService, private userservice: userService, private router: Router, private snackBar: MatSnackBar) {}
 
@@ -35,25 +36,27 @@ export class LoginComponent  {
     this.showEditPopup = false;
   }
 
-  onReset(): void{
+  onReset(): void {
     this.authService.resetPassword(this.email).subscribe({
       next: (response) => {
-        this.successEmailMessage = "Email reset link shared on email...";
+        this.successEmailMessage = response.message;
+        this.isFadingOut = false; // Reset fade-out state
         setTimeout(() => {
-          this.successMessage = '';
-          this.closePopup();
-        }, 3000);
-        this.router.navigate(['/']); // Redirect to a different page if needed
+          this.isFadingOut = true; // Trigger fade-out
+          setTimeout(() => {
+            this.successEmailMessage = '';
+            this.closePopup();
+          }, 1000); // Wait for fade-out animation to complete
+        }, 1000);
       },
       error: (err) => {
         this.errorMessage = 'Email not exist...';
         setTimeout(() => {
           this.errorMessage = '';
-          //this.router.navigate(['/']); // Redirect to a different page if needed
         }, 2000);
         console.error('Login failed:', err);
       }
-    })
+    });
   }
 
   closePopup(): void {
