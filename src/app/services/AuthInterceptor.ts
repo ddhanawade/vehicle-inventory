@@ -23,7 +23,7 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 
 export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
-  const excludedPattern = /^http:\/\/localhost:8082\/auth\/[^/]+$/; // Matches /auth/{username}
+  const excludedPattern = /^(http:\/\/localhost:8082\/auth\/[^/]+|http:\/\/fleet-manager-prd\.us-east-2\.elasticbeanstalk\.com)$/;
 
   if (!excludedPattern.test(req.url)) {
     const token = localStorage.getItem('authToken');
