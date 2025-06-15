@@ -157,7 +157,7 @@ getObjectKeys(obj: any): string[] {
 
   filterStocks(): void {
     const searchTermLower = this.searchTerm.toLowerCase();
-
+    
     // Apply role-based filtering first
     let roleFilteredList: VehicleModel[] = [];
     if (this.hasRole('ADMIN')) {

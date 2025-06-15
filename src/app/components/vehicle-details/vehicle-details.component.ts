@@ -219,21 +219,22 @@ export class VehicleDetailsComponent implements OnInit {
   getCarDetails(modelName: string): void {
     this.vehicleService.getVehicleAndOrderDetailsByModel(modelName).subscribe({
       next: (result: VehicleModel[]) => {
-        this.carDetailsList = result
-        console.log("V det " + JSON.stringify( this.carDetailsList))
+        this.carDetailsList = result;
+        console.log("V det " + JSON.stringify(this.carDetailsList));
         this.dataSource = new MatTableDataSource<VehicleModel>(this.carDetailsList);
-
+  
         // Set up sorting and pagination
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
-
+  
         // Configure custom sorting
         this.dataSource.sortingDataAccessor = (item: VehicleModel, property: string) => {
           switch (property) {
             case 'receivedDate':
             case 'invoiceDate':
-            case 'manufactureDate':
               return new Date(item[property] || '').getTime();
+            case 'manufactureDate': // Treat as a string
+              return item.manufactureDate || '';
             case 'age':
             case 'tkmInvoiceValue':
               return typeof item[property] === 'number' ? item[property] : 0;
@@ -241,7 +242,7 @@ export class VehicleDetailsComponent implements OnInit {
               return item[property]?.toString() || '';
           }
         };
-
+  
         // Update the filter predicate
         this.dataSource.filterPredicate = (data: VehicleModel, filter: string) => {
           return Object.keys(data).some(key => {
@@ -251,7 +252,7 @@ export class VehicleDetailsComponent implements OnInit {
               value.toString().toLowerCase().includes(filter.toLowerCase());
           });
         };
-
+  
         this.totalVehicles = this.carDetailsList.length;
         this.isLoading = false;
         this.cdr.detectChanges(); // Trigger change detection

@@ -13,7 +13,7 @@ export class AuthGuard implements CanActivate {
     const baseUrl = state.url.split('?')[0]; // Extract the base path without query parameters
 
     if (publicRoutes.includes(baseUrl)) {
-      alert("hdsgaghd")
+     
       return true; // Allow access to public routes
     }
 

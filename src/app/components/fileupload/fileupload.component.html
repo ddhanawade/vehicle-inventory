@@ -1,20 +1,28 @@
+
 <div class="file-upload-container">
-    <label for="fileInput" class="file-label">Choose a file</label>
-    <input id="fileInput" type="file" (change)="onFileSelected($event)" />
-    <span *ngIf="selectedFileName" class="file-name">Selected File: {{ selectedFileName }}</span>
-    <button mat-raised-button color="primary" (click)="uploadFile()">Upload</button>
-  
-    <mat-card *ngIf="successMessage" class="success-card">
-      <mat-card-content>
-        <mat-icon color="primary">check_circle</mat-icon>
-        <span>{{ successMessage }}</span>
-      </mat-card-content>
-    </mat-card>
-  
-    <mat-card *ngIf="errorMessage" class="error-card">
-      <mat-card-content>
-        <mat-icon color="warn">error</mat-icon>
-        <span>{{ errorMessage }}</span>
-      </mat-card-content>
-    </mat-card>
-  </div>
+  <label for="fileInput" class="file-label">Choose a file</label>
+  <input id="fileInput" type="file" (change)="onFileSelected($event)" />
+  <span *ngIf="selectedFileName" class="file-name">Selected File: {{ selectedFileName }}</span>
+  <button mat-raised-button color="primary" (click)="uploadFile()" [disabled]="isLoading">
+    <span *ngIf="!isLoading">Upload</span>
+  </button>
+
+  <!-- <button mat-raised-button color="accent" (click)="downloadTemplate()">
+    Download Template
+  </button> -->
+
+  <mat-progress-spinner *ngIf="isLoading" diameter="40" mode="indeterminate"></mat-progress-spinner>
+  <mat-card *ngIf="successMessage" class="success-card">
+    <mat-card-content>
+      <mat-icon color="primary">check_circle</mat-icon>
+      <span>{{ successMessage }}</span>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card *ngIf="errorMessage" class="error-card">
+    <mat-card-content>
+      <mat-icon color="warn">error</mat-icon>
+      <span>{{ errorMessage }}</span>
+    </mat-card-content>
+  </mat-card>
+</div>
