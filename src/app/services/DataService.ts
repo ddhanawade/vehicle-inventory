@@ -10,6 +10,8 @@ export class DataService {
 
   private baseUrl = 'http://localhost:8080/api/vehicles';
 
+  //private baseUrl = 'http://fleet-manager-prd.us-east-2.elasticbeanstalk.com/api/vehicles';
+
   constructor(private http: HttpClient) {}
 
   getData(): Observable<VehicleModel[]> {
