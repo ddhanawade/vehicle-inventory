@@ -18,7 +18,7 @@ export class ReportingService {
 
   // getMonthlySalesReport(request: MonthlySalesRequest): Observable<any> {
   //   let httpParams = new HttpParams();
-    
+
   //   if (request.dateRange) httpParams = httpParams.set('dateRange', request.dateRange);
   //   if (request.city) httpParams = httpParams.set('city', request.city);
   //   if (request.make) httpParams = httpParams.set('make', request.make);
@@ -35,7 +35,7 @@ export class ReportingService {
 
   // getTopModelSold(request: MonthlySalesRequest): Observable<any> {
   //   let httpParams = new HttpParams();
-    
+
   //   if (request.dateRange) httpParams = httpParams.set('dateRange', request.dateRange);
   //   if (request.city) httpParams = httpParams.set('city', request.city);
   //   if (request.make) httpParams = httpParams.set('make', request.make);
@@ -43,5 +43,5 @@ export class ReportingService {
 
   //   return this.http.get(`${this.baseUrl}/analytics/top-model-sold`, { params: httpParams });
   // }
-  
+
 }
