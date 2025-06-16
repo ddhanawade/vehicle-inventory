@@ -3,15 +3,20 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject, throwError } from 'rxjs';
 import { UserModel } from '../models/UserModel';
 import { tap, catchError } from 'rxjs/operators';
+import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { SessionExpiredDialogComponent } from '../components/session-expired-dialog-component/session-expired-dialog-component.component';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private baseUrl = 'http://localhost:8082/auth';
-  //private baseUrl = 'http://inventory-service-prd.us-east-2.elasticbeanstalk.com/auth';
+  
+  
+  private baseUrl = 'http://inventory-service-prd.us-east-2.elasticbeanstalk.com/auth';
   private tokenKey = 'authToken';
   private userKey = 'authUser';
+  private sessionTimeout: any;
 
   private userSubject = new BehaviorSubject<UserModel | null>(this.getStoredUser());
   user$ = this.userSubject.asObservable();
@@ -19,14 +24,14 @@ export class AuthService {
   private isLoggedInSubject = new BehaviorSubject<boolean>(this.isAuthenticated());
   isLoggedIn$ = this.isLoggedInSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router, private dialog: MatDialog) {}
 
   login(username: string, password: string): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/login`, { username, password }).pipe(
       tap(response => {
         if (response.token) {
           this.saveToken(response.token);
-          console.log('JWT token stored in localStorage:', response.token);
+          this.startSessionTimer(response.token);
         } else {
           console.error('Token not found in login response');
         }
@@ -47,14 +52,39 @@ export class AuthService {
     return localStorage.getItem(this.tokenKey);
   }
 
-  saveUser(user: UserModel): void {
-    localStorage.setItem(this.userKey, JSON.stringify(user));
-    this.userSubject.next(user);
+  startSessionTimer(token: string): void {
+    const tokenPayload = JSON.parse(atob(token.split('.')[1])); // Decode JWT payload
+    const expiryTime = tokenPayload.exp * 1000; // Convert expiry to milliseconds
+    const currentTime = Date.now();
+    const timeout = expiryTime - currentTime;
+
+    if (timeout > 0) {
+      this.sessionTimeout = setTimeout(() => {
+        this.handleSessionExpiry();
+      }, timeout);
+    }
   }
 
-  getStoredUser(): UserModel | null {
-    const user = localStorage.getItem(this.userKey);
-    return user ? JSON.parse(user) : null;
+  handleSessionExpiry(): void {
+    this.clearToken();
+    const dialogRef = this.dialog.open(SessionExpiredDialogComponent, {
+      width: '300px',
+      disableClose: true
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      this.router.navigate(['/login']);
+    });
+  }
+
+  clearToken(): void {
+    localStorage.removeItem(this.tokenKey);
+    localStorage.removeItem(this.userKey);
+    this.isLoggedInSubject.next(false);
+    this.userSubject.next(null);
+    if (this.sessionTimeout) {
+      clearTimeout(this.sessionTimeout);
+    }
   }
 
   logout(): Observable<any> {
@@ -78,13 +108,6 @@ export class AuthService {
     );
   }
 
-  clearToken(): void {
-    localStorage.removeItem(this.tokenKey);
-    localStorage.removeItem(this.userKey);
-    this.isLoggedInSubject.next(false);
-    this.userSubject.next(null);
-  }
-
   registerUser(userData: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/register`, userData, { responseType: 'text' }).pipe(
       catchError(error => {
@@ -94,14 +117,19 @@ export class AuthService {
     );
   }
 
+  forgotPassword(token: string, newPassword: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/reset-password`, { token, newPassword });
+  }
+
+  resetPassword(email: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/forget-password`, {email});
+  }
+
   getUserByName(username: string): Observable<UserModel> {
     const url = `${this.baseUrl}/${username}`;
     return this.http.get<UserModel>(url); // No headers added here
   }
 
-  isAuthenticated(): boolean {
-    return !!this.getToken();
-  }
 
   setUser(user: UserModel): void {
     this.saveUser(user);
@@ -115,24 +143,17 @@ export class AuthService {
     this.clearToken();
   }
 
-  resetPassword(email: string): Observable<any> {
-    return this.http.post(`${this.baseUrl}/forget-password`, {email});
-    // return this.http.post(`${this.baseUrl}/forget-password`, {email}).pipe(
-    //   tap(response => {
-    //     if (response) {
-    //       console.log('Email retrieved successfully:');
-    //     } else {
-    //       console.error('Email not found');
-    //     }
-    //   }),
-    //   catchError(error => {
-    //     console.error('error occured while email search:', error);
-    //     return throwError(() => error);
-    //   })
-    // );
+  saveUser(user: UserModel): void {
+    localStorage.setItem(this.userKey, JSON.stringify(user));
+    this.userSubject.next(user);
   }
 
-  forgotPassword(token: string, newPassword: string): Observable<any> {
-    return this.http.post(`${this.baseUrl}/reset-password`, { token, newPassword });
+  getStoredUser(): UserModel | null {
+    const user = localStorage.getItem(this.userKey);
+    return user ? JSON.parse(user) : null;
+  }
+
+  isAuthenticated(): boolean {
+    return !!this.getToken();
   }
 }

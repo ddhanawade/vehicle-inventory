@@ -77,6 +77,7 @@ export class VehicleDetailsComponent implements OnInit {
   filters: { [key: string]: string } = {};
   activeFilter: string | null = null;
   successMessage: string = '';
+  originalCarDetailsList: VehicleModel[] = [];
 
   constructor(private route: ActivatedRoute, private vehicleService: DataService, private cdr: ChangeDetectorRef, private dialog: MatDialog,
     private orderService: OrderService, private renderer: Renderer2
@@ -220,8 +221,20 @@ export class VehicleDetailsComponent implements OnInit {
     this.isLoad = true; // Start loading
     this.vehicleService.getVehicleAndOrderDetailsByModel(modelName).subscribe({
       next: (result: VehicleModel[]) => {
-        this.carDetailsList = result;
-        console.log("V det " + JSON.stringify(this.carDetailsList));
+        // Transform manufactureDate to ensure it is treated as a string
+        result.forEach(vehicle => {
+          if (vehicle.manufactureDate) {
+            vehicle.manufactureDate = vehicle.manufactureDate.toString(); // Ensure it's a string
+          }
+        });
+  
+        // Store the original unfiltered data
+        this.originalCarDetailsList = result;
+  
+        // Filter out vehicles with status "sold"
+        this.carDetailsList = result.filter(vehicle => vehicle.vehicleStatus.toLowerCase() !== 'sold');
+        console.log("Filtered Vehicle Details: " + JSON.stringify(this.carDetailsList));
+  
         this.dataSource = new MatTableDataSource<VehicleModel>(this.carDetailsList);
   
         // Set up sorting and pagination
@@ -244,19 +257,9 @@ export class VehicleDetailsComponent implements OnInit {
           }
         };
   
-        // Update the filter predicate
-        this.dataSource.filterPredicate = (data: VehicleModel, filter: string) => {
-          return Object.keys(data).some(key => {
-            const value = data[key];
-            return value !== null &&
-              value !== undefined &&
-              value.toString().toLowerCase().includes(filter.toLowerCase());
-          });
-        };
-  
         this.totalVehicles = this.carDetailsList.length;
         this.isLoading = false;
-        this.isLoad = false; // Start loading
+        this.isLoad = false; // Stop loading
         this.cdr.detectChanges(); // Trigger change detection
       },
       error: (error) => {
@@ -265,6 +268,25 @@ export class VehicleDetailsComponent implements OnInit {
       }
     });
   }
+  
+  onStatusFilterChange(event: Event): void {
+    const selectedStatus = (event.target as HTMLSelectElement).value.toLowerCase();
+  
+    if (selectedStatus === 'sold') {
+      // Show only sold vehicles
+      this.dataSource.data = this.originalCarDetailsList.filter(vehicle => vehicle.vehicleStatus.toLowerCase() === 'sold');
+    } else if (selectedStatus === 'all') {
+      // Show vehicles that are not sold
+      this.dataSource.data = this.originalCarDetailsList.filter(vehicle => vehicle.vehicleStatus.toLowerCase() !== 'sold');
+    }
+  
+    // Update the total vehicle count
+    this.totalVehicles = this.dataSource.data.length;
+  
+    // Trigger change detection
+    this.cdr.detectChanges();
+  }
+  
 
   // Update filter method
   applyFilter(event: Event) {
