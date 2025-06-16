@@ -43,7 +43,7 @@ export class VehicleDetailsComponent implements OnInit {
   dataSource!: MatTableDataSource<VehicleModel>;
   isLoading = false;
   totalVehicles = 0;
-
+  isLoad: boolean = false;
   displayedColumns: string[] = [
     'invoiceDate',
     'invoiceNumber',
@@ -217,6 +217,7 @@ export class VehicleDetailsComponent implements OnInit {
   }
 
   getCarDetails(modelName: string): void {
+    this.isLoad = true; // Start loading
     this.vehicleService.getVehicleAndOrderDetailsByModel(modelName).subscribe({
       next: (result: VehicleModel[]) => {
         this.carDetailsList = result;
@@ -255,6 +256,7 @@ export class VehicleDetailsComponent implements OnInit {
   
         this.totalVehicles = this.carDetailsList.length;
         this.isLoading = false;
+        this.isLoad = false; // Start loading
         this.cdr.detectChanges(); // Trigger change detection
       },
       error: (error) => {

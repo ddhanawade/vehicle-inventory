@@ -43,6 +43,8 @@ export class UpdateVehicleComponent implements OnInit {
 
   dataSource!: MatTableDataSource<VehicleModel>;
 
+  isLoading: boolean = false;
+
   currentTab: number = 0; // Track the current tab
 
   makes = ['Tata', 'Toyota', 'Eicher'];
@@ -91,7 +93,7 @@ export class UpdateVehicleComponent implements OnInit {
   
   onUpdate(): void {
     if (this.vehicleForm.valid) {
-      
+    this.isLoading = true; // Start loading
     const updatedVehicle = this.vehicleForm.value;
 
     const updateVehicle = { ...updatedVehicle, id: updatedVehicle.id, invoiceDate: this.formatDate(new Date(updatedVehicle.invoiceDate))};
@@ -103,6 +105,7 @@ export class UpdateVehicleComponent implements OnInit {
       (response: any) => {
         console.log("Response from backend:", response); // Debugging log
         this.successMessage = 'Vehicle details updated successfully!';
+        this.isLoading = false; // Stop loading
         setTimeout(() => {
           this.successMessage = '';
           // this.closeEditPopup();
@@ -145,3 +148,4 @@ export class UpdateVehicleComponent implements OnInit {
   }
 
 }
+

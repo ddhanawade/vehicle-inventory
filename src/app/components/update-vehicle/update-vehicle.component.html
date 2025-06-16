@@ -14,7 +14,12 @@
             <div class="form-header">
                 <h2><i class="fas fa-plus-circle"></i> Update Vehicle Details</h2>
             </div>
-            
+            <div *ngIf="isLoading" class="loading-overlay">
+                <div class="loading-indicator">
+                  <div class="spinner"></div>
+                  <p>Loading, please wait...</p>
+                </div>
+              </div>
             <form [formGroup]="vehicleForm" (ngSubmit)="onUpdate()">
                 <div class="tab-container">
                     <!-- Tab Navigation -->

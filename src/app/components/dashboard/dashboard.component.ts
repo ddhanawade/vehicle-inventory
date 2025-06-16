@@ -33,6 +33,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   stocksList: any;
   selectedAgeFilter: any;
   vehicleOrderDetails: any;
+  isLoading: boolean = false;
 
   
   scrollLeft() {
@@ -342,22 +343,31 @@ getObjectKeys(obj: any): string[] {
   
 
   getUniqueModelDetails(): void {
-    this.vehicleService.getUnqiueVehicleModels().subscribe((data: VehicleModel[]) => {
-      this.uniqueVehicleModel = data;
-
-      // Filter the data based on roles
-      if (this.hasRole('ADMIN')) {
-        this.filteredModelStockList = [...this.uniqueVehicleModel]; // Show all data for ADMIN
-      } else if (this.hasRole('TATA')) {
-        this.filteredModelStockList = this.uniqueVehicleModel.filter(car => car.make === 'Tata');
-      } else if (this.hasRole('TOYOTA')) {
-        this.filteredModelStockList = this.uniqueVehicleModel.filter(car => car.make === 'Toyota');
-      } else if (this.hasRole('EICHER')) {
-        this.filteredModelStockList = this.uniqueVehicleModel.filter(car => car.make === 'Eicher');
-      } else {
-        this.filteredModelStockList = []; // Default to an empty list if no roles match
+    this.isLoading = true; // Start loading
+    this.vehicleService.getUnqiueVehicleModels().subscribe({
+      next: (data: VehicleModel[]) => {
+        this.uniqueVehicleModel = data;
+  
+        // Filter the data based on roles
+        if (this.hasRole('ADMIN')) {
+          this.filteredModelStockList = [...this.uniqueVehicleModel]; // Show all data for ADMIN
+        } else if (this.hasRole('TATA')) {
+          this.filteredModelStockList = this.uniqueVehicleModel.filter(car => car.make === 'Tata');
+        } else if (this.hasRole('TOYOTA')) {
+          this.filteredModelStockList = this.uniqueVehicleModel.filter(car => car.make === 'Toyota');
+        } else if (this.hasRole('EICHER')) {
+          this.filteredModelStockList = this.uniqueVehicleModel.filter(car => car.make === 'Eicher');
+        } else {
+          this.filteredModelStockList = []; // Default to an empty list if no roles match
+        }
+        this.cdr.markForCheck(); // Notify Angular about data changes
+      },
+      error: (err) => {
+        console.error('Error fetching vehicle models:', err);
+      },
+      complete: () => {
+        this.isLoading = false; // Stop loading
       }
-      this.cdr.markForCheck(); // Notify Angular about data changes
     });
   }
 

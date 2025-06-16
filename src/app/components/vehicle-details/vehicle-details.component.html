@@ -18,7 +18,12 @@
           (Total: {{totalVehicles}})
         </span> -->
       </h2>
-  
+      <div *ngIf="isLoad" class="loading-overlay">
+        <div class="loading-indicator">
+          <div class="spinner"></div>
+          <p>Loading, please wait...</p>
+        </div>
+      </div>
       <div class="table-actions">
         <div class="search-box">
           <!-- <mat-form-field appearance="outline">
