@@ -156,106 +156,6 @@ export class VehicleDetailsComponent implements OnInit {
     return `${year}-${month}-${day}`; // Format as YYYY-MM-DD
   }
 
-  // exportToPDF() {
-  //   const table = document.querySelector('table') as HTMLElement;
-  
-  //   if (!table) {
-  //     console.error('Table element not found');
-  //     return;
-  //   }
-  
-  //   // Save original styles for excluded columns
-  //   const excludedColumns = table.querySelectorAll('.Actions');
-  //   const originalDisplayStyles: string[] = [];
-  //   excludedColumns.forEach((col) => {
-  //     originalDisplayStyles.push((col as HTMLElement).style.display);
-  //     (col as HTMLElement).style.display = 'none'; // Hide the column
-  //   });
-  
-  //   html2canvas(table, { scale: 2, useCORS: true }).then((canvas) => {
-  //     const imgData = canvas.toDataURL('image/png');
-  //     const pdf = new jsPDF();
-  //     const pdfWidth = pdf.internal.pageSize.getWidth();
-  //     const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-  
-  //     pdf.addImage(imgData, 'PNG', 10, 10, pdfWidth - 20, pdfHeight);
-  //     pdf.save('vehicle-data.pdf');
-  
-  //     // Restore original styles for excluded columns
-  //     excludedColumns.forEach((col, index) => {
-  //       (col as HTMLElement).style.display = originalDisplayStyles[index];
-  //     });
-  //   }).catch((error) => {
-  //     console.error('Error generating PDF:', error);
-  
-  //     // Restore original styles in case of error
-  //     excludedColumns.forEach((col, index) => {
-  //       (col as HTMLElement).style.display = originalDisplayStyles[index];
-  //     });
-  //   });
-  // }
-
-  // exportToExcel() {
-  //   const table = document.querySelector('.responsive-table') as HTMLElement;
-  //   const worksheet = XLSX.utils.table_to_sheet(table);
-  //   const workbook = XLSX.utils.book_new();
-  //   XLSX.utils.book_append_sheet(workbook, worksheet, 'Vehicle Details');
-  //   XLSX.writeFile(workbook, 'vehicle-details.xlsx');
-
-
-  // }
-
-  // exportToPDF(): void {
-  //   // Define the columns you want to include in the PDF
-  //   const columnsToInclude = [
-  //     'invoiceDate',
-  //     'invoiceNumber',
-  //     'purchaseDealer',
-  //     'receivedDate',
-  //     'orderDate',
-  //     'deliveryDate',
-  //     'model',
-  //     'location',
-  //     'vehicleStatus',
-  //     'make'
-  //   ];
-  
-  //   // Map the data to include only the selected columns
-  //   const pdfData = this.dataSource.data.map((vehicle) => {
-  //     const row: { [key: string]: any } = {};
-  //     columnsToInclude.forEach((column) => {
-  //       if (['invoiceDate', 'receivedDate', 'orderDate', 'deliveryDate'].includes(column)) {
-  //         row[column] = vehicle[column as keyof VehicleModel]
-  //           ? new Date(vehicle[column as keyof VehicleModel]).toLocaleDateString() // Format as date
-  //           : ''; // Handle empty or null values
-  //       } else {
-  //         row[column] = vehicle[column as keyof VehicleModel];
-  //       }
-  //     });
-  //     return row;
-  //   });
-  
-  //   // Generate a table for the PDF
-  //   const tableHeaders = columnsToInclude.map((column) => this.getColumnHeader(column));
-  //   const tableRows = pdfData.map((row) => columnsToInclude.map((column) => row[column]));
-  
-  //   const pdf = new jsPDF();
-  //   pdf.setFontSize(10);
-  
-  //   // Add table headers
-  //   pdf.autoTable({
-  //     head: [tableHeaders],
-  //     body: tableRows,
-  //     startY: 10,
-  //     theme: 'grid',
-  //     styles: { fontSize: 8 },
-  //     headStyles: { fillColor: [33, 147, 176] }, // Custom header color
-  //   });
-  
-  //   // Save the PDF
-  //   pdf.save('vehicle-data.pdf');
-  // }
-
   exportToExcel(): void {
     // Define the columns you want to include in the Excel file
     const columnsToInclude = [
@@ -328,10 +228,11 @@ export class VehicleDetailsComponent implements OnInit {
     this.isLoad = true; // Start loading
     this.vehicleService.getVehicleAndOrderDetailsByModel(modelName).subscribe({
       next: (result: VehicleModel[]) => {
-        // Transform manufactureDate to ensure it is treated as a string
+        // Transform manufactureDate to extract only the year
         result.forEach(vehicle => {
           if (vehicle.manufactureDate) {
-            vehicle.manufactureDate = vehicle.manufactureDate.toString(); // Ensure it's a string
+            const date = new Date(vehicle.manufactureDate);
+            vehicle.manufactureDate = date.getFullYear().toString(); // Extract year as string
           }
         });
   
