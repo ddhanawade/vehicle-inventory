@@ -156,52 +156,159 @@ export class VehicleDetailsComponent implements OnInit {
     return `${year}-${month}-${day}`; // Format as YYYY-MM-DD
   }
 
-  exportToPDF() {
-    const table = document.querySelector('table') as HTMLElement;
+  // exportToPDF() {
+  //   const table = document.querySelector('table') as HTMLElement;
   
-    if (!table) {
-      console.error('Table element not found');
-      return;
-    }
+  //   if (!table) {
+  //     console.error('Table element not found');
+  //     return;
+  //   }
   
-    // Save original styles for excluded columns
-    const excludedColumns = table.querySelectorAll('.Actions');
-    const originalDisplayStyles: string[] = [];
-    excludedColumns.forEach((col) => {
-      originalDisplayStyles.push((col as HTMLElement).style.display);
-      (col as HTMLElement).style.display = 'none'; // Hide the column
-    });
+  //   // Save original styles for excluded columns
+  //   const excludedColumns = table.querySelectorAll('.Actions');
+  //   const originalDisplayStyles: string[] = [];
+  //   excludedColumns.forEach((col) => {
+  //     originalDisplayStyles.push((col as HTMLElement).style.display);
+  //     (col as HTMLElement).style.display = 'none'; // Hide the column
+  //   });
   
-    html2canvas(table, { scale: 2, useCORS: true }).then((canvas) => {
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF();
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+  //   html2canvas(table, { scale: 2, useCORS: true }).then((canvas) => {
+  //     const imgData = canvas.toDataURL('image/png');
+  //     const pdf = new jsPDF();
+  //     const pdfWidth = pdf.internal.pageSize.getWidth();
+  //     const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
   
-      pdf.addImage(imgData, 'PNG', 10, 10, pdfWidth - 20, pdfHeight);
-      pdf.save('vehicle-data.pdf');
+  //     pdf.addImage(imgData, 'PNG', 10, 10, pdfWidth - 20, pdfHeight);
+  //     pdf.save('vehicle-data.pdf');
   
-      // Restore original styles for excluded columns
-      excludedColumns.forEach((col, index) => {
-        (col as HTMLElement).style.display = originalDisplayStyles[index];
-      });
-    }).catch((error) => {
-      console.error('Error generating PDF:', error);
+  //     // Restore original styles for excluded columns
+  //     excludedColumns.forEach((col, index) => {
+  //       (col as HTMLElement).style.display = originalDisplayStyles[index];
+  //     });
+  //   }).catch((error) => {
+  //     console.error('Error generating PDF:', error);
   
-      // Restore original styles in case of error
-      excludedColumns.forEach((col, index) => {
-        (col as HTMLElement).style.display = originalDisplayStyles[index];
-      });
-    });
-  }
+  //     // Restore original styles in case of error
+  //     excludedColumns.forEach((col, index) => {
+  //       (col as HTMLElement).style.display = originalDisplayStyles[index];
+  //     });
+  //   });
+  // }
 
-  exportToExcel() {
-    const table = document.querySelector('.responsive-table') as HTMLElement;
-    const worksheet = XLSX.utils.table_to_sheet(table);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Vehicle Details');
-    XLSX.writeFile(workbook, 'vehicle-details.xlsx');
+  // exportToExcel() {
+  //   const table = document.querySelector('.responsive-table') as HTMLElement;
+  //   const worksheet = XLSX.utils.table_to_sheet(table);
+  //   const workbook = XLSX.utils.book_new();
+  //   XLSX.utils.book_append_sheet(workbook, worksheet, 'Vehicle Details');
+  //   XLSX.writeFile(workbook, 'vehicle-details.xlsx');
 
+
+  // }
+
+  // exportToPDF(): void {
+  //   // Define the columns you want to include in the PDF
+  //   const columnsToInclude = [
+  //     'invoiceDate',
+  //     'invoiceNumber',
+  //     'purchaseDealer',
+  //     'receivedDate',
+  //     'orderDate',
+  //     'deliveryDate',
+  //     'model',
+  //     'location',
+  //     'vehicleStatus',
+  //     'make'
+  //   ];
+  
+  //   // Map the data to include only the selected columns
+  //   const pdfData = this.dataSource.data.map((vehicle) => {
+  //     const row: { [key: string]: any } = {};
+  //     columnsToInclude.forEach((column) => {
+  //       if (['invoiceDate', 'receivedDate', 'orderDate', 'deliveryDate'].includes(column)) {
+  //         row[column] = vehicle[column as keyof VehicleModel]
+  //           ? new Date(vehicle[column as keyof VehicleModel]).toLocaleDateString() // Format as date
+  //           : ''; // Handle empty or null values
+  //       } else {
+  //         row[column] = vehicle[column as keyof VehicleModel];
+  //       }
+  //     });
+  //     return row;
+  //   });
+  
+  //   // Generate a table for the PDF
+  //   const tableHeaders = columnsToInclude.map((column) => this.getColumnHeader(column));
+  //   const tableRows = pdfData.map((row) => columnsToInclude.map((column) => row[column]));
+  
+  //   const pdf = new jsPDF();
+  //   pdf.setFontSize(10);
+  
+  //   // Add table headers
+  //   pdf.autoTable({
+  //     head: [tableHeaders],
+  //     body: tableRows,
+  //     startY: 10,
+  //     theme: 'grid',
+  //     styles: { fontSize: 8 },
+  //     headStyles: { fillColor: [33, 147, 176] }, // Custom header color
+  //   });
+  
+  //   // Save the PDF
+  //   pdf.save('vehicle-data.pdf');
+  // }
+
+  exportToExcel(): void {
+    // Define the columns you want to include in the Excel file
+    const columnsToInclude = [
+      'invoiceDate',
+    'invoiceNumber',
+    'purchaseDealer',
+    'receivedDate',
+    'manufactureDate',
+    'model',
+    'grade',
+    'fuelType',
+    'suffix',
+    'exteriorColor',
+    'interiorColor',
+    'chassisNumber',
+    'engineNumber',
+    'keyNumber',
+    'location',
+    'invoiceValue',
+    'age',
+    'interest',
+    'vehicleStatus',
+    'make',
+    'customerName',
+    'orderDate',
+    'deliveryDate',
+    'orderStatus'
+    ];
+  
+    // Map the data to include only the selected columns and format date columns
+  const excelData = this.dataSource.data.map((vehicle) => {
+    const row: { [key: string]: any } = {};
+    columnsToInclude.forEach((column) => {
+      if (['invoiceDate', 'receivedDate', 'orderDate', 'deliveryDate'].includes(column)) {
+        row[column] = vehicle[column as keyof VehicleModel]
+          ? new Date(vehicle[column as keyof VehicleModel]).toLocaleDateString() // Format as date
+          : ''; // Handle empty or null values
+      } else {
+        row[column] = vehicle[column as keyof VehicleModel];
+      }
+    });
+    return row;
+  });
+
+  // Create a worksheet from the filtered data
+  const worksheet = XLSX.utils.json_to_sheet(excelData);
+
+  // Create a workbook and append the worksheet
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Vehicle Details');
+
+  // Write the workbook to a file
+  XLSX.writeFile(workbook, 'vehicle-details.xlsx');
 
   }
 
