@@ -10,7 +10,7 @@ import { OrderModel } from "../models/order.model";
 export class OrderService {
     
     //private baseUrl = 'http://fleet-manager-prd.us-east-2.elasticbeanstalk.com/api/orders';
-    private baseUrl = 'http://localhost:8080/api/orders';
+        private baseUrl = 'http://localhost:8080/api/orders';
 
     constructor(private http: HttpClient) { }
 

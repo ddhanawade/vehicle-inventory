@@ -12,8 +12,8 @@ import { SessionExpiredDialogComponent } from '../components/session-expired-dia
 })
 export class AuthService {
   
-  
-  private baseUrl = 'http://inventory-service-prd.us-east-2.elasticbeanstalk.com/auth';
+  private baseUrl = 'http://localhost:8082/auth';
+  //private baseUrl = 'http://inventory-service-prd.us-east-2.elasticbeanstalk.com/auth';
   private tokenKey = 'authToken';
   private userKey = 'authUser';
   private sessionTimeout: any;
