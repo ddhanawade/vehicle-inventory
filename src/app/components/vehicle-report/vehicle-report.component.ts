@@ -105,7 +105,6 @@ export class VehicleReportComponent implements OnInit {
       make: this.make || undefined,
       model: this.model || undefined
     };
-  console.log("sd " + request.startDate);
     this.reportService.getMonthlySalesReport(request).subscribe({
       next: (result: VehicleModel[]) => {
         this.carDetailsList = result;

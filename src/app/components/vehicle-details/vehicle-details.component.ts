@@ -77,6 +77,7 @@ export class VehicleDetailsComponent implements OnInit {
   filters: { [key: string]: string } = {};
   activeFilter: string | null = null;
   successMessage: string = '';
+  originalCarDetailsList: VehicleModel[] = [];
 
   constructor(private route: ActivatedRoute, private vehicleService: DataService, private cdr: ChangeDetectorRef, private dialog: MatDialog,
     private orderService: OrderService, private renderer: Renderer2
@@ -155,52 +156,59 @@ export class VehicleDetailsComponent implements OnInit {
     return `${year}-${month}-${day}`; // Format as YYYY-MM-DD
   }
 
-  exportToPDF() {
-    const table = document.querySelector('table') as HTMLElement;
+  exportToExcel(): void {
+    // Define the columns you want to include in the Excel file
+    const columnsToInclude = [
+      'invoiceDate',
+    'invoiceNumber',
+    'purchaseDealer',
+    'receivedDate',
+    'manufactureDate',
+    'model',
+    'grade',
+    'fuelType',
+    'suffix',
+    'exteriorColor',
+    'interiorColor',
+    'chassisNumber',
+    'engineNumber',
+    'keyNumber',
+    'location',
+    'invoiceValue',
+    'age',
+    'interest',
+    'vehicleStatus',
+    'make',
+    'customerName',
+    'orderDate',
+    'deliveryDate',
+    'orderStatus'
+    ];
   
-    if (!table) {
-      console.error('Table element not found');
-      return;
-    }
-  
-    // Save original styles for excluded columns
-    const excludedColumns = table.querySelectorAll('.Actions');
-    const originalDisplayStyles: string[] = [];
-    excludedColumns.forEach((col) => {
-      originalDisplayStyles.push((col as HTMLElement).style.display);
-      (col as HTMLElement).style.display = 'none'; // Hide the column
+    // Map the data to include only the selected columns and format date columns
+  const excelData = this.dataSource.data.map((vehicle) => {
+    const row: { [key: string]: any } = {};
+    columnsToInclude.forEach((column) => {
+      if (['invoiceDate', 'receivedDate', 'orderDate', 'deliveryDate'].includes(column)) {
+        row[column] = vehicle[column as keyof VehicleModel]
+          ? new Date(vehicle[column as keyof VehicleModel]).toLocaleDateString() // Format as date
+          : ''; // Handle empty or null values
+      } else {
+        row[column] = vehicle[column as keyof VehicleModel];
+      }
     });
-  
-    html2canvas(table, { scale: 2, useCORS: true }).then((canvas) => {
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF();
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-  
-      pdf.addImage(imgData, 'PNG', 10, 10, pdfWidth - 20, pdfHeight);
-      pdf.save('vehicle-data.pdf');
-  
-      // Restore original styles for excluded columns
-      excludedColumns.forEach((col, index) => {
-        (col as HTMLElement).style.display = originalDisplayStyles[index];
-      });
-    }).catch((error) => {
-      console.error('Error generating PDF:', error);
-  
-      // Restore original styles in case of error
-      excludedColumns.forEach((col, index) => {
-        (col as HTMLElement).style.display = originalDisplayStyles[index];
-      });
-    });
-  }
+    return row;
+  });
 
-  exportToExcel() {
-    const table = document.querySelector('.responsive-table') as HTMLElement;
-    const worksheet = XLSX.utils.table_to_sheet(table);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Vehicle Details');
-    XLSX.writeFile(workbook, 'vehicle-details.xlsx');
+  // Create a worksheet from the filtered data
+  const worksheet = XLSX.utils.json_to_sheet(excelData);
 
+  // Create a workbook and append the worksheet
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Vehicle Details');
+
+  // Write the workbook to a file
+  XLSX.writeFile(workbook, 'vehicle-details.xlsx');
 
   }
 
@@ -220,8 +228,21 @@ export class VehicleDetailsComponent implements OnInit {
     this.isLoad = true; // Start loading
     this.vehicleService.getVehicleAndOrderDetailsByModel(modelName).subscribe({
       next: (result: VehicleModel[]) => {
-        this.carDetailsList = result;
-        console.log("V det " + JSON.stringify(this.carDetailsList));
+        // Transform manufactureDate to extract only the year
+        result.forEach(vehicle => {
+          if (vehicle.manufactureDate) {
+            const date = new Date(vehicle.manufactureDate);
+            vehicle.manufactureDate = date.getFullYear().toString(); // Extract year as string
+          }
+        });
+  
+        // Store the original unfiltered data
+        this.originalCarDetailsList = result;
+  
+        // Filter out vehicles with status "sold"
+        this.carDetailsList = result.filter(vehicle => vehicle.vehicleStatus.toLowerCase() !== 'sold');
+        console.log("Filtered Vehicle Details: " + JSON.stringify(this.carDetailsList));
+  
         this.dataSource = new MatTableDataSource<VehicleModel>(this.carDetailsList);
   
         // Set up sorting and pagination
@@ -244,19 +265,9 @@ export class VehicleDetailsComponent implements OnInit {
           }
         };
   
-        // Update the filter predicate
-        this.dataSource.filterPredicate = (data: VehicleModel, filter: string) => {
-          return Object.keys(data).some(key => {
-            const value = data[key];
-            return value !== null &&
-              value !== undefined &&
-              value.toString().toLowerCase().includes(filter.toLowerCase());
-          });
-        };
-  
         this.totalVehicles = this.carDetailsList.length;
         this.isLoading = false;
-        this.isLoad = false; // Start loading
+        this.isLoad = false; // Stop loading
         this.cdr.detectChanges(); // Trigger change detection
       },
       error: (error) => {
@@ -265,6 +276,25 @@ export class VehicleDetailsComponent implements OnInit {
       }
     });
   }
+  
+  onStatusFilterChange(event: Event): void {
+    const selectedStatus = (event.target as HTMLSelectElement).value.toLowerCase();
+  
+    if (selectedStatus === 'sold') {
+      // Show only sold vehicles
+      this.dataSource.data = this.originalCarDetailsList.filter(vehicle => vehicle.vehicleStatus.toLowerCase() === 'sold');
+    } else if (selectedStatus === 'all') {
+      // Show vehicles that are not sold
+      this.dataSource.data = this.originalCarDetailsList.filter(vehicle => vehicle.vehicleStatus.toLowerCase() !== 'sold');
+    }
+  
+    // Update the total vehicle count
+    this.totalVehicles = this.dataSource.data.length;
+  
+    // Trigger change detection
+    this.cdr.detectChanges();
+  }
+  
 
   // Update filter method
   applyFilter(event: Event) {

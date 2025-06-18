@@ -119,7 +119,7 @@ onCreateUser(): void {
         roles: [] as string[] // Initialize roles as an empty array
       };
     },
-    (error) => {
+    (error: { error: { message: string; }; }) => {
       console.error('Error creating user:', error); // Log the error
       this.successMessage = error.error?.message || 'An error occurred while creating the user.';
     }

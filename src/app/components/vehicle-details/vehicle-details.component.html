@@ -25,6 +25,14 @@
         </div>
       </div>
       <div class="table-actions">
+          <div class="search-box">
+            <input type="text" placeholder="Search vehicles..." (keyup)="applyFilter($event)" #input>
+            <select class="filter-dropdown" (change)="onStatusFilterChange($event)">
+              <option value="all">All</option>
+              <option value="sold">Sold</option>
+              <!-- <option value="available">Available</option> -->
+            </select>
+          </div>
         <div class="search-box">
           <!-- <mat-form-field appearance="outline">
             <mat-label>Search</mat-label>
@@ -34,9 +42,9 @@
         </div>
   
         <div class="export-buttons">
-          <button mat-raised-button color="primary" (click)="exportToPDF()">
+          <!-- <button mat-raised-button color="primary" (click)="exportToPDF()">
             <i class="fas fa-file-pdf"></i> Export to PDF
-          </button>
+          </button> -->
           <button mat-raised-button color="accent" (click)="exportToExcel()">
             <i class="fas fa-file-excel"></i> Export to Excel
           </button>
