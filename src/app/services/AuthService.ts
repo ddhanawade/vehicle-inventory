@@ -8,7 +8,7 @@ import { tap, catchError } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class AuthService {
-  private baseUrl = 'http://localhost:8082/auth';
+  private baseUrl = 'https://auth.fleet-manager.in/auth';
   //private baseUrl = 'http://inventory-service-prd.us-east-2.elasticbeanstalk.com/auth';
   private tokenKey = 'authToken';
   private userKey = 'authUser';
