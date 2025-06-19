@@ -8,9 +8,10 @@ import { OrderModel } from "../models/order.model";
     providedIn: 'root'
 })
 export class OrderService {
-    
+
     //private baseUrl = 'http://fleet-manager-prd.us-east-2.elasticbeanstalk.com/api/orders';
-    private baseUrl = 'http://localhost:8080/api/orders';
+    // private baseUrl = 'http://localhost:8080/api/orders';
+  private baseUrl = 'https://api.fleet-manager.in/api/vehicles';
 
     constructor(private http: HttpClient) { }
 
