@@ -49,26 +49,12 @@
 # CMD ["nginx", "-g", "daemon off;"]
 
 
-# Stage 1: Build
-FROM node:18 as builder
-WORKDIR /app
-
-# Copy only package files first to leverage caching
-COPY package*.json ./
-RUN npm ci --prefer-offline
-
-# Copy the rest of the application files
-COPY . .
-
-# Build the application with production configuration
-RUN npm run build --configuration=production && rm -rf /app/node_modules
-
-# Stage 2: Production
+# Stage 1: Production
 FROM nginx:alpine
 WORKDIR /usr/share/nginx/html
 
-# Copy the built application from the builder stage
-COPY --from=builder /app/dist/vehicle-inventory .
+# Copy the pre-built application files
+COPY dist/vehicle-inventory .
 
 # Expose port 80 for the application
 EXPOSE 80
