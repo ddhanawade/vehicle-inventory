@@ -48,7 +48,10 @@
                 }
               ],
               "outputHashing": "all",
-              "aot": true
+              "aot": true,
+              "optimization": true,
+              "sourceMap": false,
+              "buildOptimizer": true
             },
             "development": {
               "optimization": true,
