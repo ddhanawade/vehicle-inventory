@@ -61,7 +61,7 @@ RUN npm ci --prefer-offline
 COPY . .
 
 # Build the application with production configuration
-RUN npm run build --configuration=production
+RUN npm run build --configuration=production && rm -rf /app/node_modules
 
 # Stage 2: Production
 FROM nginx:alpine
