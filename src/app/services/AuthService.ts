@@ -11,7 +11,7 @@ import { SessionExpiredDialogComponent } from '../components/session-expired-dia
   providedIn: 'root'
 })
 export class AuthService {
-  private baseUrl = 'https://auth.fleet-manager.in/auth';
+  private baseUrl = 'http://139.84.150.78:8081/auth';
   //private baseUrl = 'http://inventory-service-prd.us-east-2.elasticbeanstalk.com/auth';
   private tokenKey = 'authToken';
   private userKey = 'authUser';
