@@ -1,5 +1,5 @@
 import { CommonModule, JsonPipe } from '@angular/common';
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatNativeDateModule, NativeDateAdapter } from '@angular/material/core';
@@ -14,7 +14,6 @@ import { catchError, Observable, tap, throwError } from 'rxjs';
 import { OrderModel } from '../../models/order.model';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
-// Add custom date formats
 export const MY_DATE_FORMATS = {
   parse: {
     dateInput: 'MM/DD/YYYY',
@@ -47,10 +46,10 @@ export const MY_DATE_FORMATS = {
     MatDatepickerModule,
     { provide: MAT_DATE_LOCALE, useValue: 'en-US' },
     { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS },
-    { provide: DateAdapter, useClass: NativeDateAdapter } // Change this line
+    { provide: DateAdapter, useClass: NativeDateAdapter }
   ],
   templateUrl: './edit-vehicle-dialog.component.html',
-  styleUrl: './edit-vehicle-dialog.scss'
+  styleUrls: ['./edit-vehicle-dialog.scss'] // Corrected property name
 })
 export class EditVehicleDialogComponent {
   vehicleForm: FormGroup;
@@ -58,16 +57,12 @@ export class EditVehicleDialogComponent {
   isUpdated = false;
   isSaving = false;
   successMessage = '';
-
   editOrderData: any = {};
+  orderId: number | null = null;
 
-  orderId: Number | null = null;
-
-  // Sample data - replace with actual data from your service
   teamLeaders = ['John Doe', 'Jane Smith', 'Mike Johnson'];
   salesOfficers = ['Alice Brown', 'Bob Wilson', 'Carol White'];
   financers = ['BANK OF MAHARASHTRA', 'TOYOTA FINANCIAL SERVICES INDIA LTD', 'HDFC BANK LTD', 'CANARA BANK', 'PUNJAB NATIONAL BANK', 'CHOLAMANDALAM INVESTMENT AND FINANCE CO LTD', 'STATE BANK OF INDIA', 'SHRI TIRUPATI NAGARI SAH.PATSANSTHA MAYADIT', 'UNION BANK OF INDIA', 'MAHINDRA AND MAHINDRA FINANCIAL SERVICES LTD', 'Not Applicable', 'AU SMALL FINANCE BANK LIMITED', 'KOTAK MAHINDRA BANK LTD', 'ICICI BANK LTD', 'HDB FINANCIAL SERVICES LTD', 'BANK OF INDIA', 'SUNDARAM FINANCE LTD', 'AXIS BANK LTD', 'MADHYA PRADESH GRAMIN BANK', 'THE ANAND MERCANTILE CO-OPERATIVE BANK LIMITED', 'INDIAN OVERSEAS BANK', 'CENTRAL BANK OF INDIA', 'BANK OF BARODA', 'SHRIRAM TRANSPORT FINANCE COMPANY LTD', 'IDBI BANK LTD'];
-
 
   constructor(
     private dialogRef: MatDialogRef<EditVehicleDialogComponent>,
@@ -77,7 +72,7 @@ export class EditVehicleDialogComponent {
   ) {
     this.vehicleForm = this.fb.group({
       orderId: [''],
-      vehicleId: [''],  // Add vehicleId to form controls
+      vehicleId: [''],
       customerName: ['', [Validators.required]],
       leadName: ['', [Validators.required]],
       salesPersonName: ['', [Validators.required]],
@@ -90,62 +85,33 @@ export class EditVehicleDialogComponent {
     });
   }
 
-
-  // Update the ngOnInit method
-ngOnInit(): void {
-  if (this.data) {
-    console.log('Dialog data:', this.data);
-    // First set the vehicleId
-    const vehicleId = this.data.vehicleId;  
-    // Check for existing order
-    if (vehicleId) {
-      this.orderService.getOrdersByVehicleId(vehicleId).subscribe({
-        next: (response) => {
-          if (response && (Array.isArray(response) ? response.length > 0 : response.orderId)) {
-            const orderData = Array.isArray(response) ? response[0] : response;
-            
-            // Store the orderId
-            this.orderId = orderData.orderId;
-            this.isSaved = true;
-            
-            // Format and display the data
-            const formattedData = {
-              vehicleId: vehicleId,
-              orderId: orderData.orderId,
-              customerName: orderData.customerName,
-              leadName: orderData.leadName,
-              salesPersonName: orderData.salesPersonName,
-              deliveryDate: orderData.deliveryDate ? new Date(orderData.deliveryDate) : null,
-              financerName: orderData.financerName,
-              financeType: orderData.financeType,
-              phoneNumber: orderData.phoneNumber,
-              orderStatus: orderData.orderStatus,
-              remarks: orderData.remarks
-            };
-
-            // Update form with existing data
-            this.vehicleForm.patchValue(formattedData);
-
-            // Disable appropriate fields
-            // Object.keys(this.vehicleForm.controls).forEach(key => {
-            //   if (key !== 'status' && key !== 'remarks') {
-            //     this.vehicleForm.get(key)?.disable();
-            //   }
-            // });
-
-          } else {
-            // No existing order found
+  ngOnInit(): void {
+    if (this.data) {
+      const vehicleId = this.data.vehicleId;
+      if (vehicleId) {
+        this.orderService.getOrdersByVehicleId(vehicleId).subscribe({
+          next: (response) => {
+            if (response && Array.isArray(response) && response.length > 0) {
+              const orderData = response[0];
+              this.orderId = orderData.orderId;
+              this.isSaved = true;
+              this.vehicleForm.patchValue({
+                ...orderData,
+                deliveryDate: orderData.deliveryDate ? new Date(orderData.deliveryDate) : null,
+                vehicleId: vehicleId
+              });
+            } else {
+              this.resetForm(vehicleId);
+            }
+          },
+          error: (error) => {
+            console.error('Error fetching order data:', error);
             this.resetForm(vehicleId);
           }
-        },
-        error: (error) => {
-          console.error('Error fetching order data:', error);
-          this.resetForm(vehicleId);
-        }
-      });
+        });
+      }
     }
   }
-}
 
   private checkExistingOrder(vehicleId: string) {
     
@@ -180,22 +146,12 @@ ngOnInit(): void {
 
   // Update the resetForm method to handle initial state
 private resetForm(vehicleId: string): void {
-  this.isSaved = false;
-  this.isUpdated = false;
-  this.orderId = null;
-  
-  this.vehicleForm.reset();
-  
-  // Enable all controls
-  Object.keys(this.vehicleForm.controls).forEach(key => {
-    this.vehicleForm.get(key)?.enable();
-  });
-  
-  // Set initial vehicle ID
-  this.vehicleForm.patchValue({
-    vehicleId: vehicleId
-  });
-}
+    this.isSaved = false;
+    this.isUpdated = false;
+    this.orderId = null;
+    this.vehicleForm.reset();
+    this.vehicleForm.patchValue({ vehicleId });
+  }
 
   formatPhoneNumber(event: any) {
     let input = event.target.value.replace(/\D/g, '');
@@ -232,96 +188,53 @@ private resetForm(vehicleId: string): void {
   }
 
 
-onSave(vehicleId: string): void {
-  console.log("vehicle id " + vehicleId);
-  if (this.vehicleForm.valid) {
-    this.isSaving = true;
-    const formData = this.vehicleForm.value;
-    
-    this.orderService.createOrder(formData).subscribe({
-      next: (response) => {
-        this.isSaved = true;
-        this.isSaving = false;
-        this.successMessage = 'Order created successfully!';
-        
-        // Store the orderId from the response
-        this.orderId = response.orderId;
-        
-        // Update form with response data
-        this.vehicleForm.patchValue({
-          ...response,
-          vehicleId: vehicleId,
-          orderId: response.orderId
-        });
-
-        // Disable form fields except status and remarks
-        Object.keys(this.vehicleForm.controls).forEach(key => {
-          if (key !== 'orderStatus' && key !== 'remarks') {
-            this.vehicleForm.get(key)?.disable();
-          }
-        });
-        // Optional: Refresh the data
-        console.log("ghdfzsf " + vehicleId);
-        this.checkExistingOrder(vehicleId);
-      },
-      error: (error) => {
-        this.isSaving = false;
-        this.isSaved = false;
-        console.error('Error occurred while saving order details:', error);
-      }
-    });
+ onSave(vehicleId: string): void {
+    if (this.vehicleForm.valid) {
+      this.isSaving = true;
+      const formData = this.vehicleForm.value;
+      this.orderService.createOrder(formData).subscribe({
+        next: (response) => {
+          this.isSaved = true;
+          this.isSaving = false;
+          this.successMessage = 'Order created successfully!';
+          this.orderId = response.orderId;
+          this.vehicleForm.patchValue({
+            ...response,
+            vehicleId,
+            orderId: response.orderId
+          });
+        },
+        error: (error) => {
+          this.isSaving = false;
+          console.error('Error occurred while saving order details:', error);
+        }
+      });
+    }
   }
-}
 
 onUpdate(): void {
-  if (this.vehicleForm.valid && this.orderId) {
-    this.isSaving = true;
-    
-    // Enable all controls temporarily to get complete form value
-    Object.keys(this.vehicleForm.controls).forEach(key => {
-      this.vehicleForm.get(key)?.enable();
-    });
-
-    const formData = {
-      ...this.vehicleForm.value,
-      orderId: this.orderId,
-      deliveryDate: this.vehicleForm.get('deliveryDate')?.value ?
-        new Date(this.vehicleForm.get('deliveryDate')?.value).toISOString() : null
-    };
-
-    this.orderService.updateOrder(formData.orderId, formData).subscribe({
-      next: (response) => {
-        if (response) {
+    if (this.vehicleForm.valid && this.orderId) {
+      this.isSaving = true;
+      const formData = {
+        ...this.vehicleForm.value,
+        orderId: this.orderId,
+        deliveryDate: this.vehicleForm.get('deliveryDate')?.value
+          ? new Date(this.vehicleForm.get('deliveryDate')?.value).toISOString()
+          : null
+      };
+      this.orderService.updateOrder(formData.orderId, formData).subscribe({
+        next: (response) => {
           this.isUpdated = true;
           this.isSaving = false;
           this.successMessage = 'Order details updated successfully!';
-          
-          this.displaySavedData(response, formData.vehicleId);
-
-          // Disable appropriate fields
-          Object.keys(this.vehicleForm.controls).forEach(key => {
-            if (key !== 'orderStatus' && key !== 'remarks') {
-              this.vehicleForm.get(key)?.disable();
-            }
-          });
+        },
+        error: (error) => {
+          this.isSaving = false;
+          console.error('Error updating order details:', error);
         }
-      },
-      error: (error) => {
-        this.isSaving = false;
-        this.isUpdated = false;
-        console.error('Error updating order details:', error);
-        // Show error message to user
-        this.successMessage = 'Error updating order. Please try again.';
-      },
-      complete: () => {
-        this.isSaving = false;
-      }
-    });
-  } else {
-    console.warn('Form is invalid or orderId is missing');
-    this.successMessage = 'Please fill in all required fields.';
+      });
+    }
   }
-}
 
 // Add a helper method to display the saved data
 private displaySavedData(response: any, vehicleId: string): void {
