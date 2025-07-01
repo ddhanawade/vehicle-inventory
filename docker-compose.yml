@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  frontend:
+    build:
+      context: .
+    container_name: angular
+    restart: unless-stopped
+    ports:
+      - "4200:80"  # Expose and map port 4200
+    networks:
+      - backend-network
+
+networks:
+  backend-network:
+    driver: bridge
