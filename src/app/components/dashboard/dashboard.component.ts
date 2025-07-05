@@ -436,18 +436,6 @@ getObjectKeys(obj: any): string[] {
       this.locationDataSource.sort = this.sort;
     }
   }
-
-  // getVehicleOrderDetails(): void {
-  //   this.vehicleService.getVehicleAndOrderDetailsByModel(this.model).subscribe(
-  //     (data: any) => {
-  //       this.vehicleOrderDetails = data;
-  //       console.log('Vehicle Order Details:', this.vehicleOrderDetails);
-  //     },
-  //     (error: any) => {
-  //       console.error('Error fetching vehicle order details:', error);
-  //     }
-  //   );
-  // }
   model(model: any) {
     throw new Error('Method not implemented.');
   }

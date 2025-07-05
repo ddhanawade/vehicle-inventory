@@ -5,6 +5,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { BrowserModule } from '@angular/platform-browser';
 import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { HeaderComponent } from "./components/header/header.component";
+import { AuthService } from './services/AuthService';
 
 @Component({
   selector: 'app-root',
@@ -20,6 +21,7 @@ export class AppComponent implements AfterViewInit, OnInit {
   constructor(
     private router: Router,
     private location: Location,
+    private authService: AuthService,
     private platformLocation: PlatformLocation
   ) {
     // Prevent back navigation
@@ -37,6 +39,10 @@ export class AppComponent implements AfterViewInit, OnInit {
   }
 
   ngOnInit() {
+    setInterval(() => {
+      this.authService.checkTokenExpiry();
+    }, 5000); // Check every 5 seconds
+    
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.history.push(event.urlAfterRedirects);

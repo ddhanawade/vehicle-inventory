@@ -12,7 +12,7 @@ import { SessionExpiredDialogComponent } from '../components/session-expired-dia
 })
 export class AuthService {
   private baseUrl = 'https://fleet-manager.in/auth';
-  //private baseUrl = 'http://inventory-service-prd.us-east-2.elasticbeanstalk.com/auth';
+  //private baseUrl = 'http://localhost:8081/auth';
   private tokenKey = 'authToken';
   private userKey = 'authUser';
   private sessionTimeout: any;
@@ -65,20 +65,22 @@ export class AuthService {
   }
 
   handleSessionExpiry(): void {
-    this.clearToken();
-    const dialogRef = this.dialog.open(SessionExpiredDialogComponent, {
-      width: '300px',
-      disableClose: true
-    });
+  this.clearToken();
+  const dialogRef = this.dialog.open(SessionExpiredDialogComponent, {
+    width: '300px',
+    disableClose: true
+  });
 
-    dialogRef.afterClosed().subscribe(() => {
-      this.router.navigate(['/login']);
-    });
-  }
+  dialogRef.afterClosed().subscribe(() => {
+    this.router.navigate(['/login']);
+  });
+}
 
   clearToken(): void {
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.userKey);
+    sessionStorage.removeItem(this.userKey); // Remove token from sessionStorage (if used)
+    document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'; // Clear token from cookies
     this.isLoggedInSubject.next(false);
     this.userSubject.next(null);
     if (this.sessionTimeout) {
@@ -155,4 +157,21 @@ export class AuthService {
   isAuthenticated(): boolean {
     return !!this.getToken();
   }
+
+  simulateSessionExpiry(): void {
+  this.handleSessionExpiry();
+}
+
+checkTokenExpiry(): void {
+  const token = this.getToken();
+  if (token) {
+    const tokenPayload = JSON.parse(atob(token.split('.')[1])); // Decode JWT payload
+    const expiryTime = tokenPayload.exp * 1000; // Convert expiry to milliseconds
+    const currentTime = Date.now();
+
+    if (currentTime >= expiryTime) {
+      this.handleSessionExpiry();
+    }
+  }
+}
 }

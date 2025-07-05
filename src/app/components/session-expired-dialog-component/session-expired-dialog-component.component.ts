@@ -1,15 +1,17 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-session-expired-dialog',
-  template: `
-    <h1 mat-dialog-title>Session Expired</h1>
-    <div mat-dialog-content>
-      <p>Your session has expired. Please log in again.</p>
-    </div>
-    <div mat-dialog-actions>
-      <button mat-button mat-dialog-close>OK</button>
-    </div>
-  `
+  imports:[],
+  templateUrl: './session-expired-dialog-component.component.html',
+  styleUrls: ['./session-expired-dialog-component.component.scss']
 })
-export class SessionExpiredDialogComponent {}
+export class SessionExpiredDialogComponent {
+
+  constructor(private router: Router) {}
+
+  navigateToLogin(): void {
+    this.router.navigate(['/login']);
+  }
+}

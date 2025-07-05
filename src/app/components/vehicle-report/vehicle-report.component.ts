@@ -48,12 +48,6 @@ import { VehicleModel } from '../../models/VehicleModel';
   styleUrls: ['./vehicle-report.component.scss']
 })
 export class VehicleReportComponent implements OnInit {
-  // Filters
-  // startDate: Date | null = null;
-  // endDate: Date | null = null;
-  // city: string = '';
-  // make: string = '';
-  // model: string = '';
 
   startDate: string = '';
   endDate: string = '';
