@@ -16,6 +16,8 @@ import { AuthService } from './services/AuthService';
 export class AppComponent implements AfterViewInit, OnInit {
   title = 'vehicle-inventory';
 
+  excludedRoutes: string[] = ['/login-page', '/reset-password']; // Routes to exclude the navbar
+
   private history: string[] = [];
 
   constructor(
@@ -70,5 +72,9 @@ export class AppComponent implements AfterViewInit, OnInit {
         this.classList.add('active');
       });
     });
+  }
+
+  shouldShowNavbar(): boolean {
+    return !this.excludedRoutes.includes(this.router.url);
   }
 }

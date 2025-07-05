@@ -8,17 +8,21 @@
 </head>
 <body>
     <div class="main-container">
+        
+     <!-- <app-header></app-header> -->
 
-     <app-header></app-header>
+     <!-- Conditionally display the navbar -->
+        <div *ngIf="shouldShowNavbar()">
+             <app-header></app-header>
+    </div>
+
+<!-- Main content -->
+<router-outlet></router-outlet>
+
     <main>
         <router-outlet></router-outlet>
     </main>
     
-    <!-- <footer class="footer">
-        <p>&copy; 2025 My Website | All rights reserved</p>
-        <p>Contact: info-mywebsite.com | Phone: (123) 456-7890</p>
-    </footer> -->
-    <!-- <script src="assets/public/mainscript.js"></script> -->
 </div>
 </body>
 </html>
