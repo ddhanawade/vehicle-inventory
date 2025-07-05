@@ -194,6 +194,7 @@ private resetForm(vehicleId: string): void {
       const formData = this.vehicleForm.value;
       this.orderService.createOrder(formData).subscribe({
         next: (response) => {
+          setTimeout(() => {
           this.isSaved = true;
           this.isSaving = false;
           this.successMessage = 'Order created successfully!';
@@ -203,6 +204,11 @@ private resetForm(vehicleId: string): void {
             vehicleId,
             orderId: response.orderId
           });
+          setTimeout(() => {
+            this.dialogRef.close(true); // Pass true to indicate success
+        window.location.reload();   // Refresh the page
+      }, 1000); // Wait 1 second before closing and refreshing
+    }, 1500); // Simulate network delay
         },
         error: (error) => {
           this.isSaving = false;
@@ -224,9 +230,15 @@ onUpdate(): void {
       };
       this.orderService.updateOrder(formData.orderId, formData).subscribe({
         next: (response) => {
+          setTimeout(() => {
           this.isUpdated = true;
           this.isSaving = false;
           this.successMessage = 'Order details updated successfully!';
+      setTimeout(() => {
+        this.dialogRef.close(true);
+        window.location.reload();
+      }, 1000);
+    }, 1500);
         },
         error: (error) => {
           this.isSaving = false;

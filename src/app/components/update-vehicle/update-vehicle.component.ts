@@ -103,13 +103,15 @@ export class UpdateVehicleComponent implements OnInit {
 
     this.vehicleService.updateVehicleDetails(updateVehicle).subscribe(
       (response: any) => {
-        console.log("Response from backend:", response); // Debugging log
+      setTimeout(() => {  
         this.successMessage = 'Vehicle details updated successfully!';
         this.isLoading = false; // Stop loading
         setTimeout(() => {
           this.successMessage = '';
-          // this.closeEditPopup();
+          this.dialogRef.close(true);
+          window.location.reload();
         }, 2000);
+        }, 1500);
       },
       (error: any) => {
         console.error('Error updating vehicle:', error); // Debugging log

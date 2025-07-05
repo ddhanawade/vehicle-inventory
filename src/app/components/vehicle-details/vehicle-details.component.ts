@@ -340,14 +340,23 @@ export class VehicleDetailsComponent implements OnInit {
 
   // Update the getColumnValue method
   getColumnValue(item: VehicleModel, column: string): string {
-    const value = item[column as keyof VehicleModel];
+  const value = item[column as keyof VehicleModel];
 
-    if (column.includes('Date') && value) {
-      return new Date(value).toLocaleDateString();
+  if (column === 'manufactureDate' && value) {
+    // If value is a year (e.g., "2024"), just return it
+    if (/^\d{4}$/.test(value.toString())) {
+      return value.toString();
     }
-
-    return value?.toString() || '';
+    // If value is a date string, extract the year
+    return new Date(value).getFullYear().toString();
   }
+
+  if (column.includes('Date') && value) {
+    return new Date(value).toLocaleDateString();
+  }
+
+  return value?.toString() || '';
+}
 
   shouldTruncate(column: string): boolean {
     // Add columns that should be truncated

@@ -9,25 +9,53 @@ $border-radius: 8px;
 $transition: all 0.3s ease;
 
 .vehicle-details-container {
-  padding: 24px;
+  padding: 32px 24px;
   background: #f8fafc;
   margin-left: 150px;
+  min-height: 100vh;
+  animation: fadeIn 0.7s;
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(24px);}
+    to { opacity: 1; transform: translateY(0);}
+  }
 
   .header-section {
-    margin-bottom: 24px;
+  margin-bottom: 24px;
+  padding: 5px 5px;
+  background: linear-gradient(135deg, #2193b0, #6dd5ed);
+  border-radius: 5px;
+  box-shadow: 0 4px 16px rgba(33, 147, 176, 0.15);
+  color: $white;
+  text-align: center;
+  transition: box-shadow 0.3s, transform 0.2s;
+
+  &:hover {
+    box-shadow: 0 8px 24px rgba(33, 147, 176, 0.25);
+    transform: translateY(-2px);
+  }
+
+  h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
 
     .table-heading {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      color: #1e293b;
-      margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
 
-      i {
-        color: #2193b0;
-        font-size: 24px;
-      }
+    i {
+      font-size: 32px;
+      color: $white;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
+  }
 
     .table-actions {
       display: flex;
@@ -42,19 +70,27 @@ $transition: all 0.3s ease;
 
         button {
           min-width: 140px;
-          padding: 8px 16px;
+          padding: 10px 20px;
           border-radius: 8px;
           display: flex;
           align-items: center;
           gap: 8px;
-          transition: transform 0.2s ease;
+          background: linear-gradient(135deg, #2193b0, #6dd5ed);
+          color: #fff;
+          font-weight: 600;
+          font-size: 1rem;
+          border: none;
+          box-shadow: 0 2px 8px rgba(33,147,176,0.10);
+          transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
 
           &:hover {
-            transform: translateY(-2px);
+            background: linear-gradient(135deg, #17607a, #2193b0);
+            transform: translateY(-2px) scale(1.04);
+            box-shadow: 0 4px 16px rgba(33,147,176,0.18);
           }
 
           i {
-            font-size: 16px;
+            font-size: 18px;
           }
         }
       }
@@ -62,51 +98,47 @@ $transition: all 0.3s ease;
   }
 
   .table-container {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    background: $white;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(33, 147, 176, 0.10), 0 1.5px 4px rgba(0,0,0,0.08);
     overflow: hidden;
+    margin-bottom: 32px;
+    transition: box-shadow 0.3s;
+
+    &:hover {
+      box-shadow: 0 12px 32px rgba(33, 147, 176, 0.16), 0 2px 8px rgba(0,0,0,0.10);
+    }
 
     .responsive-table {
       overflow-x: auto;
-
-      &::-webkit-scrollbar {
-        height: 8px;
-      }
-
-      &::-webkit-scrollbar-track {
-        background: #f1f5f9;
-      }
-
-      &::-webkit-scrollbar-thumb {
-        background: #cbd5e1;
-        border-radius: 4px;
-      }
 
       table {
         width: 100%;
         border-collapse: collapse;
 
         th {
-          background: #f8fafc;
+          background: linear-gradient(90deg, #f8fafc 80%, #e0f7fa 100%);
           color: #1e293b;
-          font-weight: 600;
-          font-size: 14px;
+          font-weight: 700;
+          font-size: 15px;
           text-align: left;
-          padding: 16px;
+          padding: 18px 16px;
           white-space: nowrap;
           position: sticky;
           top: 0;
-          z-index: 1;
+          z-index: 2;
           border-bottom: 2px solid #e2e8f0;
+          letter-spacing: 0.5px;
         }
 
         td {
           padding: 16px;
-          font-size: 14px;
+          font-size: 15px;
           color: #475569;
           border-bottom: 1px solid #e2e8f0;
-          max-width: 200px;
+          max-width: 220px;
+          background: #fff;
+          transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
 
           &.truncate {
             white-space: nowrap;
@@ -119,13 +151,22 @@ $transition: all 0.3s ease;
             overflow: visible;
             position: relative;
             z-index: 2;
-            background: white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background: #f1f5f9;
+            box-shadow: 0 4px 12px rgba(33,147,176,0.08);
           }
         }
 
+        tr {
+          transition: background 0.2s, transform 0.15s;
+        }
+
+        tr:nth-child(even) td {
+          background: #f8fafc;
+        }
+
         tr:hover td {
-          background: #f1f5f9;
+          background: #e3f2fd;
+          transform: scale(1.01);
         }
 
         .mat-no-data-row td {
@@ -140,50 +181,69 @@ $transition: all 0.3s ease;
 
   mat-paginator {
     border-top: 1px solid #e2e8f0;
+    background: #f8fafc;
+    border-radius: 0 0 16px 16px;
   }
 }
 
 .filter-section {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
-  padding: 16px;
-  background: $white;
-  border-radius: $border-radius;
-  box-shadow: $shadow-md;
-  margin-bottom: 24px;
-  transition: $transition;
+  gap: 18px;
+  padding: 18px 20px;
+  background: linear-gradient(90deg, #f8fafc 80%, #e0f7fa 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(33, 147, 176, 0.08);
+  margin-bottom: 28px;
+  border-left: 4px solid #2193b0;
+  align-items: center;
+  transition: box-shadow 0.3s, border-color 0.3s;
 
   &:hover {
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 24px rgba(33, 147, 176, 0.13);
+    border-left: 4px solid #17607a;
   }
 
   mat-form-field,
   button {
-    flex: 1; /* Ensure all elements take equal width */
-    height: 56px; /* Set consistent height */
-    min-width: 200px; /* Minimum width for smaller screens */
+    flex: 1;
+    height: 48px;
+    min-width: 180px;
     margin: 3px 0;
+    font-size: 1rem;
   }
 
   mat-form-field {
     ::ng-deep .mat-form-field-wrapper {
       margin-bottom: -1.25em;
     }
+    ::ng-deep .mat-form-field-flex {
+      background: #f8fafc;
+      border-radius: 8px;
+      transition: box-shadow 0.2s;
+    }
+    ::ng-deep .mat-form-field-flex:focus-within {
+      box-shadow: 0 0 0 2px #2193b0;
+    }
   }
 
   button {
-    background: $primary-color;
-    color: $white;
-    font-weight: 500;
-    transition: $transition;
+    background: linear-gradient(135deg, #2193b0, #6dd5ed);
+    color: #fff;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 8px;
+    font-size: 1rem;
 
     &:hover {
-      transform: translateY(-2px);
-      box-shadow: $shadow-md;
+      background: linear-gradient(135deg, #17607a, #2193b0);
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 4px 16px rgba(33,147,176,0.18);
     }
 
     mat-icon {
@@ -193,10 +253,18 @@ $transition: all 0.3s ease;
 }
 
 // Responsive adjustments
+@media (max-width: 900px) {
+  .vehicle-details-container {
+    padding: 12px;
+    margin-left: 0;
+  }
+  .table-container {
+    border-radius: 10px;
+  }
+}
+
 @media (max-width: 768px) {
   .vehicle-details-container {
-    padding: 16px;
-
     .header-section {
       .table-actions {
         flex-direction: column;
@@ -213,8 +281,8 @@ $transition: all 0.3s ease;
 
   .filter-section {
     flex-direction: column;
-    gap: 12px;
-    padding: 12px;
+    gap: 10px;
+    padding: 10px;
 
     mat-form-field {
       min-width: 100%;
@@ -227,7 +295,7 @@ $transition: all 0.3s ease;
 
   .table-container {
     .responsive-table {
-      overflow-x: hidden; // Hide horizontal scrollbar
+      overflow-x: auto;
     }
   }
 }

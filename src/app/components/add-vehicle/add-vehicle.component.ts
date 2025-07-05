@@ -199,4 +199,9 @@ calculateAge(receivedDate: Date): number {
       this.filteredModels = this.models.filter((model) => model.make === selectedMake);
     }
   }
+
+  steps = ['Basic Info', 'Specifications', 'Purchase Info'];
+prevTab() {
+  if (this.currentTab > 0) this.currentTab--;
+}
 }

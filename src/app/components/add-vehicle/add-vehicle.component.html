@@ -8,171 +8,150 @@
 </head>
 
 <body>
-    <div class="page-container">
-        <div class="add-vehicle-container">
-            <div class="form-header">
-                <h2><i class="fas fa-plus-circle"></i> Add Vehicle Details</h2>
+   <div class="page-container">
+  <div class="add-vehicle-container">
+    <div class="form-header">
+      <h2><i class="fas fa-car"></i> Add Vehicle</h2>
+        <!-- <div class="stepper">
+            <div *ngFor="let step of steps; let i = index"
+                [class.active]="currentTab === i"
+                [class.completed]="i < currentTab">
+            {{ i + 1 }}
             </div>
-            
-            <form [formGroup]="vehicleForm" (ngSubmit)="onSubmit()">
-                <div class="tab-container">
-                    <!-- Tab Navigation -->
-                    <div class="tab-header">
-                        <button type="button" class="tab-button" [class.active]="currentTab === 0" (click)="setTab(0)">
-                            <i class="fas fa-info-circle"></i>
-                            <span>Basic Details</span>
-                        </button>
-                        <button type="button" class="tab-button" [class.active]="currentTab === 1" (click)="setTab(1)">
-                            <i class="fas fa-cogs"></i>
-                            <span>Specifications</span>
-                        </button>
-                        <button type="button" class="tab-button" [class.active]="currentTab === 2" (click)="setTab(2)">
-                            <i class="fas fa-clipboard-list"></i>
-                            <span>Additional Info</span>
-                        </button>
-                    </div>
-
-
-                    <!-- Tab Content -->
-                    <!-- Basic Details Tab -->
-                    <div class="tab-content" *ngIf="currentTab === 0">
-                        <div class="form-group">
-                            <label for="make">Make <span class="required">*</span></label>
-                            <select id="make" formControlName="make" (change)="onMakeChange($event)">
-                                <option value="" disabled>Select Make</option>
-                                <option *ngFor="let make of makes" [value]="make">{{ make }}</option>
-                            </select>
-                        </div>
-                        <!-- <div class="form-group">
-                            <label for="model">Model Name <span class="required">*</span></label>
-                            <input type="text" id="model" formControlName="model" placeholder="Enter Model Name" />
-                        </div> -->
-                        <div class="form-group">
-                            <label for="model">Model Name <span class="required">*</span></label>
-                            <select id="model" formControlName="model">
-                                <option value="" disabled>Select Model</option>
-                                <option *ngFor="let v of filteredModels" [value]="v.model">{{ v.model }}</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="grade">Grade <span class="required">*</span></label>
-                            <input type="text" id="grade" formControlName="grade" placeholder="Enter Grade" />
-                        </div>
-                        <div class="form-group">
-                            <label for="fuelType">Fuel Type <span class="required">*</span></label>
-                            <select id="fuelType" formControlName="fuelType">
-                                <option value="" disabled>Select Fuel Type</option>
-                                <option *ngFor="let fuel of fuelTypes" [value]="fuel">{{ fuel }}</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="suffix">Suffix <span class="required">*</span></label>
-                            <input type="text" id="suffix" formControlName="suffix" placeholder="Enter Suffix" />
-                        </div>
-                        <!-- <div class="form-group">
-                            <label for="manufactureDate">Manufacture Date <span class="required">*</span></label>
-                            <input type="date" id="manufactureDate" formControlName="manufactureDate" />
-                        </div> -->
-                        <div class="form-group">
-                            <label for="manufactureDate">Manufacture Year<span class="required">*</span></label>
-                            <input type="text" id="manufactureDate" formControlName="manufactureDate" placeholder="Enter Manufacture Year" />
-                        </div>
-                    </div>
-
-                    <!-- Specifications Tab -->
-                    <div class="tab-content" *ngIf="currentTab === 1">
-                        <div class="form-group">
-                            <label for="exteriorColor">Exterior Color <span class="required">*</span></label>
-                            <input type="text" id="exteriorColor" formControlName="exteriorColor"
-                                placeholder="Enter Exterior Color" />
-                        </div>
-                        <div class="form-group">
-                            <label for="interiorColor">Interior Color <span class="required">*</span></label>
-                            <input type="text" id="interiorColor" formControlName="interiorColor"
-                                placeholder="Enter Interior Color" />
-                        </div>
-                        <div class="form-group">
-                            <label for="chassisNumber">Chassis Number <span class="required">*</span></label>
-                            <input type="text" id="chassisNumber" formControlName="chassisNumber"
-                                placeholder="Enter Chassis Number" />
-                        </div>
-                        <div class="form-group">
-                            <label for="engineNumber">Engine Number <span class="required">*</span></label>
-                            <input type="text" id="engineNumber" formControlName="engineNumber"
-                                placeholder="Enter Engine Number" />
-                        </div>
-                        <div class="form-group">
-                            <label for="keyNumber">Key Number <span class="required">*</span></label>
-                            <input type="text" id="keyNumber" formControlName="keyNumber"
-                                placeholder="Enter Key Number" />
-                        </div>
-                    </div>
-
-
-                    <!-- Additional Info Tab -->
-                    <div class="tab-content" *ngIf="currentTab === 2">
-                        <div class="form-group">
-                            <label for="location">Location <span class="required">*</span></label>
-                            <input type="text" id="location" formControlName="location" placeholder="Enter Location" />
-                        </div>
-                        <div class="form-group">
-                            <label for="status">Status <span class="required">*</span></label>
-                            <select id="status" formControlName="status">
-                                <option value="" disabled>Select Status</option>
-                                <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="receivedDate">Received Date <span class="required">*</span></label>
-                            <input type="date" id="receivedDate" formControlName="receivedDate" />
-                        </div>
-                        <div class="form-group">
-                            <label for="invoiceDate">Invoice Date <span class="required">*</span></label>
-                            <input type="date" id="invoiceDate" formControlName="invoiceDate" />
-                        </div>
-                        <div class="form-group">
-                            <label for="invoiceNumber">Invoice Number <span class="required">*</span></label>
-                            <input type="text" id="invoiceNumber" formControlName="invoiceNumber"
-                                placeholder="Enter Invoice Number" />
-                        </div>
-                        <div class="form-group">
-                            <label for="purchaseDealer">Purchase Dealer <span class="required">*</span></label>
-                            <input type="text" id="purchaseDealer" formControlName="purchaseDealer"
-                                placeholder="Enter Purchase Dealer" />
-                        </div>
-                        <div class="form-group">
-                            <label for="invoiceValue">Invoice Value <span class="required">*</span></label>
-                            <input type="text" id="invoiceValue" formControlName="invoiceValue"
-                                placeholder="Enter Invoice Value" />
-                        </div>
-                        <!-- <div class="form-group">
-                            <label for="interest">Interest <span class="required">*</span></label>
-                            <input type="text" id="interest" formControlName="interest" placeholder="Enter Interest" />
-                        </div> -->
-                    </div>
-                </div>
-
-                <div class="form-actions">
-                    <button type="button" class="nav-button" [disabled]="currentTab === 0" (click)="previousTab()">
-                        <i class="fas fa-arrow-left"></i> Previous
-                    </button>
-                    <button type="button" class="nav-button" *ngIf="currentTab < 2" (click)="nextTab()">
-                        Next <i class="fas fa-arrow-right"></i>
-                    </button>
-                    <button type="submit" class="submit-button" *ngIf="currentTab === 2"
-                        [disabled]="vehicleForm.invalid">
-                        <i class="fas fa-check-circle"></i> Add Vehicle
-                    </button>
-                </div>
-                <div *ngIf="successMessage" class="success-message">
-                    {{ successMessage }}
-                  </div>
-            </form>
-            
-        </div>
+        </div> -->
     </div>
-    <!-- Load external scripts if needed -->
-    <script src="script.js"></script>
+    <form [formGroup]="vehicleForm" (ngSubmit)="onSubmit()">
+      <div class="tab-container">
+        <!-- Tab Navigation -->
+        <div class="tab-header">
+          <button type="button" class="tab-button" [class.active]="currentTab === 0" (click)="setTab(0)">
+            <i class="fas fa-info-circle"></i>
+            <span>Basic Details</span>
+          </button>
+          <button type="button" class="tab-button" [class.active]="currentTab === 1" (click)="setTab(1)">
+            <i class="fas fa-cogs"></i>
+            <span>Specifications</span>
+          </button>
+          <button type="button" class="tab-button" [class.active]="currentTab === 2" (click)="setTab(2)">
+            <i class="fas fa-clipboard-list"></i>
+            <span>Additional Info</span>
+          </button>
+        </div>
+
+        <!-- Basic Details Tab -->
+        <div class="tab-content" *ngIf="currentTab === 0">
+          <div class="form-group">
+            <label for="make">Make <span class="required">*</span></label>
+            <select id="make" formControlName="make" (change)="onMakeChange($event)">
+              <option value="" disabled>Select Make</option>
+              <option *ngFor="let make of makes" [value]="make">{{ make }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="model">Model Name <span class="required">*</span></label>
+            <select id="model" formControlName="model">
+              <option value="" disabled>Select Model</option>
+              <option *ngFor="let v of filteredModels" [value]="v.model">{{ v.model }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="grade">Grade <span class="required">*</span></label>
+            <input type="text" id="grade" formControlName="grade" placeholder="Enter Grade" />
+          </div>
+          <div class="form-group">
+            <label for="fuelType">Fuel Type <span class="required">*</span></label>
+            <select id="fuelType" formControlName="fuelType">
+              <option value="" disabled>Select Fuel Type</option>
+              <option *ngFor="let fuel of fuelTypes" [value]="fuel">{{ fuel }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="suffix">Suffix <span class="required">*</span></label>
+            <input type="text" id="suffix" formControlName="suffix" placeholder="Enter Suffix" />
+          </div>
+          <div class="form-group">
+            <label for="manufactureDate">Manufacture Year <span class="required">*</span></label>
+            <input type="text" id="manufactureDate" formControlName="manufactureDate" placeholder="Enter Manufacture Year" />
+          </div>
+        </div>
+
+        <!-- Specifications Tab -->
+        <div class="tab-content" *ngIf="currentTab === 1">
+          <div class="form-group">
+            <label for="exteriorColor">Exterior Color <span class="required">*</span></label>
+            <input type="text" id="exteriorColor" formControlName="exteriorColor" placeholder="Enter Exterior Color" />
+          </div>
+          <div class="form-group">
+            <label for="interiorColor">Interior Color <span class="required">*</span></label>
+            <input type="text" id="interiorColor" formControlName="interiorColor" placeholder="Enter Interior Color" />
+          </div>
+          <div class="form-group">
+            <label for="chassisNumber">Chassis Number <span class="required">*</span></label>
+            <input type="text" id="chassisNumber" formControlName="chassisNumber" placeholder="Enter Chassis Number" />
+          </div>
+          <div class="form-group">
+            <label for="engineNumber">Engine Number <span class="required">*</span></label>
+            <input type="text" id="engineNumber" formControlName="engineNumber" placeholder="Enter Engine Number" />
+          </div>
+          <div class="form-group">
+            <label for="keyNumber">Key Number <span class="required">*</span></label>
+            <input type="text" id="keyNumber" formControlName="keyNumber" placeholder="Enter Key Number" />
+          </div>
+        </div>
+
+        <!-- Additional Info Tab -->
+        <div class="tab-content" *ngIf="currentTab === 2">
+          <div class="form-group">
+            <label for="location">Location <span class="required">*</span></label>
+            <input type="text" id="location" formControlName="location" placeholder="Enter Location" />
+          </div>
+          <div class="form-group">
+            <label for="status">Status <span class="required">*</span></label>
+            <select id="status" formControlName="status">
+              <option value="" disabled>Select Status</option>
+              <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="receivedDate">Received Date <span class="required">*</span></label>
+            <input type="date" id="receivedDate" formControlName="receivedDate" />
+          </div>
+          <div class="form-group">
+            <label for="invoiceDate">Invoice Date <span class="required">*</span></label>
+            <input type="date" id="invoiceDate" formControlName="invoiceDate" />
+          </div>
+          <div class="form-group">
+            <label for="invoiceNumber">Invoice Number <span class="required">*</span></label>
+            <input type="text" id="invoiceNumber" formControlName="invoiceNumber" placeholder="Enter Invoice Number" />
+          </div>
+          <div class="form-group">
+            <label for="purchaseDealer">Purchase Dealer <span class="required">*</span></label>
+            <input type="text" id="purchaseDealer" formControlName="purchaseDealer" placeholder="Enter Purchase Dealer" />
+          </div>
+          <div class="form-group">
+            <label for="invoiceValue">Invoice Value <span class="required">*</span></label>
+            <input type="text" id="invoiceValue" formControlName="invoiceValue" placeholder="Enter Invoice Value" />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="nav-button" [disabled]="currentTab === 0" (click)="previousTab()">
+          <i class="fas fa-arrow-left"></i> Previous
+        </button>
+        <button type="button" class="nav-button" *ngIf="currentTab < 2" (click)="nextTab()">
+          Next <i class="fas fa-arrow-right"></i>
+        </button>
+        <button type="submit" class="submit-button" *ngIf="currentTab === 2" [disabled]="vehicleForm.invalid">
+          <i class="fas fa-check-circle"></i> Add Vehicle
+        </button>
+      </div>
+      <div *ngIf="successMessage" class="success-message">
+        {{ successMessage }}
+      </div>
+    </form>
+  </div>
+</div>
 </body>
 
 </html>

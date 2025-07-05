@@ -17,7 +17,7 @@
             <div *ngIf="isLoading" class="loading-overlay">
                 <div class="loading-indicator">
                   <div class="spinner"></div>
-                  <p>Loading, please wait...</p>
+                  <p>Updating Details...</p>
                 </div>
               </div>
             <form [formGroup]="vehicleForm" (ngSubmit)="onUpdate()">
@@ -68,10 +68,6 @@
                             <label for="suffix">Suffix <span class="required">*</span></label>
                             <input type="text" id="suffix" formControlName="suffix" placeholder="Enter Suffix" />
                         </div>
-                        <!-- <div class="form-group">
-                            <label for="manufactureDate">Manufacture Date <span class="required">*</span></label>
-                            <input type="date" id="manufactureDate" formControlName="manufactureDate" />
-                        </div> -->
                         <div class="form-group">
                             <label for="manufactureDate">Manufacture Date <span class="required">*</span></label>
                             <input type="text" id="manufactureDate" formControlName="manufactureDate" placeholder="Enter Manufacture Date" />

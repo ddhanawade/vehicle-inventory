@@ -1,174 +1,206 @@
+$page-bg: #f8fafc;
+$card-bg: #fff;
+$primary: #2193b0;
+$primary-light: #6dd5ed;
+$success-bg: #d1fae5;
+$success-text: #065f46;
+$radius: 20px;
+$shadow: 0 8px 32px rgba(33, 147, 176, 0.13), 0 1.5px 4px rgba(0,0,0,0.08);
+
 .page-container {
-    padding: 20px;
-    padding-left: 280px; // Account for header width
-    min-height: 100vh;
-    background: #f8fafc;
-  
-    @media (max-width: 768px) {
-      padding-left: 20px;
-      padding-top: 80px; // Account for mobile header
-    }
-  }
-  
-  .user-management-container {
-    max-width: 600px;
-    margin: 0 auto;
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-  }
-  
-  .form-header {
-    background: linear-gradient(135deg, #2193b0, #6dd5ed);
-    padding: 20px;
-    color: white;
-  
-    h2 {
-      margin: 0;
-      font-size: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-  }
-  
-  .form-content {
-    padding: 24px;
-  }
-  
-  .form-group {
-    margin-bottom: 20px;
-  
-    label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 8px;
-      color: #334155;
-      font-weight: 500;
-  
-      i {
-        color: #2193b0;
-      }
-    }
-  
-    input, select {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      font-size: 1rem;
-      transition: all 0.3s ease;
-  
-      &:focus {
-        outline: none;
-        border-color: #2193b0;
-        box-shadow: 0 0 0 3px rgba(33, 147, 176, 0.1);
-      }
-  
-      &.invalid {
-        border-color: #ef4444;
-      }
-    }
-  
-    select[multiple] {
-      height: auto;
-      min-height: 120px;
-    }
-  }
-  
-  .password-input {
-    position: relative;
-  
-    .toggle-password {
-      position: absolute;
-      right: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: none;
-      border: none;
-      color: #64748b;
-      cursor: pointer;
-      padding: 0;
-  
-      &:hover {
-        color: #2193b0;
-      }
-    }
-  }
-  
-  .form-actions {
-    padding: 20px;
-    background: #f8fafc;
-    border-top: 1px solid #e2e8f0;
-  
-    .submit-button {
-      width: 100%;
-      padding: 12px;
-      background: linear-gradient(135deg, #2193b0, #6dd5ed);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: 500;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: all 0.3s ease;
-  
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(33, 147, 176, 0.2);
-      }
-  
-      &:disabled {
-        opacity: 0.7;
-        cursor: not-allowed;
-        transform: none;
-      }
-    }
-  }
-  
-  .success-message {
+  min-height: 100vh;
+  background: $page-bg;
+  padding: 40px 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.user-management-container {
+  max-width: 650px;
+  width: 100%;
+  margin: 0 auto;
+  background: $card-bg;
+  border-radius: $radius;
+  box-shadow: $shadow;
+  overflow: hidden;
+  animation: fadeIn 0.7s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(24px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+
+.form-header {
+  background: linear-gradient(135deg, $primary, $primary-light);
+  padding: 28px 32px 20px 32px;
+  color: $card-bg;
+  border-radius: $radius $radius 0 0;
+  text-align: center;
+  h2 {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 16px;
-    background: #d1fae5;
-    color: #065f46;
-    margin: 20px;
+    gap: 12px;
+    i { font-size: 2rem; }
+  }
+}
+
+.form-content {
+  padding: 32px;
+}
+
+.form-group {
+  margin-bottom: 22px;
+  position: relative;
+
+  label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: block;
+    color: #1e293b;
+    letter-spacing: 0.2px;
+    transition: color 0.2s;
+    /* For floating label, use position: absolute and JS/TS logic */
+  }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1.5px solid #e2e8f0;
     border-radius: 8px;
-  
-    i {
-      font-size: 1.25rem;
+    font-size: 1.08rem;
+    background: #f8fafc;
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+    &:focus {
+      border-color: $primary;
+      outline: none;
+      background: #e3f2fd;
+      box-shadow: 0 0 0 2px rgba(33,147,176,0.09);
+      transform: scale(1.02);
+    }
+    &.invalid {
+      border-color: #ef4444;
     }
   }
-  
-  @media (max-width: 640px) {
-    .user-management-container {
-      border-radius: 12px;
-    }
-  
-    .form-header {
-      padding: 16px;
-  
-      h2 {
-        font-size: 1.25rem;
-      }
-    }
-  
-    .form-content {
-      padding: 16px;
-    }
-  
-    .form-group {
-      margin-bottom: 16px;
-  
-      input, select {
-        padding: 10px;
-      }
+
+  select[multiple] {
+    height: auto;
+    min-height: 120px;
+  }
+}
+
+.password-input {
+  position: relative;
+  .toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #64748b;
+    cursor: pointer;
+    padding: 0;
+    font-size: 1.2rem;
+    transition: color 0.2s;
+    &:hover {
+      color: $primary;
     }
   }
+}
+
+.form-actions {
+  padding: 24px 32px;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  border-radius: 0 0 $radius $radius;
+  display: flex;
+  gap: 14px;
+  justify-content: flex-end;
+
+  .submit-button {
+    min-width: 140px;
+    padding: 14px 0;
+    background: linear-gradient(135deg, $primary, $primary-light);
+    color: $card-bg;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.08rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 2px 8px rgba(33,147,176,0.10);
+    transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+    position: relative;
+    overflow: hidden;
+
+    &:hover, &:focus {
+      background: linear-gradient(135deg, $primary-light, $primary);
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 4px 16px rgba(33,147,176,0.18);
+      outline: none;
+    }
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .spinner {
+      width: 22px;
+      height: 22px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-top: 3px solid $card-bg;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-right: 8px;
+    }
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg);}
+  100% { transform: rotate(360deg);}
+}
+
+.success-message {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 24px;
+  background: $success-bg;
+  color: $success-text;
+  margin: 24px 32px 0 32px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1.08rem;
+  box-shadow: 0 2px 8px rgba(49, 185, 120, 0.08);
+  animation: fadeIn 0.5s;
+  i { font-size: 1.25rem; }
+}
+
+.required {
+  color: #e53935;
+  font-weight: bold;
+  margin-left: 2px;
+}
+
+@media (max-width: 700px) {
+  .user-management-container {
+    border-radius: 12px;
+    max-width: 98vw;
+    padding: 8px;
+  }
+  .form-header { padding: 16px 10px 12px 10px; h2 { font-size: 1.2rem; } }
+  .form-content { padding: 16px; }
+  .form-actions { flex-direction: column; gap: 8px; padding: 12px 4px; }
+  .success-message { margin: 12px 4px 0 4px; font-size: 0.98rem; }
+}
