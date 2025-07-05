@@ -10,7 +10,7 @@ import { MonthlySalesRequest } from '../models/MonthlySalesRequest';
 export class ReportingService {
 
   // private baseUrl = 'http://localhost:8080/api';
-  private baseUrl = 'https://fleet-manager.in/api/analytics/monthly-sales';
+  private baseUrl = 'https://fleet-manager.in/api'; // Production URL
 
   //private baseUrl = 'http://fleet-manager-prd.us-east-2.elasticbeanstalk.com/api';
 
