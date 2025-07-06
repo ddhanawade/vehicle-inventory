@@ -17,10 +17,10 @@
     <div *ngIf="isLoading" class="loading-overlay">
       <div class="loading-indicator">
         <div class="spinner"></div>
-        <p>Loading, please wait...</p>
+        <p>please wait...</p>
       </div>
     </div>
-    
+
     <!-- Brand Filter Section -->
     <div class="brand-filters">
       <div *ngIf="hasRole('TATA')" class="brand-item" [class.active]="selectedMake === 'Tata'"
@@ -238,8 +238,8 @@
             </span> -->
             <span class="detail-item">
               <span class="label">&lt;30:</span>
-              <span 
-                class="age-badge" 
+              <span
+                class="age-badge"
                 [ngClass]="{
                   'low-count': parseToNumber(stock.lessThan30DaysCount) > 0,
                   'no-count': parseToNumber(stock.lessThan30DaysCount) === 0
@@ -249,8 +249,8 @@
             </span>
             <span class="detail-item">
               <span class="label">30-60:</span>
-              <span 
-                class="age-badge" 
+              <span
+                class="age-badge"
                 [ngClass]="{
                   'medium-count': parseToNumber(stock.between30And60DaysCount) > 0,
                   'no-count': parseToNumber(stock.between30And60DaysCount) === 0
@@ -260,15 +260,15 @@
             </span>
             <span class="detail-item">
               <span class="label">&gt;60:</span>
-              <span 
-                class="age-badge" 
+              <span
+                class="age-badge"
                 [ngClass]="{
                   'high-count': parseToNumber(stock.greaterThan60DaysCount) > 0,
                   'no-count': parseToNumber(stock.greaterThan60DaysCount) === 0
                 }">
                 {{ stock.greaterThan60DaysCount }}
               </span>
-            
+
               <!-- <span class="age-badge">{{ calculateVehicleAge(stock.greaterThan60DaysCount).days }}</span> -->
             </span>
           </div>

@@ -11,55 +11,55 @@
   <div class="login-page">
     <div class="login-container">
       <div class="login-header">
-        <i class="fas fa-car-side"></i>
+        <img src="assets/login.png" alt="Fleet Manager Icon" class="custom-icon">
         <h1>Fleet Manager</h1>
       </div>
-  
+
       <div class="login-form">
         <div *ngIf="successMessage" class="message success">
           <i class="fas fa-check-circle"></i>
           <p>{{ successMessage }}</p>
         </div>
-        
+
         <div *ngIf="errorMessage" class="message error">
           <i class="fas fa-exclamation-circle"></i>
           <p>{{ errorMessage }}</p>
         </div>
-  
+
         <form (ngSubmit)="login()" #loginForm="ngForm">
           <div class="form-group">
             <label for="username">
               <i class="fas fa-user"></i>
               <span>Username</span>
             </label>
-            <input 
-              type="text" 
-              id="username" 
-              name="username" 
-              [(ngModel)]="username" 
-              required 
+            <input
+              type="text"
+              id="username"
+              name="username"
+              [(ngModel)]="username"
+              required
               placeholder="Enter your username"
               [class.invalid]="loginForm.submitted && loginForm.form.get('username')?.invalid"
             />
           </div>
-  
+
           <div class="form-group">
             <label for="password">
               <i class="fas fa-lock"></i>
               <span>Password</span>
             </label>
             <div class="password-input">
-              <input 
+              <input
                 [type]="showPassword ? 'text' : 'password'"
-                id="password" 
-                name="password" 
-                [(ngModel)]="password" 
-                required 
+                id="password"
+                name="password"
+                [(ngModel)]="password"
+                required
                 placeholder="Enter your password"
                 [class.invalid]="loginForm.submitted && loginForm.form.get('password')?.invalid"
               />
-              <button 
-                type="button" 
+              <button
+                type="button"
                 class="toggle-password"
                 (click)="showPassword = !showPassword"
               >
@@ -67,12 +67,12 @@
               </button>
             </div>
           </div>
-  
+
           <button type="submit" class="login-button" [disabled]="!loginForm.valid">
             <i class="fas fa-sign-in-alt"></i>
             Login
           </button>
-  
+
           <div class="form-footer">
             <a (click)="showPopup()" class="forgot-password">Forgot Password?</a>
           </div>
