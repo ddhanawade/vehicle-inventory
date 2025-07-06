@@ -51,14 +51,14 @@ export class FileuploadComponent {
       this.successMessage = ''; // Clear success message
       return;
     }
-    
+
     this.isLoading = true; // Show spinner
     this.successMessage = null;
     this.errorMessage = null;
 
     const formData = new FormData();
     formData.append('file', this.selectedFile);
-  
+
     this.dataService.bulkUpload(formData).subscribe({
       next: (response: any) => {
         this.isLoading = false; // Hide spinner
@@ -76,8 +76,8 @@ export class FileuploadComponent {
 
   downloadTemplate(): void {
     const link = document.createElement('a');
-    link.href = 'assets/Stock_Tracker.csv'; // Path to your file
-    link.download = 'Stock_Tracker.csv'; // File name for download
+    link.href = 'assets/Demo_File_Fleet_Manager.csv';
+    link.download = 'Demo_File_Fleet_Manager.csv';
     link.click();
   }
 

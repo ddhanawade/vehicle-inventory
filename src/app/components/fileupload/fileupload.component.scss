@@ -1,28 +1,40 @@
+.file-upload-wrapper {
+  margin: 80px auto;
+  max-width: 600px;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+  text-align: center;
+}
+.upload-title {
+  font-size: 36px; /* Increase font size */
+  font-weight: 700; /* Make it bolder */
+  color: #1976d2; /* Use a more vibrant color */
+  margin-bottom: 20px;
+  text-align: center;
+  text-transform: uppercase; /* Add uppercase styling */
+  letter-spacing: 2px; /* Add spacing between letters */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Add a subtle shadow for creativity */
+}
 .file-upload-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 20px;
+  gap: 16px;
   padding: 20px;
   border: 2px dashed #2193b0;
   border-radius: 12px;
   background-color: #f0f9ff;
   transition: background-color 0.3s ease, border-color 0.3s ease;
-  margin-top: 250px;
-  max-width: 500px;
-  margin-left: 550px;
-
   &:hover {
     background-color: #e0f7ff;
     border-color: #1976d2;
   }
-
   input[type="file"] {
     display: none;
   }
-
-  label {
+  .file-label {
     display: inline-block;
     padding: 10px 20px;
     font-size: 16px;
@@ -32,58 +44,101 @@
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-
     &:hover {
       background-color: #1976d2;
     }
   }
-
   .file-name {
     font-size: 14px;
     color: #555;
-    margin-top: -10px;
     font-weight: 500;
   }
-
-  button {
-    padding: 10px 20px;
-    font-size: 16px;
-    font-weight: 500;
-    color: #ffffff;
-    background-color: #2193b0;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-
-    &:hover {
-      background-color: #1976d2;
-      transform: translateY(-2px);
+  .button-group {
+    display: flex;
+    gap: 10px;
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      font-weight: 500;
+      color: #ffffff;
+      border-radius: 8px;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      &:hover {
+        transform: translateY(-2px);
+      }
+      &:active {
+        transform: translateY(0);
+      }
     }
-
-    &:active {
-      transform: translateY(0);
+    button[color='primary'] {
+      background-color: #2193b0;
+      &:hover {
+        background-color: #1976d2;
+      }
+    }
+    button[color='accent'] {
+      background-color: #4db6ac;
+      &:hover {
+        background-color: #00897b;
+      }
     }
   }
 }
-
 .success-card {
   background-color: #e8f5e9;
   color: #2e7d32;
   width: 100%;
   max-width: 400px;
   text-align: center;
+  margin-top: 10px;
 }
-
 .error-card {
   background-color: #ffebee;
   color: #c62828;
   width: 100%;
   max-width: 400px;
   text-align: center;
+  margin-top: 10px;
 }
-
 mat-icon {
   vertical-align: middle;
   margin-right: 8px;
+}
+@keyframes fadePulse {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 0.95;
+    transform: scale(1);
+  }
+}
+.upload-note {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #c62828;
+  text-align: center;
+  max-width: 500px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadePulse 2s ease-in-out infinite;
+  .note-icon {
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+}
+
+.centered-note {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
