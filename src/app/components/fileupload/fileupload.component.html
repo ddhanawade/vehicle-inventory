@@ -6,6 +6,7 @@
   <button mat-raised-button color="primary" (click)="uploadFile()" [disabled]="isLoading">
     <span *ngIf="!isLoading">Upload</span>
   </button>
+  <button (click)="downloadTemplate()" mat-raised-button color="accent">Download demo Template</button>
 
   <!-- <button mat-raised-button color="accent" (click)="downloadTemplate()">
     Download Template
