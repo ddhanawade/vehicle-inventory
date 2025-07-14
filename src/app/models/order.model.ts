@@ -9,5 +9,6 @@ export interface OrderModel {
     phoneNumber: string;
     remarks: string;
     status: string;
+    dealAmount: string;
     [key: string]: string | number; // Index signature for dynamic access
 }

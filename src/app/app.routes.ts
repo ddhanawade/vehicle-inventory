@@ -11,6 +11,7 @@ import { VehicleReportComponent } from './components/vehicle-report/vehicle-repo
 import { PreventBackGuard } from './services/PreventBackGuard';
 import { FileuploadComponent } from './components/fileupload/fileupload.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
+import { PurchasereportComponent } from './components/purchasereport/purchasereport.component';
 
 export const routes: Routes = [
     {
@@ -64,6 +65,10 @@ export const routes: Routes = [
     {
         path: "reset-password",
         component: ResetPasswordComponent
+    },
+    {
+        path: "purchase-report",
+        component: PurchasereportComponent
     },
     {
         path: "**",

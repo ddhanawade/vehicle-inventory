@@ -1,95 +1,262 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vehicle Details</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-</head>
-
-<body>
-  <div class="vehicle-details-container">
-    <div class="header-section">
-      <h2 class="table-heading">
-        <i class="fas fa-car"></i>
-        Vehicle Details
-        <!-- <span class="total-count" *ngIf="totalVehicles">
-          (Total: {{totalVehicles}})
-        </span> -->
-      </h2>
-      <div *ngIf="isLoad" class="loading-overlay">
-        <div class="loading-indicator">
-          <div class="spinner"></div>
-          <p>please wait...</p>
+<!-- Enhanced Vehicle Details Component -->
+<div class="vehicle-details-container">
+  <!-- Enhanced Header Section -->
+  <div class="header-section">
+    <div class="header-content">
+      <div class="page-title">
+        <div class="title-icon">
+          <i class="fas fa-car"></i>
+        </div>
+        <div class="title-text">
+          <h1>Vehicle Details</h1>
+          <p class="subtitle">Manage and track your vehicle inventory</p>
         </div>
       </div>
-      <div class="table-actions">
-        <div class="search-box">
-          <input type="text" placeholder="Search vehicles..." (keyup)="applyFilter($event)" #input>
-          <select class="filter-dropdown" (change)="onStatusFilterChange($event)">
-            <option value="all">All</option>
-            <option value="sold">Sold</option>
-            <!-- <option value="available">Available</option> -->
-          </select>
+      
+      <!-- Quick Statistics Cards -->
+      <div class="stats-cards">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-car"></i>
+          </div>
+          <div class="stat-content">
+            <h3>{{getTotalVehicles()}}</h3>
+            <p>Total Vehicles</p>
+          </div>
         </div>
-        <div class="search-box">
-          <!-- <mat-form-field appearance="outline">
-            <mat-label>Search</mat-label>
-            <input matInput (keyup)="applyFilter($event)" placeholder="Search vehicles..." #input>
-            <mat-icon matSuffix>search</mat-icon>
-          </mat-form-field> -->
+        
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <div class="stat-content">
+            <h3>{{getAvailableCount()}}</h3>
+            <p>Available</p>
+          </div>
         </div>
+        
+        <div class="stat-card sold">
+          <div class="stat-icon">
+            <i class="fas fa-handshake"></i>
+          </div>
+          <div class="stat-content">
+            <h3>{{getSoldCount()}}</h3>
+            <p>Sold</p>
+          </div>
+        </div>
+      </div>
+    </div>
 
-        <div class="export-buttons">
-          <!-- <button mat-raised-button color="primary" (click)="exportToPDF()">
-            <i class="fas fa-file-pdf"></i> Export to PDF
-          </button> -->
-          <button mat-raised-button color="accent" (click)="exportToExcel()">
-            <i class="fas fa-file-excel"></i> Export to Excel
+    <!-- Enhanced Search and Filter Section -->
+    <div class="search-filter-section">
+      <div class="search-container">
+        <div class="search-input-wrapper">
+          <i class="fas fa-search search-icon"></i>
+          <input 
+            type="text" 
+            placeholder="Search vehicles by any field..." 
+            (keyup)="applyFilter($event)" 
+            #input
+            class="search-input"
+            [class.has-value]="input.value"
+          >
+          <button 
+            *ngIf="input.value" 
+            class="clear-search" 
+            (click)="clearSearch(input)"
+            title="Clear search"
+          >
+            <i class="fas fa-times"></i>
           </button>
         </div>
-      </div>
-    </div>
-    <div *ngIf="successMessage" class="small-success-message">
-      <p>{{ successMessage }}</p>
-    </div>
-    <div class="table-container">
-      <div class="responsive-table">
-        <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
-          <!-- Your column definitions -->
-          <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              {{ getColumnHeader(column) }}
-            </th>
-            <td mat-cell *matCellDef="let item" [class.truncate]="shouldTruncate(column)">
-              {{ getColumnValue(item, column) }}
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="actions">
-            <th mat-header-cell *matHeaderCellDef> Actions </th>
-            <td mat-cell *matCellDef="let row" class="mat-column-actions">
-              <button class="action-button" title="Edit" (click)="editVehicle(row)">
-                <i class="fas fa-edit"></i>
-              </button>
-              <button class="action-button" title="View" (click)="updateVehicle(row)">
-                <i class="fas fa-eye"></i>
-              </button>
-              <button class="action-button" title="Delete" (click)="onDelete(row)">
-                <i class="fas fa-trash"></i>
-              </button>
-            </td>
-          </ng-container>
-          <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>
+        
+        <div class="filter-wrapper">
+          <i class="fas fa-filter filter-icon"></i>
+          <select class="filter-dropdown" (change)="onStatusFilterChange($event)">
+            <option value="all">All Status</option>
+            <option value="sold">Sold</option>
+            <option value="available">Available</option>
+          </select>
+        </div>
       </div>
 
-      <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" [pageSize]="10" [length]="totalVehicles" showFirstLastButtons
-        aria-label="Select page of vehicles">
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <button class="action-btn refresh-btn" (click)="refreshData()" title="Refresh Data">
+          <i class="fas fa-sync-alt" [class.spinning]="isLoading"></i>
+          <span>Refresh</span>
+        </button>
+        
+        <button class="action-btn export-btn" (click)="exportToExcel()" title="Export to Excel">
+          <i class="fas fa-file-excel"></i>
+          <span>Export</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Message -->
+  <div *ngIf="successMessage" class="success-message">
+    <div class="message-content">
+      <i class="fas fa-check-circle"></i>
+      <p>{{ successMessage }}</p>
+    </div>
+    <button class="close-message" (click)="successMessage = ''">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <!-- Enhanced Table Container -->
+  <div class="table-container">
+    <div class="table-header">
+      <div class="table-info">
+        <span class="results-count">
+          Showing {{dataSource?.filteredData?.length || 0}} of {{totalVehicles}} vehicles
+        </span>
+      </div>
+      <div class="view-options">
+        <button class="view-btn" [class.active]="viewMode === 'table'" (click)="setViewMode('table')">
+          <i class="fas fa-table"></i>
+        </button>
+        <button class="view-btn" [class.active]="viewMode === 'card'" (click)="setViewMode('card')">
+          <i class="fas fa-th-large"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Table View -->
+    <div class="table-view" *ngIf="viewMode === 'table'">
+      <div class="responsive-table">
+        <table mat-table [dataSource]="dataSource" matSort class="enhanced-table">
+          <!-- Dynamic Column Definitions -->
+          <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="table-header-cell">
+              <div class="header-content">
+                <span>{{ getColumnHeader(column) }}</span>
+                <i class="fas fa-sort column-sort-icon"></i>
+              </div>
+            </th>
+            <td mat-cell *matCellDef="let item" class="table-cell" [class.truncate]="shouldTruncate(column)">
+              <div class="cell-content">
+                {{ getColumnValue(item, column) }}
+              </div>
+            </td>
+          </ng-container>
+          
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="actions-header">Actions</th>
+            <td mat-cell *matCellDef="let row" class="actions-cell">
+              <div class="action-buttons-group">
+                <button class="action-button edit-btn" (click)="editVehicle(row)" title="Edit Vehicle">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="action-button view-btn" (click)="updateVehicle(row)" title="View Details">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="action-button delete-btn" (click)="onDelete(row)" title="Delete Vehicle">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+          
+          <!-- Table Rows -->
+          <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true" class="table-header-row"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row" 
+              [class.selected]="selectedRow === row" (click)="selectRow(row)"></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Card View -->
+    <div class="card-view" *ngIf="viewMode === 'card'">
+      <div class="vehicle-cards">
+        <div class="vehicle-card" *ngFor="let vehicle of dataSource?.filteredData" 
+             [class.selected]="selectedRow === vehicle" (click)="selectRow(vehicle)">
+          <div class="card-header">
+            <div class="vehicle-info">
+              <h3>{{vehicle.make}} {{vehicle.model}}</h3>
+              <p class="vehicle-year">{{vehicle['year']}}</p>
+            </div>
+            <div class="status-badge" [class]="getStatusClass(vehicle.vehicleStatus)">
+              {{vehicle.vehicleStatus || 'Available'}}
+            </div>
+          </div>
+          
+          <div class="card-content">
+            <div class="info-row">
+              <span class="label">Invoice:</span>
+              <span class="value">{{vehicle.invoiceNumber}}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Dealer:</span>
+              <span class="value">{{vehicle.purchaseDealer}}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Location:</span>
+              <span class="value">{{vehicle.location}}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Date:</span>
+              <span class="value">{{vehicle.invoiceDate | date:'MMM dd, yyyy'}}</span>
+            </div>
+          </div>
+          
+          <div class="card-actions">
+            <button class="card-action-btn edit" (click)="editVehicle(vehicle); $event.stopPropagation()">
+              <i class="fas fa-edit"></i>
+              <span>Edit</span>
+            </button>
+            <button class="card-action-btn view" (click)="updateVehicle(vehicle); $event.stopPropagation()">
+              <i class="fas fa-eye"></i>
+              <span>View</span>
+            </button>
+            <button class="card-action-btn delete" (click)="onDelete(vehicle); $event.stopPropagation()">
+              <i class="fas fa-trash"></i>
+              <span>Delete</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="!dataSource?.filteredData?.length && !isLoading">
+      <div class="empty-content">
+        <i class="fas fa-search"></i>
+        <h3>No vehicles found</h3>
+        <p>Try adjusting your search criteria or filters</p>
+        <button class="reset-btn" (click)="resetFilters()">
+          <i class="fas fa-refresh"></i>
+          Reset Filters
+        </button>
+      </div>
+    </div>
+
+    <!-- Enhanced Pagination -->
+    <div class="pagination-wrapper">
+      <mat-paginator 
+        [pageSizeOptions]="[5, 10, 25, 50, 100]" 
+        [pageSize]="10" 
+        [length]="totalVehicles" 
+        showFirstLastButtons
+        aria-label="Select page of vehicles"
+        class="enhanced-paginator">
       </mat-paginator>
     </div>
   </div>
-</body>
 
-</html>
+  <!-- Loading Overlay -->
+  <div *ngIf="isLoad" class="loading-overlay">
+    <div class="loading-content">
+      <div class="loading-spinner">
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+      </div>
+      <h3>Loading Vehicle Data</h3>
+      <p>Please wait while we fetch the latest information...</p>
+    </div>
+  </div>
+</div>

@@ -69,6 +69,10 @@ export class VehicleDetailsComponent implements OnInit {
     'orderDate',
     'deliveryDate',
     'orderStatus',
+    'salesPersonName',
+    'leadName',
+    'dmsStatus',
+    'dealAmount',
     'actions'
   ];
 
@@ -78,6 +82,9 @@ export class VehicleDetailsComponent implements OnInit {
   activeFilter: string | null = null;
   successMessage: string = '';
   originalCarDetailsList: VehicleModel[] = [];
+  viewMode: 'table' | 'card' = 'table';
+  selectedRow: VehicleModel | null = null;
+  currentFilter: string = 'available'; // Track current filter state
 
   constructor(private route: ActivatedRoute, private vehicleService: DataService, private cdr: ChangeDetectorRef, private dialog: MatDialog,
     private orderService: OrderService, private renderer: Renderer2
@@ -239,11 +246,12 @@ export class VehicleDetailsComponent implements OnInit {
         // Store the original unfiltered data
         this.originalCarDetailsList = result;
   
-        // Filter out vehicles with status "sold"
-        this.carDetailsList = result.filter(vehicle => vehicle.vehicleStatus.toLowerCase() !== 'sold');
+                // Filter out vehicles with status "sold" (default to available)
+        this.carDetailsList = result.filter(vehicle => !vehicle.vehicleStatus || vehicle.vehicleStatus.toLowerCase() !== 'sold');
         console.log("Filtered Vehicle Details: " + JSON.stringify(this.carDetailsList));
-  
+
         this.dataSource = new MatTableDataSource<VehicleModel>(this.carDetailsList);
+        this.currentFilter = 'available'; // Set initial filter state
   
         // Set up sorting and pagination
         this.dataSource.sort = this.sort;
@@ -279,13 +287,21 @@ export class VehicleDetailsComponent implements OnInit {
   
   onStatusFilterChange(event: Event): void {
     const selectedStatus = (event.target as HTMLSelectElement).value.toLowerCase();
+    this.currentFilter = selectedStatus;
   
     if (selectedStatus === 'sold') {
       // Show only sold vehicles
-      this.dataSource.data = this.originalCarDetailsList.filter(vehicle => vehicle.vehicleStatus.toLowerCase() === 'sold');
+      this.dataSource.data = this.originalCarDetailsList.filter(vehicle => 
+        vehicle.vehicleStatus && vehicle.vehicleStatus.toLowerCase() === 'sold'
+      );
+    } else if (selectedStatus === 'available') {
+      // Show only available vehicles (not sold)
+      this.dataSource.data = this.originalCarDetailsList.filter(vehicle => 
+        !vehicle.vehicleStatus || vehicle.vehicleStatus.toLowerCase() !== 'sold'
+      );
     } else if (selectedStatus === 'all') {
-      // Show vehicles that are not sold
-      this.dataSource.data = this.originalCarDetailsList.filter(vehicle => vehicle.vehicleStatus.toLowerCase() !== 'sold');
+      // Show all vehicles
+      this.dataSource.data = [...this.originalCarDetailsList];
     }
   
     // Update the total vehicle count
@@ -362,6 +378,74 @@ export class VehicleDetailsComponent implements OnInit {
     // Add columns that should be truncated
     const truncateColumns = ['chassisNumber', 'engineNumber', 'keyNumber'];
     return truncateColumns.includes(column);
+  }
+
+  // Enhanced methods for the new UI
+  getAvailableCount(): number {
+    // Always calculate from original data to show total available vehicles
+    return this.originalCarDetailsList.filter(vehicle => 
+      !vehicle.vehicleStatus || vehicle.vehicleStatus.toLowerCase() !== 'sold'
+    ).length;
+  }
+
+  getSoldCount(): number {
+    // Always calculate from original data to show total sold vehicles
+    return this.originalCarDetailsList.filter(vehicle => 
+      vehicle.vehicleStatus && vehicle.vehicleStatus.toLowerCase() === 'sold'
+    ).length;
+  }
+
+  clearSearch(input: HTMLInputElement): void {
+    input.value = '';
+    this.applyFilter({ target: input } as any);
+  }
+
+  refreshData(): void {
+    this.isLoading = true;
+    this.route.params.subscribe(params => {
+      const modelName = params['modelName'];
+      if (modelName) {
+        this.getCarDetails(modelName);
+      }
+    });
+  }
+
+  setViewMode(mode: 'table' | 'card'): void {
+    this.viewMode = mode;
+  }
+
+  selectRow(row: VehicleModel): void {
+    this.selectedRow = this.selectedRow === row ? null : row;
+  }
+
+  getStatusClass(status: string | undefined): string {
+    if (!status || typeof status !== 'string') return 'available';
+    switch (status.toLowerCase()) {
+      case 'sold':
+        return 'sold';
+      case 'available':
+        return 'available';
+      default:
+        return 'available';
+    }
+  }
+
+  getTotalVehicles(): number {
+    return this.originalCarDetailsList.length;
+  }
+
+  resetFilters(): void {
+    this.filters = {};
+    this.activeFilter = null;
+    this.currentFilter = 'available';
+    this.dataSource.filter = '';
+    
+    // Reset to show only available vehicles (default state)
+    this.dataSource.data = this.originalCarDetailsList.filter(vehicle => 
+      !vehicle.vehicleStatus || vehicle.vehicleStatus.toLowerCase() !== 'sold'
+    );
+    this.totalVehicles = this.dataSource.data.length;
+    this.cdr.detectChanges();
   }
 
 }

@@ -1,87 +1,277 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>User Management</title>
-  <!-- Add Bootstrap CSS for styling -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-
-<body>
-  <div class="page-container">
-    <div class="user-management-container">
-      <div class="form-header">
-        <h2><i class="fas fa-users-cog"></i> User Management</h2>
+<!-- Enhanced User Management Component -->
+<div class="user-management-container">
+  <!-- Enhanced Header Section -->
+  <div class="header-section">
+    <div class="page-title">
+      <div class="title-icon">
+        <i class="fas fa-users-cog"></i>
       </div>
+      <div class="title-text">
+        <h1>User Management</h1>
+        <p class="subtitle">Create and manage user accounts with role-based access</p>
+      </div>
+    </div>
+    
+    <!-- Quick Stats Cards -->
+    <!-- <div class="stats-cards">
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-users"></i>
+        </div>
+        <div class="stat-content">
+          <h3>{{getTotalUsers()}}</h3>
+          <p>Total Users</p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-user-check"></i>
+        </div>
+        <div class="stat-content">
+          <h3>{{getActiveUsers()}}</h3>
+          <p>Active Users</p>
+        </div>
+      </div>
+      
+      <div class="stat-card roles">
+        <div class="stat-icon">
+          <i class="fas fa-user-tag"></i>
+        </div>
+        <div class="stat-content">
+          <h3>{{availableRoles.length}}</h3>
+          <p>Available Roles</p>
+        </div>
+      </div>
+    </div> -->
+  </div>
 
-      <form (ngSubmit)="onCreateUser()" #userForm="ngForm">
-        <div class="form-content">
-          <div class="form-group">
-            <label for="username">
-              <i class="fas fa-user"></i>
-              Username
-            </label>
-            <input type="text" id="username" [(ngModel)]="userData.username" name="username" required
-              placeholder="Enter username"
-              [class.invalid]="userForm.submitted && userForm.form.get('username')?.invalid" />
-          </div>
+  <!-- Enhanced Form Container -->
+  <div class="form-container">
+    <div class="form-header">
+      <div class="form-title">
+        <h2>
+          <i class="fas fa-user-plus"></i>
+          Create New User Account
+        </h2>
+        <p>Fill in the details below to create a new user account</p>
+      </div>
+      
+      <div class="form-progress">
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width.%]="getFormProgress()"></div>
+        </div>
+        <span class="progress-text">{{getFormProgress()}}% Complete</span>
+      </div>
+    </div>
 
-          <div class="form-group">
-            <label for="email">
-              <i class="fas fa-envelope"></i>
-              Email
-            </label>
-            <input type="email" id="email" [(ngModel)]="userData.email" name="email" required
-              placeholder="Enter email address"
-              [class.invalid]="userForm.submitted && userForm.form.get('email')?.invalid" />
-          </div>
-
-          <div class="form-group">
-            <label for="password">
-              <i class="fas fa-lock"></i>
-              Password
-            </label>
-            <div class="password-input">
-              <input [type]="showPassword ? 'text' : 'password'" id="password" [(ngModel)]="userData.password"
-                name="password" required placeholder="Enter password"
-                [class.invalid]="userForm.submitted && userForm.form.get('password')?.invalid" />
-              <button type="button" class="toggle-password" (click)="showPassword = !showPassword">
-                <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
-              </button>
+    <form (ngSubmit)="onCreateUser()" #userForm="ngForm" class="enhanced-form">
+      <div class="form-grid">
+        <!-- Username Field -->
+        <div class="form-group" [class.filled]="userData.username" [class.error]="userForm.submitted && userForm.form.get('username')?.invalid">
+          <label for="username" class="form-label">
+            <i class="fas fa-user label-icon"></i>
+            <span>Username</span>
+            <span class="required">*</span>
+          </label>
+          <div class="input-wrapper">
+            <input 
+              type="text" 
+              id="username" 
+              [(ngModel)]="userData.username" 
+              name="username" 
+              required
+              placeholder="Enter unique username"
+              class="form-input"
+              (focus)="onFieldFocus('username')"
+              (blur)="onFieldBlur('username')"
+              [class.focused]="focusedField === 'username'"
+            />
+            <div class="input-border"></div>
+            <div class="validation-icon">
+              <i class="fas fa-check" *ngIf="userData.username && userForm.form.get('username')?.valid"></i>
+              <i class="fas fa-exclamation-triangle" *ngIf="userForm.submitted && userForm.form.get('username')?.invalid"></i>
             </div>
           </div>
-
-          <div class="form-group">
-            <label for="role">
-              <i class="fas fa-user-tag"></i>
-              Roles
-            </label>
-            <select id="role" [(ngModel)]="userData.roles" name="role" multiple required
-              [class.invalid]="userForm.submitted && userForm.form.get('role')?.invalid">
-              <option *ngFor="let role of availableRoles" [value]="role">{{ role }}</option>
-            </select>
+          <div class="field-hint">
+            <span *ngIf="!userForm.submitted || userForm.form.get('username')?.valid">Choose a unique username for login</span>
+            <span *ngIf="userForm.submitted && userForm.form.get('username')?.invalid" class="error-text">Username is required</span>
           </div>
         </div>
 
-        <div class="form-actions">
-          <button type="submit" class="submit-button">
-            <i class="fas fa-user-plus"></i>
-            Create User
-          </button>
+        <!-- Email Field -->
+        <div class="form-group" [class.filled]="userData.email" [class.error]="userForm.submitted && userForm.form.get('email')?.invalid">
+          <label for="email" class="form-label">
+            <i class="fas fa-envelope label-icon"></i>
+            <span>Email Address</span>
+            <span class="required">*</span>
+          </label>
+          <div class="input-wrapper">
+            <input 
+              type="email" 
+              id="email" 
+              [(ngModel)]="userData.email" 
+              name="email" 
+              required
+              placeholder="Enter email address"
+              class="form-input"
+              (focus)="onFieldFocus('email')"
+              (blur)="onFieldBlur('email')"
+              [class.focused]="focusedField === 'email'"
+            />
+            <div class="input-border"></div>
+            <div class="validation-icon">
+              <i class="fas fa-check" *ngIf="userData.email && userForm.form.get('email')?.valid"></i>
+              <i class="fas fa-exclamation-triangle" *ngIf="userForm.submitted && userForm.form.get('email')?.invalid"></i>
+            </div>
+          </div>
+          <div class="field-hint">
+            <span *ngIf="!userForm.submitted || userForm.form.get('email')?.valid">Valid email address for notifications</span>
+            <span *ngIf="userForm.submitted && userForm.form.get('email')?.invalid" class="error-text">Valid email address is required</span>
+          </div>
         </div>
-      </form>
 
-      <div *ngIf="successMessage" class="success-message">
+        <!-- Password Field -->
+        <div class="form-group" [class.filled]="userData.password" [class.error]="userForm.submitted && userForm.form.get('password')?.invalid">
+          <label for="password" class="form-label">
+            <i class="fas fa-lock label-icon"></i>
+            <span>Password</span>
+            <span class="required">*</span>
+          </label>
+          <div class="input-wrapper password-wrapper">
+            <input 
+              [type]="showPassword ? 'text' : 'password'" 
+              id="password" 
+              [(ngModel)]="userData.password"
+              name="password" 
+              required 
+              placeholder="Enter secure password"
+              class="form-input"
+              (focus)="onFieldFocus('password')"
+              (blur)="onFieldBlur('password')"
+              [class.focused]="focusedField === 'password'"
+            />
+            <button type="button" class="password-toggle" (click)="togglePassword()" title="Toggle password visibility">
+              <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+            </button>
+            <div class="input-border"></div>
+            <div class="validation-icon">
+              <i class="fas fa-check" *ngIf="userData.password && userForm.form.get('password')?.valid"></i>
+              <i class="fas fa-exclamation-triangle" *ngIf="userForm.submitted && userForm.form.get('password')?.invalid"></i>
+            </div>
+          </div>
+          
+          <!-- Password Strength Indicator -->
+          <div class="password-strength" *ngIf="userData.password">
+            <div class="strength-bar">
+              <div class="strength-fill" [class]="getPasswordStrength()" [style.width.%]="getPasswordStrengthPercentage()"></div>
+            </div>
+            <span class="strength-text">{{getPasswordStrengthText()}}</span>
+          </div>
+          
+          <div class="field-hint">
+            <span *ngIf="!userForm.submitted || userForm.form.get('password')?.valid">Use a strong password with mixed characters</span>
+            <span *ngIf="userForm.submitted && userForm.form.get('password')?.invalid" class="error-text">Password is required</span>
+          </div>
+        </div>
+
+        <!-- Roles Field -->
+        <div class="form-group roles-group" [class.filled]="userData.roles && userData.roles.length > 0" [class.error]="userForm.submitted && userForm.form.get('role')?.invalid">
+          <label for="role" class="form-label">
+            <i class="fas fa-user-tag label-icon"></i>
+            <span>User Roles</span>
+            <span class="required">*</span>
+          </label>
+          
+          <div class="roles-selection">
+            <div class="selected-roles" *ngIf="userData.roles && userData.roles.length > 0">
+              <div class="role-chip" *ngFor="let role of userData.roles; let i = index">
+                <span>{{role}}</span>
+                <button type="button" class="remove-role" (click)="removeRole(i)" title="Remove role">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+            
+            <div class="roles-dropdown" [class.open]="rolesDropdownOpen">
+              <button type="button" class="dropdown-trigger" (click)="toggleRolesDropdown()">
+                <span *ngIf="!userData.roles || userData.roles.length === 0">Select roles...</span>
+                <span *ngIf="userData.roles && userData.roles.length > 0">Add more roles...</span>
+                <i class="fas fa-chevron-down dropdown-icon" [class.rotated]="rolesDropdownOpen"></i>
+              </button>
+              
+              <div class="dropdown-menu" *ngIf="rolesDropdownOpen">
+                <div class="dropdown-search">
+                  <input type="text" placeholder="Search roles..." [(ngModel)]="roleSearchTerm" name="roleSearch" 
+                         (ngModelChange)="filterRoles()" class="search-input">
+                  <i class="fas fa-search search-icon"></i>
+                </div>
+                
+                <div class="roles-list">
+                  <label class="role-option" *ngFor="let role of getFilteredRoles()" 
+                         [class.selected]="isRoleSelected(role)">
+                    <input type="checkbox" [checked]="isRoleSelected(role)" (change)="toggleRole(role)">
+                    <div class="role-content">
+                      <span class="role-name">{{role}}</span>
+                      <i class="fas fa-check role-check"></i>
+                    </div>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="field-hint">
+            <span *ngIf="!userForm.submitted || userForm.form.get('role')?.valid">Select one or more roles for the user</span>
+            <span *ngIf="userForm.submitted && userForm.form.get('role')?.invalid" class="error-text">At least one role must be selected</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" (click)="resetForm(userForm)">
+          <i class="fas fa-undo"></i>
+          <span>Reset Form</span>
+        </button>
+        
+        <button type="submit" class="btn-primary" [disabled]="isCreatingUser" 
+                [class.loading]="isCreatingUser">
+          <div class="btn-content">
+            <i class="fas fa-user-plus" *ngIf="!isCreatingUser"></i>
+            <div class="loading-spinner" *ngIf="isCreatingUser">
+              <div class="spinner-ring"></div>
+            </div>
+            <span>{{isCreatingUser ? 'Creating User...' : 'Create User Account'}}</span>
+          </div>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Enhanced Success Message -->
+  <div *ngIf="successMessage" class="success-notification">
+    <div class="notification-content">
+      <div class="notification-icon">
         <i class="fas fa-check-circle"></i>
+      </div>
+      <div class="notification-text">
+        <h4>Success!</h4>
         <p>{{ successMessage }}</p>
       </div>
+      <button class="close-notification" (click)="clearSuccessMessage()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="notification-progress">
+      <div class="progress-line"></div>
     </div>
   </div>
 
-  <!-- Add Bootstrap JS for optional interactivity -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-
-</html>
+  <!-- Background Decorations -->
+  <div class="background-decoration">
+    <div class="decoration-circle circle-1"></div>
+    <div class="decoration-circle circle-2"></div>
+    <div class="decoration-circle circle-3"></div>
+  </div>
+</div>

@@ -22,6 +22,7 @@ export interface VehicleModel {
     interest: string;
     lessThan30DaysCount : string;
     between30And60DaysCount: string;
-    greaterThan60DaysCount : string
+    greaterThan60DaysCount : string;
+    remarks: string;
     [key: string]: string | number; // Index signature for dynamic access
   }
