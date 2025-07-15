@@ -201,12 +201,6 @@
               </button>
               
               <div class="dropdown-menu" *ngIf="rolesDropdownOpen">
-                <div class="dropdown-search">
-                  <input type="text" placeholder="Search roles..." [(ngModel)]="roleSearchTerm" name="roleSearch" 
-                         (ngModelChange)="filterRoles()" class="search-input">
-                  <i class="fas fa-search search-icon"></i>
-                </div>
-                
                 <div class="roles-list">
                   <label class="role-option" *ngFor="let role of getFilteredRoles()" 
                          [class.selected]="isRoleSelected(role)">
