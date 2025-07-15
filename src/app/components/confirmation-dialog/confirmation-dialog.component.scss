@@ -1,75 +1,516 @@
-.custom-dialog-container {
-    background-color: #ffffff; /* White background for the dialog */
-    border-radius: 12px; /* Rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
-    padding: 24px; /* Padding inside the dialog */
-    max-width: 400px; /* Limit the width */
-    margin: auto; /* Center the dialog horizontally */
-    text-align: center; /* Center-align text */
+// Enhanced Attractive Confirmation Dialog Styles
+// ===============================================
+
+// CSS Custom Properties
+:host {
+  --warning-primary: #f59e0b;
+  --warning-secondary: #fbbf24;
+  --error-primary: #ef4444;
+  --error-secondary: #f87171;
+  --success-color: #10b981;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-light: #9ca3af;
+  --background-card: #ffffff;
+  --background-overlay: rgba(0, 0, 0, 0.5);
+  --border-color: #e5e7eb;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+// Main Dialog Container
+.modern-dialog-container {
+  position: relative;
+  background: var(--background-card);
+  border-radius: 20px;
+  overflow: hidden;
+  max-width: 450px;
+  width: 100%;
+  box-shadow: var(--shadow-xl);
+  animation: dialogSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  @media (max-width: 600px) {
+    max-width: 90vw;
+    border-radius: 16px;
   }
-  
-  .custom-dialog-title {
-    font-size: 24px; /* Larger font size for the title */
-    font-weight: bold; /* Bold text for emphasis */
-    color: #1e293b; /* Dark text color */
-    margin-bottom: 16px; /* Space below the title */
+}
+
+// Dialog Header
+.dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem 2rem 1.5rem;
+  background: linear-gradient(135deg, 
+    rgba(245, 158, 11, 0.05) 0%, 
+    rgba(251, 191, 36, 0.05) 100%);
+  border-bottom: 1px solid rgba(245, 158, 11, 0.1);
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, 
+      var(--warning-primary), 
+      var(--warning-secondary));
   }
-  
-  mat-dialog-content {
-    font-size: 16px; /* Standard font size for content */
-    color: #475569; /* Neutral text color */
-    margin-bottom: 24px; /* Space below the content */
+
+  @media (max-width: 600px) {
+    padding: 1.5rem 1.5rem 1rem;
+    gap: 1rem;
   }
-  
-  .custom-dialog-actions {
-    display: flex; /* Flex layout for buttons */
-    justify-content: space-between; /* Space buttons apart */
-    gap: 16px; /* Add spacing between buttons */
-  }
-  
-  button {
-    min-width: 100px; /* Ensure buttons have a consistent width */
-    padding: 8px 16px; /* Add padding for better touch targets */
-    border-radius: 8px; /* Rounded corners for buttons */
-    font-size: 14px; /* Standard font size for buttons */
-    transition: all 0.3s ease; /* Smooth hover effect */
-  
-    &:hover {
-      transform: translateY(-2px); /* Slight lift effect on hover */
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Shadow effect on hover */
+}
+
+// Warning Icon Container
+.warning-icon-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  .warning-icon-wrapper {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--warning-primary), var(--warning-secondary));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    z-index: 2;
+    animation: warningIconBounce 2s ease-in-out infinite;
+
+    @media (max-width: 600px) {
+      width: 50px;
+      height: 50px;
+    }
+
+    .warning-icon {
+      color: white;
+      font-size: 2rem;
+      animation: warningIconPulse 2s ease-in-out infinite;
+
+      @media (max-width: 600px) {
+        font-size: 1.5rem;
+      }
     }
   }
-  
-  button[color="warn"] {
-    background-color: #f87171; /* Red background for delete button */
-    color: #ffffff; /* White text */
-  }
-  
-  button[color="warn"]:hover {
-    background-color: #ef4444; /* Darker red on hover */
-  }
-  
-  button:not([color="warn"]) {
-    background-color: #e2e8f0; /* Light gray background for cancel button */
-    color: #1e293b; /* Dark text color */
-  }
-  
-  button:not([color="warn"]):hover {
-    background-color: #cbd5e1; /* Slightly darker gray on hover */
-  }
-  
-  @media (max-width: 768px) {
-    .custom-dialog-container {
-      padding: 16px; /* Reduce padding for smaller screens */
-      max-width: 90%; /* Adjust width for responsiveness */
-    }
-  
-    .custom-dialog-actions {
-      flex-direction: column; /* Stack buttons vertically */
-      gap: 12px; /* Adjust spacing for smaller screens */
-    }
-  
-    button {
-      width: 100%; /* Make buttons full-width */
+
+  .warning-pulse {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    border: 3px solid var(--warning-primary);
+    border-radius: 50%;
+    opacity: 0.3;
+    animation: warningPulse 2s ease-in-out infinite;
+
+    @media (max-width: 600px) {
+      width: 50px;
+      height: 50px;
     }
   }
+}
+
+// Header Content
+.header-content {
+  flex: 1;
+
+  .dialog-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 0.5rem 0;
+    letter-spacing: -0.025em;
+    animation: slideInRight 0.5s ease-out 0.1s both;
+
+    @media (max-width: 600px) {
+      font-size: 1.25rem;
+    }
+  }
+
+  .dialog-subtitle {
+    font-size: 0.875rem;
+    color: var(--warning-primary);
+    margin: 0;
+    font-weight: 500;
+    animation: slideInRight 0.5s ease-out 0.2s both;
+  }
+}
+
+// Dialog Content
+.dialog-content {
+  padding: 0 !important;
+
+  .content-wrapper {
+    padding: 1.5rem 2rem;
+
+    @media (max-width: 600px) {
+      padding: 1rem 1.5rem;
+    }
+  }
+}
+
+// Message Container
+.message-container {
+  margin-bottom: 1.5rem;
+  animation: fadeInUp 0.5s ease-out 0.3s both;
+
+  .primary-message {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 1rem 0;
+    line-height: 1.5;
+
+    @media (max-width: 600px) {
+      font-size: 1rem;
+    }
+  }
+
+  .secondary-message {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.6;
+  }
+}
+
+// Warning Indicator
+.warning-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 1.5rem 0;
+  animation: fadeInUp 0.5s ease-out 0.4s both;
+
+  .indicator-line {
+    width: 40px;
+    height: 2px;
+    background: linear-gradient(90deg, 
+      transparent, 
+      var(--warning-primary), 
+      transparent);
+    animation: indicatorGlow 3s ease-in-out infinite;
+  }
+
+  .indicator-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--warning-primary);
+    border-radius: 50%;
+    animation: indicatorPulse 2s ease-in-out infinite;
+  }
+}
+
+// Dialog Actions
+.dialog-actions {
+  padding: 0 !important;
+  margin: 0 !important;
+
+  .action-buttons-container {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem 2rem 2rem;
+    background: linear-gradient(135deg, 
+      rgba(248, 250, 252, 0.8), 
+      rgba(241, 245, 249, 0.8));
+    border-top: 1px solid var(--border-color);
+
+    @media (max-width: 600px) {
+      padding: 1rem 1.5rem 1.5rem;
+      flex-direction: column;
+    }
+  }
+}
+
+// Button Styles
+.cancel-button, .delete-button {
+  flex: 1;
+  border: none;
+  border-radius: 14px;
+  padding: 0.875rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  min-height: 48px;
+
+  .button-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  mat-icon {
+    font-size: 1.1rem;
+    transition: transform 0.3s ease;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+      transparent, 
+      rgba(255, 255, 255, 0.2), 
+      transparent);
+    transition: left 0.6s ease;
+    z-index: 1;
+  }
+
+  &:hover::before {
+    left: 100%;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    
+    mat-icon {
+      transform: scale(1.1);
+    }
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+  }
+}
+
+// Cancel Button
+.cancel-button {
+  background: linear-gradient(135deg, 
+    rgba(107, 114, 128, 0.1), 
+    rgba(156, 163, 175, 0.1));
+  color: var(--text-secondary);
+  border: 2px solid rgba(107, 114, 128, 0.2);
+  animation: slideInUp 0.5s ease-out 0.5s both;
+
+  &:hover {
+    background: linear-gradient(135deg, 
+      var(--text-secondary), 
+      var(--text-light));
+    color: white;
+    border-color: var(--text-secondary);
+    box-shadow: var(--shadow-lg);
+  }
+}
+
+// Delete Button
+.delete-button {
+  background: linear-gradient(135deg, var(--error-primary), var(--error-secondary));
+  color: white;
+  box-shadow: var(--shadow-md);
+  animation: slideInUp 0.5s ease-out 0.6s both;
+
+  &:hover {
+    background: linear-gradient(135deg, 
+      #dc2626, 
+      var(--error-primary));
+    box-shadow: var(--shadow-lg);
+  }
+
+  &:focus {
+    outline: 2px solid var(--error-primary);
+    outline-offset: 2px;
+  }
+}
+
+// Background Effect
+.dialog-background-effect {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, 
+    rgba(245, 158, 11, 0.02) 0%, 
+    rgba(251, 191, 36, 0.02) 50%,
+    rgba(239, 68, 68, 0.02) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+// Animations
+@keyframes dialogSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes warningIconBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes warningIconPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes warningPulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 0.1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.4);
+    opacity: 0;
+  }
+}
+
+@keyframes indicatorGlow {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes indicatorPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.7;
+  }
+}
+
+// Responsive Design
+@media (max-width: 480px) {
+  .modern-dialog-container {
+    max-width: 95vw;
+    border-radius: 12px;
+  }
+
+  .dialog-header {
+    padding: 1.25rem 1.25rem 0.75rem;
+    flex-direction: column;
+    text-align: center;
+    gap: 0.75rem;
+  }
+
+  .content-wrapper {
+    padding: 0.75rem 1.25rem;
+  }
+
+  .action-buttons-container {
+    padding: 0.75rem 1.25rem 1.25rem;
+    gap: 0.75rem;
+  }
+
+  .cancel-button, .delete-button {
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+// Accessibility
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+// Focus styles for accessibility
+.cancel-button:focus-visible,
+.delete-button:focus-visible {
+  outline: 3px solid var(--warning-primary);
+  outline-offset: 2px;
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .modern-dialog-container {
+    border: 2px solid var(--text-primary);
+  }
+
+  .warning-icon-wrapper {
+    border: 2px solid var(--warning-primary);
+  }
+
+  .cancel-button, .delete-button {
+    border-width: 3px;
+  }
+}
