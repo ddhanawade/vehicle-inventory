@@ -36,14 +36,53 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   isLoading: boolean = false;
 
   
-  scrollLeft() {
-    throw new Error('Method not implemented.');
+  // Enhanced slider navigation method
+  scrollSlider(direction: 'left' | 'right'): void {
+    const slider = document.querySelector('.stats-slider') as HTMLElement;
+    if (slider) {
+      const scrollAmount = 280; // Width of one card plus gap
+      const currentScroll = slider.scrollLeft;
+      
+      if (direction === 'left') {
+        slider.scrollTo({
+          left: Math.max(0, currentScroll - scrollAmount),
+          behavior: 'smooth'
+        });
+      } else {
+        slider.scrollTo({
+          left: currentScroll + scrollAmount,
+          behavior: 'smooth'
+        });
+      }
+    }
   }
-  scrollRight() {
-    throw new Error('Method not implemented.');
+
+  // Clear search functionality
+  clearSearch(): void {
+    this.searchTerm = '';
+    this.filterStocks();
   }
-  clearSearch() {
-    throw new Error('Method not implemented.');
+
+  // Get current date for welcome section
+  getCurrentDate(): string {
+    const now = new Date();
+    const options: Intl.DateTimeFormatOptions = { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    };
+    return now.toLocaleDateString('en-US', options);
+  }
+
+  // Navigate to add vehicle functionality
+  navigateToAddVehicle(): void {
+    this.showPopup = true;
+  }
+
+  // Navigate to reports functionality  
+  navigateToReports(): void {
+    this.router.navigate(['/vehicle-report']);
   }
 
   displayedColumns: string[] = [
@@ -274,16 +313,19 @@ getObjectKeys(obj: any): string[] {
       filteredList = this.carDetailsList.filter(car => car.make === 'Eicher');
     }
 
-    // Group by city and count vehicles
+    // Group by city (uppercase) and count vehicles to avoid duplicates
     const cityCounts = filteredList.reduce((acc, car) => {
-      acc[car.location] = (acc[car.location] || 0) + 1;
+      const cityUpperCase = car.location ? car.location.toUpperCase().trim() : '';
+      if (cityUpperCase) { // Only count non-empty cities
+        acc[cityUpperCase] = (acc[cityUpperCase] || 0) + 1;
+      }
       return acc;
     }, {} as { [key: string]: number });
 
     return Object.keys(cityCounts).map(city => ({
       city,
       count: cityCounts[city]
-    }));
+    })).sort((a, b) => b.count - a.count); // Sort by count descending
   }
 
   logout(): void {

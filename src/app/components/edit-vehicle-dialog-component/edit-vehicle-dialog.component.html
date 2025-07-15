@@ -117,7 +117,7 @@
           <mat-icon matSuffix>badge</mat-icon>
       </mat-form-field>
        <mat-form-field appearance="outline">
-          <mat-label>Status</mat-label>
+          <mat-label>DMS Status</mat-label>
           <mat-select formControlName="dmsStatus">
             <mat-option value="WATER">Water</mat-option>
             <mat-option value="FRESH">Fresh</mat-option>
@@ -128,6 +128,19 @@
           </mat-error>
         </mat-form-field>
         </div>
+        <mat-form-field appearance="outline">
+          <mat-label>Vehicle Status</mat-label>
+          <mat-select formControlName="vehicleStatus">
+            <mat-option value="AVAILABLE">AVAILABLE</mat-option>
+            <mat-option value="SOLD">SOLD</mat-option>
+            <mat-option value="BOOKED">BOOKED</mat-option>
+            <mat-option value="FREE">FREE</mat-option>
+          </mat-select>
+          <mat-icon matSuffix>info</mat-icon>
+          <mat-error *ngIf="vehicleForm.get('vehicleStatus')?.hasError('required')">
+            Status is required
+          </mat-error>
+        </mat-form-field>
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Remarks</mat-label>
         <textarea matInput formControlName="remarks" rows="3" 

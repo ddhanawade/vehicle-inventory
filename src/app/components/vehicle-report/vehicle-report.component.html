@@ -44,10 +44,10 @@
           <i class="fas fa-filter"></i>
           <span>Filter Options</span>
         </div>
-        <button class="toggle-filters" (click)="toggleAdvancedFilters()">
+        <!-- <button class="toggle-filters" (click)="toggleAdvancedFilters()">
           <i class="fas fa-chevron-down" [class.rotated]="showAdvancedFilters"></i>
           <span>{{showAdvancedFilters ? 'Less' : 'More'}} Options</span>
-        </button>
+        </button> -->
       </div>
       
       <div class="filter-content compact">
@@ -80,7 +80,7 @@
             <input matInput [(ngModel)]="city" placeholder="City" (input)="onFilterChange()">
           </mat-form-field>
 
-          <ng-container *ngIf="showAdvancedFilters">
+          <!-- <ng-container *ngIf="showAdvancedFilters"> -->
             <mat-form-field appearance="outline" class="filter-field mini">
               <mat-label>
                 <mat-icon class="filter-icon">directions_car</mat-icon>
@@ -96,7 +96,7 @@
               </mat-label>
               <input matInput [(ngModel)]="model" placeholder="Model" (input)="onFilterChange()">
             </mat-form-field>
-          </ng-container>
+          <!-- </ng-container> -->
 
           <div class="filter-actions compact-actions" style="display: flex; gap: 10px; align-items: center;">
             <button mat-raised-button color="primary"
