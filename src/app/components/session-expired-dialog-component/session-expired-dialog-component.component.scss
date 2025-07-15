@@ -1,60 +1,801 @@
-/* SCSS for Session Expired Dialog */
-h3 {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #d32f2f; /* Red color for emphasis */
-  text-align: center;
-  margin-bottom: 1rem;
-  text-transform: uppercase;
-}
-
-div[mat-dialog-content] {
-  font-size: 1.2rem;
-  color: #555; /* Neutral text color */
-  text-align: center;
-  margin-bottom: 1.5rem;
-  line-height: 1.6;
-}
-
-div[mat-dialog-actions] {
+// Enhanced Session Expired Dialog Component with Modern Interactive Design
+:host {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10000;
   display: flex;
+  align-items: center;
   justify-content: center;
-  margin-top: 1rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 
-  button {
-    background-color: #6dd5ed; /* Blue button color */
-    color: #fff; /* White text */
-    font-size: 1rem;
+// Enhanced Color Scheme Variables
+:root {
+  --primary-color: #2193b0;
+  --primary-light: #6dd5ed;
+  --primary-dark: #17607a;
+  --accent-color: #ffb300;
+  --accent-light: #ffcc33;
+  --accent-dark: #ff8f00;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --error-color: #ef4444;
+  --critical-color: #dc2626;
+  --text-dark: #1e293b;
+  --text-light: #ffffff;
+  --text-muted: #64748b;
+  --glass-bg: rgba(255, 255, 255, 0.15);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --shadow-light: 0 8px 32px rgba(0, 0, 0, 0.1);
+  --shadow-medium: 0 16px 48px rgba(0, 0, 0, 0.15);
+  --shadow-heavy: 0 24px 64px rgba(0, 0, 0, 0.25);
+  --border-radius: 20px;
+  --border-radius-lg: 24px;
+  --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+// Enhanced Keyframe Animations
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-10px);
+  }
+  75% {
+    transform: translateX(10px);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(33, 147, 176, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(33, 147, 176, 0.8);
+  }
+}
+
+@keyframes criticalPulse {
+  0%, 100% {
+    background-color: var(--error-color);
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+  }
+  50% {
+    background-color: var(--critical-color);
+    box-shadow: 0 0 30px rgba(220, 38, 38, 0.5);
+  }
+}
+
+@keyframes warningPulse {
+  0%, 100% {
+    background-color: var(--warning-color);
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+  }
+  50% {
+    background-color: var(--accent-color);
+    box-shadow: 0 0 30px rgba(255, 179, 0, 0.5);
+  }
+}
+
+// Background Overlay
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  transition: var(--transition);
+  z-index: 9999;
+
+  &.visible {
+    opacity: 1;
+  }
+}
+
+// Main Dialog Container
+.session-dialog {
+  position: relative;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--border-radius-lg);
+  padding: 2rem;
+  max-width: 480px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-heavy);
+  transform: scale(0.8) translateY(-20px);
+  opacity: 0;
+  transition: var(--transition);
+  z-index: 10000;
+
+  &.visible {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    animation: fadeInScale 0.6s ease-out;
+  }
+
+  &.pulse {
+    animation: pulse 1s ease-in-out;
+  }
+
+  // Scroll styling
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    border-radius: 3px;
+  }
+
+  @media (max-width: 768px) {
+    padding: 1.5rem;
+    max-width: 95%;
+  }
+}
+
+// Dialog Header
+.dialog-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  animation: slideInUp 0.8s ease-out;
+
+  .icon-container {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-medium);
+    transition: var(--transition);
+
+    &.warning {
+      background: linear-gradient(135deg, var(--warning-color), var(--accent-color));
+      animation: warningPulse 2s ease-in-out infinite;
+    }
+
+    &.critical {
+      background: linear-gradient(135deg, var(--error-color), var(--critical-color));
+      animation: criticalPulse 1s ease-in-out infinite;
+    }
+
+    i {
+      font-size: 2.5rem;
+      color: var(--text-light);
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    }
+  }
+
+  h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0 0 0.5rem 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .dialog-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    margin: 0;
     font-weight: 500;
-    padding: 0.6rem 2rem;
-    border: none;
-    border-radius: 25px; /* Rounded button */
-    cursor: pointer;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Add shadow */
-    transition: all 0.3s ease;
+  }
+}
 
-    &:hover {
-      background-color: #1565c0; /* Darker blue on hover */
-      transform: scale(1.05); /* Slight zoom effect */
+// Countdown Section
+.countdown-section {
+  text-align: center;
+  margin-bottom: 2rem;
+  animation: slideInUp 0.8s ease-out 0.2s both;
+
+  .countdown-display {
+    margin-bottom: 1.5rem;
+    position: relative;
+
+    .countdown-circle {
+      position: relative;
+      width: 150px;
+      height: 150px;
+      margin: 0 auto;
+
+      .countdown-svg {
+        width: 100%;
+        height: 100%;
+        transform: rotate(-90deg);
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+
+        .countdown-bg {
+          fill: none;
+          stroke: rgba(255, 255, 255, 0.2);
+          stroke-width: 3;
+        }
+
+        .countdown-progress {
+          fill: none;
+          stroke: var(--primary-color);
+          stroke-width: 4;
+          stroke-linecap: round;
+          transition: stroke-dashoffset 1s ease-in-out, stroke 0.3s ease;
+        }
+      }
+
+      .countdown-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+
+        .countdown-number {
+          display: block;
+          font-size: 2.5rem;
+          font-weight: 800;
+          color: var(--text-dark);
+          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .countdown-label {
+          font-size: 0.9rem;
+          color: var(--text-muted);
+          font-weight: 500;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+      }
+    }
+
+    &.warning {
+      .countdown-svg .countdown-progress {
+        stroke: var(--warning-color);
+      }
+      .countdown-text .countdown-number {
+        color: var(--warning-color);
+      }
+    }
+
+    &.critical {
+      .countdown-svg .countdown-progress {
+        stroke: var(--error-color);
+        animation: glow 1s ease-in-out infinite;
+      }
+      .countdown-text .countdown-number {
+        color: var(--error-color);
+        animation: pulse 0.5s ease-in-out infinite;
+      }
+    }
+  }
+
+  .countdown-message {
+    p {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      color: var(--text-dark);
+
+      i {
+        font-size: 1.2rem;
+      }
+
+      &.warning-message {
+        color: var(--warning-color);
+        
+        i {
+          color: var(--warning-color);
+        }
+      }
+
+      &.critical-message {
+        color: var(--error-color);
+        animation: pulse 1s ease-in-out infinite;
+        
+        i {
+          color: var(--error-color);
+        }
+      }
     }
   }
 }
 
-/* Add smooth fade-in animation for the dialog */
-.mat-dialog-container {
-  border-radius: 10px; /* Rounded corners for the dialog */
-  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.3); /* Add shadow */
-  animation: fadeIn 0.5s ease-in-out; /* Smooth fade-in animation */
-  background: #fff; /* White background */
+// Status Messages
+.status-messages {
+  margin-bottom: 1.5rem;
+  min-height: 50px;
+  position: relative;
+
+  .refresh-success,
+  .refresh-error {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    transform: translateY(-10px);
+    opacity: 0;
+    transition: var(--transition);
+
+    &.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .refresh-success {
+    background: linear-gradient(135deg, var(--success-color), #34d399);
+    color: var(--text-light);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  }
+
+  .refresh-error {
+    background: linear-gradient(135deg, var(--error-color), var(--critical-color));
+    color: var(--text-light);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  }
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-20px); /* Slide in from above */
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0); /* Final position */
+// Interactive Action Buttons
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  animation: slideInUp 0.8s ease-out 0.4s both;
+
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-light);
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.3s ease, height 0.3s ease;
+    }
+
+    &:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .button-content {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      z-index: 1;
+    }
+
+    .keyboard-hint {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      opacity: 0.8;
+      z-index: 1;
+    }
+
+    i {
+      font-size: 1.1rem;
+      z-index: 1;
+
+      &.spin {
+        animation: spin 1s linear infinite;
+      }
+    }
+
+    span {
+      z-index: 1;
+    }
+
+    // Primary Button
+    &.btn-primary {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+      color: var(--text-light);
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-medium);
+      }
+
+      &:focus {
+        box-shadow: 0 0 0 3px rgba(33, 147, 176, 0.3);
+      }
+    }
+
+    // Secondary Button
+    &.btn-secondary {
+      background: linear-gradient(135deg, var(--accent-color), var(--accent-light));
+      color: var(--text-dark);
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-medium);
+      }
+
+      &:focus {
+        box-shadow: 0 0 0 3px rgba(255, 179, 0, 0.3);
+      }
+    }
+
+    // Tertiary Button
+    &.btn-tertiary {
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--text-dark);
+      border: 1px solid var(--glass-border);
+
+      &:hover {
+        background: rgba(255, 255, 255, 1);
+        transform: translateY(-1px);
+      }
+
+      &:focus {
+        box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+      }
+    }
   }
 }
+
+// Keyboard Shortcuts Section
+.keyboard-shortcuts {
+  margin-bottom: 2rem;
+  animation: slideInUp 0.8s ease-out 0.6s both;
+
+  .shortcuts-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.9rem;
+
+    i {
+      font-size: 1rem;
+      color: var(--primary-color);
+    }
+  }
+
+  .shortcuts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.75rem;
+
+    .shortcut-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.75rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: var(--border-radius);
+      transition: var(--transition);
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+      }
+
+      kbd {
+        background: var(--text-dark);
+        color: var(--text-light);
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      span {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        text-align: center;
+        font-weight: 500;
+      }
+    }
+  }
+
+  @media (max-width: 480px) {
+    .shortcuts-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}
+
+// Session Progress Bar
+.session-progress {
+  margin-bottom: 2rem;
+  animation: slideInUp 0.8s ease-out 0.8s both;
+
+  .progress-bar {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+      transition: width 1s ease-in-out, background-color 0.3s ease;
+      border-radius: 4px;
+      position: relative;
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        animation: shimmer 2s infinite;
+      }
+
+      &.warning {
+        background: linear-gradient(90deg, var(--warning-color), var(--accent-color));
+      }
+
+      &.critical {
+        background: linear-gradient(90deg, var(--error-color), var(--critical-color));
+        animation: glow 1s ease-in-out infinite;
+      }
+    }
+  }
+
+  .progress-text {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+
+    .progress-percentage {
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+// Dialog Footer
+.dialog-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  animation: slideInUp 0.8s ease-out 1s both;
+
+  .security-info,
+  .help-text {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+
+    i {
+      font-size: 1rem;
+      color: var(--primary-color);
+    }
+  }
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+// Shake Animation for Dialog
+.shake-animation {
+  animation: shake 0.5s ease-in-out;
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .session-dialog {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+
+  .dialog-header {
+    .icon-container {
+      width: 60px;
+      height: 60px;
+      
+      i {
+        font-size: 2rem;
+      }
+    }
+
+    h2 {
+      font-size: 1.5rem;
+    }
+  }
+
+  .countdown-section {
+    .countdown-display {
+      .countdown-circle {
+        width: 120px;
+        height: 120px;
+
+        .countdown-text {
+          .countdown-number {
+            font-size: 2rem;
+          }
+        }
+      }
+    }
+  }
+
+  .action-buttons {
+    .btn {
+      padding: 0.875rem 1.25rem;
+      font-size: 0.9rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .session-dialog {
+    padding: 1rem;
+  }
+
+  .countdown-section {
+    .countdown-display {
+      .countdown-circle {
+        width: 100px;
+        height: 100px;
+
+        .countdown-text {
+          .countdown-number {
+            font-size: 1.5rem;
+          }
+
+          .countdown-label {
+            font-size: 0.8rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Accessibility Improvements
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+// Focus Styles
+.session-dialog:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+// High Contrast Mode
+@media (prefers-contrast: high) {
+  .session-dialog {
+    background: var(--text-light);
+    border: 2px solid var(--text-dark);
+  }
+
+  .dialog-header h2,
+  .countdown-text .countdown-number {
+    color: var(--text-dark);
+  }
+}
+
