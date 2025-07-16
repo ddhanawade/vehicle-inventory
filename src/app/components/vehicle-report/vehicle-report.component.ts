@@ -53,6 +53,8 @@ export class VehicleReportComponent implements OnInit {
   city: string = '';
   make: string = '';
   model: string = '';
+  salesPersonName: string = '';
+  leadName: string = '';
 
   // Enhanced properties
   showAdvancedFilters: boolean = false;
@@ -82,8 +84,8 @@ export class VehicleReportComponent implements OnInit {
   totalVehicles!: number;
 
   topModelData!: { labels: any; datasets: { data: any; label: string; backgroundColor: string[]; }[]; };
-  salesPersonName: any;
-  leadName: any;
+  // salesPersonName: any;
+  // leadName: any;
 
   constructor(
     private http: HttpClient, 
@@ -190,7 +192,9 @@ export class VehicleReportComponent implements OnInit {
       endDate: this.formatDate(new Date(this.endDate)),    // Format the endDate
       city: this.city || undefined,
       make: this.make || undefined,
-      model: this.model || undefined
+      model: this.model || undefined,
+      salesPersonName: this.salesPersonName || undefined,
+      leadName: this.leadName || undefined
     };
     
     this.reportService.getMonthlySalesReport(request).subscribe({

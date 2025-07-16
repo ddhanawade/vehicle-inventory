@@ -675,6 +675,40 @@
             color: #2193b0;
             transition: transform 0.3s ease;
           }
+          
+          // Specific report button styles
+          &.test-vehicle-report {
+            &:hover {
+              border-color: #6366f1;
+              box-shadow: 0 5px 15px rgba(99, 102, 241, 0.2);
+              
+              &::before {
+                background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
+              }
+              
+              .report-icon {
+                background: linear-gradient(135deg, #6366f1, #8b5cf6);
+                
+                i {
+                  color: white;
+                }
+              }
+              
+              .report-arrow {
+                color: #6366f1;
+              }
+            }
+            
+            .report-icon {
+              i {
+                color: #6366f1;
+              }
+            }
+            
+            .report-arrow {
+              color: #6366f1;
+            }
+          }
         }
       }
       

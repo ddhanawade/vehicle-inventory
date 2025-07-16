@@ -197,15 +197,7 @@ export class FileuploadComponent {
 
   // Test vehicles upload method (placeholder for future API implementation)
   uploadTestVehicles(formData: FormData): void {
-    // TODO: Implement test vehicles API call in DataService
-    // For now, simulate the upload
-    setTimeout(() => {
-      this.testIsLoading = false;
-      this.testSuccessMessage = 'Test vehicle data uploaded successfully! (Simulated)';
-      this.testErrorMessage = null;
-    }, 2000);
-
-    
+    console.log("uploadTestVehicles" + JSON.stringify(formData));
     this.dataService.uploadTestVehicles(formData).subscribe({
       next: (response: any) => {
         this.testIsLoading = false;

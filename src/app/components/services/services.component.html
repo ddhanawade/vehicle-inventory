@@ -222,7 +222,7 @@
                 <i class="fas fa-chart-line"></i>
                 Available Reports
               </span>
-              <div class="feature-count">2 Reports</div>
+              <div class="feature-count">3 Reports</div>
             </div>
             
             <div class="report-buttons">
@@ -250,6 +250,20 @@
                 <div class="report-info">
                   <span class="report-name">Purchase Report</span>
                   <span class="report-desc">Vehicle purchase analytics</span>
+                </div>
+                <i class="fas fa-arrow-right report-arrow"></i>
+              </a>
+              
+              <a routerLink="/test-vehicle-report" 
+                 class="report-button test-vehicle-report"
+                 (mouseenter)="onReportButtonHover('testVehicle')"
+                 (mouseleave)="onReportButtonLeave()">
+                <div class="report-icon">
+                  <i class="fas fa-flask"></i>
+                </div>
+                <div class="report-info">
+                  <span class="report-name">Test Vehicle Report</span>
+                  <span class="report-desc">Vehicle testing & QA analytics</span>
                 </div>
                 <i class="fas fa-arrow-right report-arrow"></i>
               </a>
