@@ -205,20 +205,20 @@ export class FileuploadComponent {
       this.testErrorMessage = null;
     }, 2000);
 
-    // Uncomment when test vehicles API is ready:
-    // this.dataService.uploadTestVehicles(formData).subscribe({
-    //   next: (response: any) => {
-    //     this.testIsLoading = false;
-    //     this.testSuccessMessage = response.message || 'Test vehicle data uploaded successfully!';
-    //     this.testErrorMessage = null;
-    //   },
-    //   error: (error: any) => {
-    //     this.testIsLoading = false;
-    //     this.testErrorMessage = "Test vehicle upload failed. Please try again.";
-    //     this.testSuccessMessage = null;
-    //     console.error('Test upload error:', error);
-    //   }
-    // });
+    
+    this.dataService.uploadTestVehicles(formData).subscribe({
+      next: (response: any) => {
+        this.testIsLoading = false;
+        this.testSuccessMessage = response.message || 'Test vehicle data uploaded successfully!';
+        this.testErrorMessage = null;
+      },
+      error: (error: any) => {
+        this.testIsLoading = false;
+        this.testErrorMessage = "Test vehicle upload failed. Please try again.";
+        this.testSuccessMessage = null;
+        console.error('Test upload error:', error);
+      }
+    });
   }
 
   // Template download handler

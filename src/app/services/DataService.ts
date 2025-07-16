@@ -8,10 +8,9 @@ import { VehicleModel } from '../models/VehicleModel';
 })
 export class DataService {
 
-    // private baseUrl = 'http://localhost:8080/api/vehicles';
+  
+  //private baseUrl = 'http://localhost:8081/api/vehicles';
   private baseUrl = 'https://fleet-manager.in/api/vehicles';
-
-  //private baseUrl = 'http://fleet-manager-prd.us-east-2.elasticbeanstalk.com/api/vehicles';
 
   constructor(private http: HttpClient) {}
 
@@ -51,6 +50,11 @@ export class DataService {
   getAllModels(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/model-info`);
   }
+
+  uploadTestVehicles(formData: FormData): Observable<any>{
+    return this.http.post(`${this.baseUrl}/testdrives/upload`, formData);
+  }
+
 
   private modelNameSubject = new Subject<string>();
 

@@ -189,7 +189,9 @@ export class VehicleDetailsComponent implements OnInit {
     'customerName',
     'orderDate',
     'deliveryDate',
-    'orderStatus'
+    'orderStatus',
+    'dmsStatus',
+    'dealAmount'
     ];
   
     // Map the data to include only the selected columns and format date columns

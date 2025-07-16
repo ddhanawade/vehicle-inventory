@@ -59,7 +59,8 @@ export class AddVehicleComponent implements OnInit{
       manufactureDate: [''],
       suffix: [''],
       invoiceValue: [''],
-      interest: ['']
+      interest: [''],
+      remarks: ['']
     });
 
     this.getModelInfo();
@@ -86,7 +87,8 @@ export class AddVehicleComponent implements OnInit{
       manufactureDate: [''],
       suffix: [''],
       invoiceValue: [''],
-      interest: ['']
+      interest: [''],
+      remarks: ['']
     });
   }
 
@@ -160,7 +162,7 @@ export class AddVehicleComponent implements OnInit{
         receivedDate: this.datePipe.transform(formData.receivedDate, 'yyyy-MM-dd') || '',
         invoiceDate: this.datePipe.transform(formData.invoiceDate, 'yyyy-MM-dd') || ''
       };
-
+console.log
       this.vehicleService.addVehicle(formattedData).subscribe({
         next: (response) => {
           console.log('Vehicle added:', response);

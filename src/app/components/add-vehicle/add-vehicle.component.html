@@ -495,10 +495,32 @@
                 <span *ngIf="!vehicleForm.get('invoiceValue')?.invalid || (!vehicleForm.get('invoiceValue')?.dirty && !vehicleForm.get('invoiceValue')?.touched)">Enter the invoice value</span>
                 <span *ngIf="vehicleForm.get('invoiceValue')?.invalid && (vehicleForm.get('invoiceValue')?.dirty || vehicleForm.get('invoiceValue')?.touched)" class="error-text">Invoice value is required</span>
               </div>
+              </div>
+              <div class="form-row">
+                
+                <div class="form-group" [class.filled]="vehicleForm.get('remarks')?.value" [class.error]="vehicleForm.get('remarks')?.invalid && (vehicleForm.get('remarks')?.dirty || vehicleForm.get('remarks')?.touched)" style="flex: 1;">
+                  <label for="remarks" class="form-label">
+                    <i class="fas fa-comment-dots label-icon"></i>
+                    <span>Remarks</span>
+                    <span class="required">*</span>
+                  </label>
+                  <div class="input-wrapper">
+                    <input type="text" id="remarks" formControlName="remarks" class="form-input" placeholder="Enter remarks" (focus)="onFieldFocus('remarks')" (blur)="onFieldBlur('remarks')">
+                    <div class="input-border"></div>
+                    <div class="validation-icon">
+                      <i class="fas fa-check" *ngIf="vehicleForm.get('remarks')?.valid && vehicleForm.get('remarks')?.value"></i>
+                      <i class="fas fa-exclamation-triangle" *ngIf="vehicleForm.get('remarks')?.invalid && (vehicleForm.get('remarks')?.dirty || vehicleForm.get('remarks')?.touched)"></i>
+                    </div>
+                  </div>
+                  <div class="field-hint">
+                    <span *ngIf="!vehicleForm.get('remarks')?.invalid || (!vehicleForm.get('remarks')?.dirty && !vehicleForm.get('remarks')?.touched)">Enter the remarks</span>
+                    <span *ngIf="vehicleForm.get('remarks')?.invalid && (vehicleForm.get('remarks')?.dirty || vehicleForm.get('remarks')?.touched)" class="error-text">Remarks is required</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
       <!-- Form Actions -->
       <div class="form-actions">

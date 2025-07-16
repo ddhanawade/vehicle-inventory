@@ -441,18 +441,22 @@ getObjectKeys(obj: any): string[] {
 
     this.locationDataSource = new MatTableDataSource<VehicleModel>(this.locationVehicles);
     
-    // Set up sorting and pagination
-    setTimeout(() => {
-      this.locationDataSource.paginator = this.paginator;
-      this.locationDataSource.sort = this.sort;
-    });
-    
+    // Show modal immediately
     this.showLocationDetails = true;
+    
+    // Set up sorting and pagination immediately after view update
+    requestAnimationFrame(() => {
+      if (this.paginator && this.sort) {
+        this.locationDataSource.paginator = this.paginator;
+        this.locationDataSource.sort = this.sort;
+      }
+    });
   }
 
-  // Add method to close location details
+  // Add method to close location details - Instant close
   closeLocationDetails(): void {
     this.showLocationDetails = false;
+    // Clean up data immediately  
     this.selectedLocation = null;
     this.locationVehicles = [];
     this.locationDataSource = new MatTableDataSource<VehicleModel>([]);

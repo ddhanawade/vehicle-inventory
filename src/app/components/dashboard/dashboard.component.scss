@@ -1874,7 +1874,7 @@ body, .dashboard-bg {
   }
 }
 
-// Enhanced Interactive & Responsive Modal - Instant & Smooth
+// Enhanced Interactive & Responsive Modal - Instant Response
 .location-details.modern {
   position: fixed;
   top: 0;
@@ -1886,7 +1886,13 @@ body, .dashboard-bg {
   align-items: center;
   justify-content: center;
   padding: 20px;
-  animation: modalBackdropFadeIn 0.2s ease-out forwards;
+  animation: modalBackdropFadeIn 0.1s ease-out forwards;
+  
+  // Instant close - no exit animations
+  &.ng-leave {
+    animation: none !important;
+    transition: none !important;
+  }
 
   @media (max-width: 768px) {
     padding: 10px;
@@ -1906,8 +1912,8 @@ body, .dashboard-bg {
       rgba(0, 0, 0, 0.6) 100%);
     backdrop-filter: blur(12px);
     cursor: pointer;
-    animation: overlayFadeIn 0.2s ease-out forwards;
-    transition: backdrop-filter 0.3s ease;
+    animation: overlayFadeIn 0.1s ease-out forwards;
+    transition: backdrop-filter 0.2s ease;
 
     &:hover {
       backdrop-filter: blur(15px);
@@ -1933,15 +1939,15 @@ body, .dashboard-bg {
       inset 0 1px 0 rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(20px);
     border: 2px solid rgba(255, 255, 255, 0.4);
-    animation: modalSlideInEnhanced 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    animation: modalSlideInEnhanced 0.15s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     transform-origin: center center;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
 
     @media (max-width: 768px) {
       width: 100%;
       max-height: 95vh;
       border-radius: 16px 16px 0 0;
-      animation: modalSlideInMobile 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      animation: modalSlideInMobile 0.15s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     }
 
     &:hover {
@@ -1991,7 +1997,7 @@ body, .dashboard-bg {
         display: flex;
         align-items: center;
         gap: 20px;
-        animation: slideInLeft 0.2s ease-out 0.1s forwards;
+        animation: slideInLeft 0.1s ease-out 0.05s forwards;
 
         @media (max-width: 768px) {
           flex-direction: column;
@@ -2132,7 +2138,7 @@ body, .dashboard-bg {
         justify-content: center;
         position: relative;
         overflow: hidden;
-        animation: slideInRight 0.2s ease-out 0.1s forwards;
+        animation: slideInRight 0.1s ease-out 0.05s forwards;
 
         &::before {
           content: '';
@@ -2241,7 +2247,7 @@ body, .dashboard-bg {
           width: 100%;
           border-collapse: separate;
           border-spacing: 0;
-          animation: fadeInUp 0.2s ease-out 0.15s forwards;
+          animation: fadeInUp 0.1s ease-out 0.08s forwards;
 
           th {
             background: linear-gradient(135deg, 
@@ -2529,7 +2535,7 @@ body, .dashboard-bg {
         box-shadow: 
           0 -4px 8px rgba(33, 147, 176, 0.04),
           inset 0 1px 0 rgba(255, 255, 255, 0.8);
-        animation: slideInUp 0.2s ease-out 0.15s forwards;
+        animation: slideInUp 0.1s ease-out 0.08s forwards;
 
         @media (max-width: 768px) {
           margin: 0 20px 20px;
