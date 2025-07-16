@@ -75,6 +75,11 @@ export class VehicleReportComponent implements OnInit {
     'location',
     'invoiceValue',
     'interest',
+    'salesPersonName',
+    'leadName',
+    'vehicleStatus',
+    'dmsStatus',
+    'dealAmount',
     'status'
     
   ];
