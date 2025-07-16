@@ -16,7 +16,7 @@
         <div class="header-icon">
           <i class="fas fa-chart-line"></i>
         </div>
-        <h2>Sales Report</h2>
+        <h2>Vehicle Purchase Report</h2>
         <div class="header-subtitle">
           <!-- <span>Comprehensive Sales Analytics</span> -->
         </div>
@@ -95,22 +95,6 @@
                 <span class="visually-hidden">Model</span>
               </mat-label>
               <input matInput [(ngModel)]="model" placeholder="Model" (input)="onFilterChange()">
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="filter-field mini">
-              <mat-label>
-                <mat-icon class="filter-icon">person</mat-icon>
-                <span class="visually-hidden">Sales Person</span>
-              </mat-label>
-              <input matInput [(ngModel)]="salesPersonName" placeholder="Sales Person" (input)="onFilterChange()">
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="filter-field mini">
-              <mat-label>
-                <mat-icon class="filter-icon">supervisor_account</mat-icon>
-                <span class="visually-hidden">Sales Lead</span>
-              </mat-label>
-              <input matInput [(ngModel)]="leadName" placeholder="Sales Lead" (input)="onFilterChange()">
             </mat-form-field>
           <!-- </ng-container> -->
 

@@ -1,24 +1,191 @@
-/* Add these Material theme customizations */
+/* 🎨 Modern Global Styles for Vehicle Inventory Dashboard */
 @use '@angular/material' as mat;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
-$custom-primary: mat.define-palette((
-  50: #e3f2fd,
-  100: #bbdefb,
-  500: #2193b0,
-  700: #1976d2,
+// 🌈 Modern Color Palette - Updated to match dashboard
+$modern-primary: mat.define-palette((
+  50: #eff6ff,
+  100: #dbeafe,
+  200: #bfdbfe,
+  300: #93c5fd,
+  400: #60a5fa,
+  500: #3b82f6,
+  600: #2563eb,
+  700: #1d4ed8,
+  800: #1e40af,
+  900: #1e3a8a,
   contrast: (
     50: rgba(black, 0.87),
     100: rgba(black, 0.87),
+    200: rgba(black, 0.87),
+    300: rgba(black, 0.87),
+    400: white,
     500: white,
+    600: white,
     700: white,
+    800: white,
+    900: white,
   )
 ));
 
-$custom-theme: mat.define-light-theme((
+$modern-accent: mat.define-palette((
+  50: #faf5ff,
+  100: #f3e8ff,
+  200: #e9d5ff,
+  300: #d8b4fe,
+  400: #c084fc,
+  500: #8b5cf6,
+  600: #7c3aed,
+  700: #6d28d9,
+  800: #5b21b6,
+  900: #4c1d95,
+  contrast: (
+    50: rgba(black, 0.87),
+    100: rgba(black, 0.87),
+    200: rgba(black, 0.87),
+    300: rgba(black, 0.87),
+    400: white,
+    500: white,
+    600: white,
+    700: white,
+    800: white,
+    900: white,
+  )
+));
+
+$modern-theme: mat.define-light-theme((
   color: (
-    primary: $custom-primary
+    primary: $modern-primary,
+    accent: $modern-accent
+  ),
+  typography: mat.define-typography-config(
+    $font-family: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+    $headline-1: mat.define-typography-level(2.5rem, 1.2, 800),
+    $headline-2: mat.define-typography-level(2rem, 1.2, 700),
+    $headline-3: mat.define-typography-level(1.75rem, 1.3, 600),
+    $headline-4: mat.define-typography-level(1.5rem, 1.4, 600),
+    $headline-5: mat.define-typography-level(1.25rem, 1.4, 500),
+    $headline-6: mat.define-typography-level(1rem, 1.5, 500),
+    $body-1: mat.define-typography-level(1rem, 1.6, 400),
+    $body-2: mat.define-typography-level(0.875rem, 1.5, 400),
+    $button: mat.define-typography-level(0.875rem, 1, 600),
   )
 ));
 
 @include mat.core();
-@include mat.all-component-themes($custom-theme);
+@include mat.all-component-themes($modern-theme);
+
+// 🎯 Global Enhancements
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// 🎨 Enhanced Material Design Overrides
+.mat-button, .mat-raised-button, .mat-flat-button, .mat-stroked-button {
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 600 !important;
+  border-radius: 12px !important;
+  text-transform: none !important;
+  letter-spacing: 0.025em !important;
+}
+
+.mat-table {
+  font-family: 'Inter', sans-serif !important;
+  background: white !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
+}
+
+.mat-header-cell {
+  font-weight: 600 !important;
+  color: #374151 !important;
+  background: #f9fafb !important;
+}
+
+.mat-cell {
+  color: #4b5563 !important;
+}
+
+.mat-paginator {
+  font-family: 'Inter', sans-serif !important;
+  background: #f9fafb !important;
+  border-top: 1px solid #e5e7eb !important;
+}
+
+.mat-form-field {
+  font-family: 'Inter', sans-serif !important;
+}
+
+.mat-input-element {
+  font-family: 'Inter', sans-serif !important;
+}
+
+// 🌈 Custom Scrollbar Styling
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+}
+
+// 📱 Responsive Design Utilities
+@media (max-width: 768px) {
+  .mat-table {
+    font-size: 0.875rem !important;
+  }
+  
+  .mat-header-cell, .mat-cell {
+    padding: 8px !important;
+  }
+}
+
+// 🎯 Focus and Accessibility Improvements
+*:focus-visible {
+  outline: 2px solid #3b82f6 !important;
+  outline-offset: 2px !important;
+  border-radius: 4px !important;
+}
+
+// 🎨 Animation Performance
+* {
+  will-change: auto;
+}
+
+.mat-ripple-element {
+  background-color: rgba(59, 130, 246, 0.1) !important;
+}
+
+// 🌟 Enhanced Selection Styling
+::selection {
+  background: rgba(59, 130, 246, 0.2);
+  color: #1e40af;
+}
+
+::-moz-selection {
+  background: rgba(59, 130, 246, 0.2);
+  color: #1e40af;
+}

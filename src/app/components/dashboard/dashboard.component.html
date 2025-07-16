@@ -6,342 +6,657 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vehicle Inventory Management</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
   <div class="dashboard-container" *ngIf="user">
-    <!-- Welcome Section -->
+    <!-- Enhanced Welcome Section -->
     <div class="welcome-section">
-      <h1><i class="fas fa-user-circle"></i> Welcome, {{ user.username }}</h1>
-    </div>
-    <div *ngIf="isLoading" class="loading-overlay">
-      <div class="loading-indicator">
-        <div class="spinner"></div>
-        <p>please wait...</p>
+      <div class="welcome-background">
+        <div class="floating-shape shape-1"></div>
+        <div class="floating-shape shape-2"></div>
+        <div class="floating-shape shape-3"></div>
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
       </div>
-    </div>
-
-    <!-- Brand Filter Section -->
-    <div class="brand-filters">
-      <div *ngIf="hasRole('TATA')" class="brand-item" [class.active]="selectedMake === 'Tata'"
-        (click)="filterByMake('Tata')">
-        <i class="fas fa-car"></i>
-        <span>Tata</span>
-      </div>
-      <div *ngIf="hasRole('EICHER')" class="brand-item" [class.active]="selectedMake === 'Eicher'"
-        (click)="filterByMake('Eicher')">
-        <i class="fas fa-truck"></i>
-        <span>Eicher</span>
-      </div>
-      <div *ngIf="hasRole('TOYOTA')" class="brand-item" [class.active]="selectedMake === 'Toyota'"
-        (click)="filterByMake('Toyota')">
-        <i class="fas fa-car-side"></i>
-        <span>Toyota</span>
-      </div>
-      <div *ngIf="hasRole('ADMIN')" class="brand-item" [class.active]="!selectedMake" (click)="filterByMake('')">
-        <i class="fas fa-list"></i>
-        <span>All</span>
-      </div>
-    </div>
-    <div *ngIf="!isLoading">
-    <!-- Stats Section -->
-    <div class="stats-section">
-      <div class="stats-container">
-        <!-- Total Stats -->
-        <!-- Total Stats -->
-        <div class="total-stats">
-          <div class="stat-card primary">
-            <div class="stat-header">
-              <div class="stat-icon">
-                <i class="fas fa-car-alt"></i>
+      
+      <div class="welcome-content">
+        <div class="welcome-text">
+          <div class="greeting-container">
+            <div class="avatar-section">
+              <div class="user-avatar">
+                <i class="fas fa-user-circle"></i>
               </div>
-              <div class="stat-badge">
-                <span>Total</span>
-              </div>
+              <div class="online-indicator"></div>
             </div>
-            <div class="stat-content">
-              <h3>Total Vehicles</h3>
-              <p class="stat-value">{{ getTotalCarsAvailable() }}</p>
-              <div class="stat-footer">
-                <span class="trend-up" *ngIf="getTotalCarsAvailable() > 0">
-                  <i class="fas fa-arrow-up"></i>
-                  Active Fleet
-                </span>
+            
+            <div class="greeting-text">
+              <h1 class="main-greeting">
+                <span class="greeting-word">Welcome back,</span>
+                <span class="username-highlight">{{ user.username }}</span>
+              </h1>
+              <p class="welcome-subtitle">
+                <i class="fas fa-shield-alt"></i>
+                Your fleet management dashboard is ready
+              </p>
+              <div class="welcome-tags">
+                <span class="tag">Fleet Manager</span>
+                <span class="tag">{{ getCurrentDate() }}</span>
               </div>
             </div>
           </div>
         </div>
+      </div>
+    </div>
 
-        <!-- City Stats with Slider -->
-        <div class="city-stats">
-          <div class="stats-slider" #cityStatsContainer>
-            <div class="stat-card" *ngFor="let cityData of getCityWiseModelCounts()">
-              <div class="stat-icon">
-                <i class="fas fa-city"></i>
+    <!-- Enhanced Loading State -->
+    <div *ngIf="isLoading" class="loading-overlay">
+      <div class="loading-container">
+        <div class="loading-spinner">
+          <div class="spinner-ring"></div>
+          <div class="spinner-ring"></div>
+          <div class="spinner-ring"></div>
+        </div>
+        <h3>Loading your dashboard...</h3>
+        <p>Please wait while we gather your vehicle data</p>
+      </div>
+    </div>
+
+    <!-- Enhanced Brand Filter Section -->
+    <div class="brand-filters">
+      <div class="filter-grid">
+        <div *ngIf="hasRole('TATA')" 
+             class="filter-card" 
+             [class.active]="selectedMake === 'Tata'"
+             (click)="filterByMake('Tata')"
+             tabindex="0"
+             role="button"
+             aria-label="Filter by Tata vehicles">
+          <div class="filter-icon">
+            <i class="fas fa-car"></i>
+          </div>
+          <div class="filter-content">
+            <span class="filter-label">Tata</span>
+            <div class="filter-badge" *ngIf="selectedMake === 'Tata' && filteredModelStockList.length > 0">
+              {{ filteredModelStockList.length }}
+            </div>
+          </div>
+        </div>
+        
+        <div *ngIf="hasRole('EICHER')" 
+             class="filter-card" 
+             [class.active]="selectedMake === 'Eicher'"
+             (click)="filterByMake('Eicher')"
+             tabindex="0"
+             role="button"
+             aria-label="Filter by Eicher vehicles">
+          <div class="filter-icon">
+            <i class="fas fa-truck"></i>
+          </div>
+          <div class="filter-content">
+            <span class="filter-label">Eicher</span>
+            <div class="filter-badge" *ngIf="selectedMake === 'Eicher' && filteredModelStockList.length > 0">
+              {{ filteredModelStockList.length }}
+            </div>
+          </div>
+        </div>
+        
+        <div *ngIf="hasRole('TOYOTA')" 
+             class="filter-card" 
+             [class.active]="selectedMake === 'Toyota'"
+             (click)="filterByMake('Toyota')"
+             tabindex="0"
+             role="button"
+             aria-label="Filter by Toyota vehicles">
+          <div class="filter-icon">
+            <i class="fas fa-car-side"></i>
+          </div>
+          <div class="filter-content">
+            <span class="filter-label">Toyota</span>
+            <div class="filter-badge" *ngIf="selectedMake === 'Toyota' && filteredModelStockList.length > 0">
+              {{ filteredModelStockList.length }}
+            </div>
+          </div>
+        </div>
+        
+        <div *ngIf="hasRole('ADMIN')" 
+             class="filter-card all-filter" 
+             [class.active]="!selectedMake" 
+             (click)="filterByMake('')"
+             tabindex="0"
+             role="button"
+             aria-label="Show all vehicles">
+          <div class="filter-icon">
+            <i class="fas fa-th-large"></i>
+          </div>
+          <div class="filter-content">
+            <span class="filter-label">All Brands</span>
+            <div class="filter-badge total">{{ getTotalCarsAvailable() }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!isLoading">
+      <!-- Enhanced Stats Section -->
+      <div class="stats-section">
+        <h3 class="section-title">
+          <i class="fas fa-chart-bar"></i>
+          Fleet Overview
+        </h3>
+        
+        <div class="stats-container">
+          <!-- Enhanced Total Stats -->
+          <div class="total-stats">
+            <div class="stat-card primary">
+              <div class="stat-background">
+                <div class="floating-icon">
+                  <i class="fas fa-car-alt"></i>
+                </div>
+              </div>
+              <div class="stat-header">
+                <div class="stat-icon-container">
+                  <i class="fas fa-car-alt"></i>
+                </div>
+                <div class="stat-badge pulse">
+                  <span>Fleet Status</span>
+                </div>
               </div>
               <div class="stat-content">
-                <h3>{{ cityData.city }}</h3>
-                <button class="count-button" (click)="getVehiclesByLocation(cityData.city)">
-                  <span class="stat-value">{{ cityData.count }}</span>
-                  <span class="stat-label">Vehicles</span>
-                </button>
+                <h3>Total Active Vehicles</h3>
+                                 <div class="stat-value-container">
+                   <span class="stat-value counter">{{ getTotalCarsAvailable() }}</span>
+                   <div class="stat-progress">
+                     <div class="progress-bar" style="width: 100%;"></div>
+                   </div>
+                 </div>
+                <div class="stat-footer">
+                  <span class="trend-indicator positive" *ngIf="getTotalCarsAvailable() > 0">
+                    <i class="fas fa-arrow-up"></i>
+                    Active Fleet Management
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Enhanced City Stats with Interactive Slider -->
+          <div class="city-stats">
+                         <div class="city-header">
+               <h4>Location Distribution</h4>
+               <div class="slider-controls">
+                 <button class="slider-btn" 
+                         (click)="scrollSlider('left')"
+                         aria-label="Scroll left">
+                   <i class="fas fa-chevron-left"></i>
+                 </button>
+                 <button class="slider-btn" 
+                         (click)="scrollSlider('right')"
+                         aria-label="Scroll right">
+                   <i class="fas fa-chevron-right"></i>
+                 </button>
+               </div>
+             </div>
+            
+            <div class="stats-slider" #cityStatsContainer>
+              <div class="stat-card location-card" 
+                   *ngFor="let cityData of getCityWiseModelCounts(); let i = index"
+                   [style.animation-delay]="i * 0.1 + 's'">
+                <div class="card-glow"></div>
+                <div class="stat-icon-container">
+                  <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div class="stat-content">
+                  <h4>{{ cityData.city }}</h4>
+                  <button class="count-button interactive-btn" 
+                          (click)="getVehiclesByLocation(cityData.city)"
+                          [attr.aria-label]="'View ' + cityData.count + ' vehicles in ' + cityData.city">
+                    <span class="stat-value">{{ cityData.count }}</span>
+                    <span class="stat-label">Vehicles</span>
+                    <i class="fas fa-external-link-alt action-icon"></i>
+                  </button>
+                </div>
+                <div class="card-pattern"></div>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- Add this new section for location details -->
-        <!-- Location Details Modal -->
-        <div class="location-details" *ngIf="showLocationDetails">
-          <div class="location-overlay"></div>
-          <div class="location-modal">
-            <div class="modal-header">
-              <h2><i class="fas fa-map-marker-alt"></i> {{ selectedLocation }} Vehicles</h2>
-              <button class="close-button" (click)="closeLocationDetails()">
+      <!-- Enhanced Search Section -->
+      <div class="search-section">
+        <div class="search-container">
+          <h3 class="section-title">
+            <i class="fas fa-search"></i>
+            Find Vehicles
+          </h3>
+          <div class="search-wrapper">
+            <div class="search-input-container">
+              <i class="fas fa-search search-icon"></i>
+              <input type="text" 
+                     placeholder="Search by make, model, city, or any detail..." 
+                     [(ngModel)]="searchTerm"
+                     (input)="filterStocks()" 
+                     class="search-input enhanced" 
+                     autocomplete="off"
+                     [attr.aria-label]="'Search vehicles. Current results: ' + filteredModelStockList.length + ' found'"/>
+              <button class="search-clear" 
+                      *ngIf="searchTerm" 
+                      (click)="clearSearch()"
+                      aria-label="Clear search">
                 <i class="fas fa-times"></i>
               </button>
             </div>
-            <div class="modal-content">
-              <div class="responsive-table">
-                <table mat-table [dataSource]="locationDataSource" matSort>
-                  <!-- Make Column -->
-                  <ng-container matColumnDef="make">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Make</th>
-                    <td mat-cell *matCellDef="let vehicle" class="column-make">{{vehicle.make}}</td>
-                  </ng-container>
-
-                  <!-- Model Column -->
-                  <ng-container matColumnDef="model">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Model</th>
-                    <td mat-cell *matCellDef="let vehicle" class="column-model">{{vehicle.model}}</td>
-                  </ng-container>
-
-                  <!-- Grade Column -->
-                  <ng-container matColumnDef="grade">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Grade</th>
-                    <td mat-cell *matCellDef="let vehicle" class="column-grade">{{vehicle.grade}}</td>
-                  </ng-container>
-
-                  <!-- Chassis Number Column -->
-                  <ng-container matColumnDef="chassisNumber">
-                    <th mat-header-cell *matHeaderCellDef>Chassis No.</th>
-                    <td mat-cell *matCellDef="let vehicle" class="truncate" class="column-chassisNumber">{{vehicle.chassisNumber}}</td>
-                  </ng-container>
-
-                  <!-- Engine Number Column -->
-                  <ng-container matColumnDef="engineNumber">
-                    <th mat-header-cell *matHeaderCellDef>Engine No.</th>
-                    <td mat-cell *matCellDef="let vehicle" class="truncate" class="column-engineNumber">{{vehicle.engineNumber}}</td>
-                  </ng-container>
-
-                  <!-- Fuel Type Column -->
-                  <ng-container matColumnDef="fuelType">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Fuel Type</th>
-                    <td mat-cell *matCellDef="let vehicle" class="column-fuelType">{{vehicle.fuelType}}</td>
-                  </ng-container>
-
-                  <!-- Color Column -->
-                  <ng-container matColumnDef="exteriorColor">
-                    <th mat-header-cell *matHeaderCellDef>Color</th>
-                    <td mat-cell *matCellDef="let vehicle" class="column-exteriorColor">{{vehicle.exteriorColor}}</td>
-                  </ng-container>
-
-                  <!-- Status Column -->
-                  <ng-container matColumnDef="status">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
-                    <td mat-cell *matCellDef="let vehicle">
-                      <span class="status-badge" [class.active]="vehicle.vehicleStatus === 'Active'" class="column-status">
-                        {{vehicle.vehicleStatus}}
-                      </span>
-                    </td>
-                  </ng-container>
-
-                  <!-- Age Column -->
-                  <ng-container matColumnDef="age">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Age</th>
-                    <td mat-cell *matCellDef="let vehicle" class="column-age">
-                      <span [class]="'age-badge ' + calculateVehicleAge(vehicle.invoiceDate).status">
-                        {{vehicle.age}} days
-                      </span>
-                    </td>
-                  </ng-container>
-
-                  <!-- Received Date Column -->
-                  <ng-container matColumnDef="receivedDate">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Received Date</th>
-                    <td mat-cell *matCellDef="let vehicle" class="column-receivedDate">{{vehicle.receivedDate | date:'mediumDate'}}</td>
-                  </ng-container>
-
-                  <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-                  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-
-                  <!-- No Data Row -->
-                  <tr class="mat-row" *matNoDataRow>
-                    <td class="mat-cell" colspan="10">No vehicles found for this location</td>
-                  </tr>
-                </table>
-              </div>
-
-              <mat-paginator #paginator [length]="locationVehicles.length" [pageSize]="10"
-                [pageSizeOptions]="[5, 10, 25, 50]" showFirstLastButtons>
-              </mat-paginator>
+            <div class="search-results-count" *ngIf="searchTerm">
+              <span class="results-badge">
+                {{ filteredModelStockList.length }} result<span *ngIf="filteredModelStockList.length !== 1">s</span> found
+              </span>
             </div>
           </div>
         </div>
-
       </div>
-    </div>
 
-    <!-- Search Section -->
-    <div class="search-section">
-      <div class="search-container">
-        <div class="search-wrapper">
-          <i class="fas fa-search"></i>
-          <input type="text" placeholder="Search vehicles by make, model, or city..." [(ngModel)]="searchTerm"
-            (input)="filterStocks()" class="search-input" />
-          <!-- <button class="search-clear" *ngIf="searchTerm" (click)="clearSearch()">
-          <i class="fas fa-times"></i>
-        </button> -->
+      <!-- Success Message with Animation -->
+      <div *ngIf="successMessage" class="success-message animated">
+        <div class="message-icon">
+          <i class="fas fa-check-circle"></i>
         </div>
-      </div>
-    </div>
-    <div *ngIf="successMessage" class="small-success-message">
-      <p>{{ successMessage }}</p>
-    </div>
-    <!-- Vehicle Grid -->
-    <div class="vehicle-grid">
-      <div class="vehicle-card" *ngFor="let stock of filteredModelStockList">
-        <div class="card-header">
-          <i class="fas fa-car"></i>
-          <h3>{{ stock.make }}</h3>
-        </div>
-        <div class="card-content">
-          <div class="detail-row">
-            <span class="label">Model:</span>
-            <a [routerLink]="['/vehicle-page', stock.model]">{{ stock.model }}</a>
-          </div>
-          <div class="detail-row">
-            <span class="label">Total Units:</span>
-            <span class="count-badge">{{ getModelCount(stock.model) }}</span>
-          </div>
-          <!-- <div class="detail-row">
-          <span class="label">Location:</span>
-          <span>{{ stock.location }}</span>
-        </div> -->
-          <!-- Replace the commented age section with this -->
-          <!-- Replace the age section with this corrected version -->
-          <div class="detail-row">
-            <span class="label">Age:</span>
-            <!-- <span [class]="'age-badge ' + calculateVehicleAge(stock.receivedDate).status">
-              {{ calculateVehicleAge(stock.receivedDate).days }} days
-              <span class="age-label">{{ calculateVehicleAge(stock.receivedDate).label }}</span>
-            </span> -->
-            <span class="detail-item">
-              <span class="label">&lt;30:</span>
-              <span
-                class="age-badge"
-                [ngClass]="{
-                  'low-count': parseToNumber(stock.lessThan30DaysCount) > 0,
-                  'no-count': parseToNumber(stock.lessThan30DaysCount) === 0
-                }">
-                {{ stock.lessThan30DaysCount }}
-              </span>
-            </span>
-            <span class="detail-item">
-              <span class="label">30-60:</span>
-              <span
-                class="age-badge"
-                [ngClass]="{
-                  'medium-count': parseToNumber(stock.between30And60DaysCount) > 0,
-                  'no-count': parseToNumber(stock.between30And60DaysCount) === 0
-                }">
-                {{ stock.between30And60DaysCount }}
-              </span>
-            </span>
-            <span class="detail-item">
-              <span class="label">&gt;60:</span>
-              <span
-                class="age-badge"
-                [ngClass]="{
-                  'high-count': parseToNumber(stock.greaterThan60DaysCount) > 0,
-                  'no-count': parseToNumber(stock.greaterThan60DaysCount) === 0
-                }">
-                {{ stock.greaterThan60DaysCount }}
-              </span>
-
-              <!-- <span class="age-badge">{{ calculateVehicleAge(stock.greaterThan60DaysCount).days }}</span> -->
-            </span>
-          </div>
-          <!-- <div class="detail-row">
-            <span class="label">Date:</span>
-            <span>{{ stock.receivedDate | date: 'dd-MM-yyyy' }}</span>
-          </div> -->
-        </div>
-        <!-- <div class="card-actions">
-          <button class="btn-edit" (click)="openEditVehiclePopup(stock)">
-            <i class="fas fa-edit"></i> Edit
-          </button>
-          <button class="btn-delete" (click)="onDelete(stock)">
-            <i class="fas fa-trash"></i> Delete
-          </button>
-        </div> -->
-      </div>
-    </div>
-  </div>
-    <!-- Add Vehicle Popup -->
-    <div *ngIf="showPopup" class="popup">
-      <div class="popup-content">
-        <span class="close" (click)="closePopup()">&times;</span>
-        <h2>Add Vehicle</h2>
-        <!-- Success message -->
-        <div *ngIf="successMessage" class="small-success-message">
+        <div class="message-content">
           <p>{{ successMessage }}</p>
         </div>
-        <form [formGroup]="vehicleForm" (ngSubmit)="onSubmit()">
-          <label for="make">Make:</label>
-          <input id="make" formControlName="make" placeholder="Enter vehicle make">
+        <button class="message-close" (click)="successMessage = ''" aria-label="Close message">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
 
-          <label for="model">Model:</label>
-          <input id="model" formControlName="model" placeholder="Enter vehicle model">
+      <!-- Enhanced Vehicle Grid -->
+      <div class="vehicle-grid">
+        <div class="grid-header">
+          <h3 class="section-title">
+            <i class="fas fa-cars"></i>
+            Vehicle Inventory
+          </h3>
+          <div class="grid-stats">
+            <span class="total-count">{{ filteredModelStockList.length }} Models Available</span>
+          </div>
+        </div>
 
-          <label for="city">City:</label>
-          <input id="city" formControlName="city" placeholder="Enter city">
+        <div class="vehicle-cards-container">
+          <div class="vehicle-card modern" 
+               *ngFor="let stock of filteredModelStockList; let i = index"
+               [style.animation-delay]="i * 0.1 + 's'">
+            
+            <div class="card-header enhanced">
+              <div class="brand-icon">
+                <i class="fas fa-car"></i>
+              </div>
+              <div class="brand-info">
+                <h3>{{ stock.make }}</h3>
+                <span class="model-name">{{ stock.model }}</span>
+              </div>
+              <div class="total-badge">
+                {{ getModelCount(stock.model) }}
+              </div>
+            </div>
 
-          <label for="vehicleYear">Vehicle Year:</label>
-          <input id="vehicleYear" formControlName="vehicleYear" type="date">
+            <div class="card-content enhanced">
+              <div class="detail-row interactive">
+                <span class="label">
+                  <i class="fas fa-cog"></i>
+                  Model
+                </span>
+                <a [routerLink]="['/vehicle-page', stock.model]" 
+                   class="model-link"
+                   [attr.aria-label]="'View details for ' + stock.model">
+                  {{ stock.model }}
+                  <i class="fas fa-external-link-alt"></i>
+                </a>
+              </div>
 
-          <button type="submit" class="button">Submit</button>
+              <div class="detail-row interactive">
+                <span class="label">
+                  <i class="fas fa-calculator"></i>
+                  Total Units
+                </span>
+                <span class="count-badge animated">{{ getModelCount(stock.model) }}</span>
+              </div>
+
+              <!-- Enhanced Age Distribution -->
+              <div class="age-distribution">
+                <div class="age-header">
+                  <span class="label">
+                    <i class="fas fa-clock"></i>
+                    Age Distribution
+                  </span>
+                </div>
+                <div class="age-items">
+                  <div class="age-item" 
+                       [attr.title]="'Vehicles less than 30 days old'">
+                    <span class="age-label">&lt;30 days</span>
+                    <span class="age-badge new"
+                          [ngClass]="{
+                            'has-count': parseToNumber(stock.lessThan30DaysCount) > 0,
+                            'no-count': parseToNumber(stock.lessThan30DaysCount) === 0
+                          }">
+                      {{ stock.lessThan30DaysCount }}
+                    </span>
+                  </div>
+                  
+                  <div class="age-item"
+                       [attr.title]="'Vehicles between 30-60 days old'">
+                    <span class="age-label">30-60 days</span>
+                    <span class="age-badge medium"
+                          [ngClass]="{
+                            'has-count': parseToNumber(stock.between30And60DaysCount) > 0,
+                            'no-count': parseToNumber(stock.between30And60DaysCount) === 0
+                          }">
+                      {{ stock.between30And60DaysCount }}
+                    </span>
+                  </div>
+                  
+                  <div class="age-item"
+                       [attr.title]="'Vehicles more than 60 days old'">
+                    <span class="age-label">&gt;60 days</span>
+                    <span class="age-badge old"
+                          [ngClass]="{
+                            'has-count': parseToNumber(stock.greaterThan60DaysCount) > 0,
+                            'no-count': parseToNumber(stock.greaterThan60DaysCount) === 0
+                          }">
+                      {{ stock.greaterThan60DaysCount }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card Footer with Actions -->
+            <!-- <div class="card-footer">
+              <div class="quick-actions">
+                <button class="action-btn primary" 
+                        [routerLink]="['/vehicle-page', stock.model]"
+                        [attr.aria-label]="'View ' + stock.model + ' details'">
+                  <i class="fas fa-eye"></i>
+                  <span>View Details</span>
+                </button>
+              </div>
+            </div> -->
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" *ngIf="filteredModelStockList.length === 0 && !isLoading">
+          <div class="empty-icon">
+            <i class="fas fa-search"></i>
+          </div>
+          <h3>No vehicles found</h3>
+          <p>Try adjusting your search terms or filters</p>
+          <button class="reset-btn" (click)="clearSearch(); filterByMake('')">
+            <i class="fas fa-refresh"></i>
+            Reset Filters
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Enhanced Location Details Modal -->
+    <div class="location-details modern" *ngIf="showLocationDetails">
+      <div class="location-overlay animated" (click)="closeLocationDetails()"></div>
+      <div class="location-modal enhanced">
+        <div class="modal-header">
+          <div class="header-content">
+            <div class="location-icon">
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <div class="header-text">
+              <h2>{{ selectedLocation }} Fleet</h2>
+              <span class="location-count">{{ locationVehicles.length }} vehicles found</span>
+            </div>
+          </div>
+          <button class="close-button modern" 
+                  (click)="closeLocationDetails()"
+                  aria-label="Close location details">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <div class="modal-content">
+          <div class="responsive-table enhanced">
+            <table mat-table [dataSource]="locationDataSource" matSort>
+              <!-- Table columns remain the same as original -->
+              <ng-container matColumnDef="make">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Make</th>
+                <td mat-cell *matCellDef="let vehicle" class="column-make">{{vehicle.make}}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="model">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Model</th>
+                <td mat-cell *matCellDef="let vehicle" class="column-model">{{vehicle.model}}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="grade">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Grade</th>
+                <td mat-cell *matCellDef="let vehicle" class="column-grade">{{vehicle.grade}}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="chassisNumber">
+                <th mat-header-cell *matHeaderCellDef>Chassis No.</th>
+                <td mat-cell *matCellDef="let vehicle" class="truncate column-chassisNumber">{{vehicle.chassisNumber}}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="engineNumber">
+                <th mat-header-cell *matHeaderCellDef>Engine No.</th>
+                <td mat-cell *matCellDef="let vehicle" class="truncate column-engineNumber">{{vehicle.engineNumber}}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="fuelType">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Fuel Type</th>
+                <td mat-cell *matCellDef="let vehicle" class="column-fuelType">{{vehicle.fuelType}}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="exteriorColor">
+                <th mat-header-cell *matHeaderCellDef>Color</th>
+                <td mat-cell *matCellDef="let vehicle" class="column-exteriorColor">{{vehicle.exteriorColor}}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+                <td mat-cell *matCellDef="let vehicle">
+                  <span class="status-badge modern" [class.active]="vehicle.vehicleStatus === 'Active'">
+                    {{vehicle.vehicleStatus}}
+                  </span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="age">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Age</th>
+                <td mat-cell *matCellDef="let vehicle" class="column-age">
+                  <span class="age-badge modern" [class]="calculateVehicleAge(vehicle.invoiceDate).status">
+                    {{vehicle.age}} days
+                  </span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="receivedDate">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Received Date</th>
+                <td mat-cell *matCellDef="let vehicle" class="column-receivedDate">{{vehicle.receivedDate | date:'mediumDate'}}</td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+              <tr class="mat-row no-data" *matNoDataRow>
+                <td class="mat-cell" colspan="10">
+                  <div class="no-data-message">
+                    <i class="fas fa-inbox"></i>
+                    <span>No vehicles found for this location</span>
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          <mat-paginator #paginator 
+                        [length]="locationVehicles.length" 
+                        [pageSize]="10"
+                        [pageSizeOptions]="[5, 10, 25, 50]" 
+                        showFirstLastButtons>
+          </mat-paginator>
+        </div>
+      </div>
+    </div>
+
+    <!-- Enhanced Add Vehicle Popup -->
+    <div *ngIf="showPopup" class="popup modern">
+      <div class="popup-overlay" (click)="closePopup()"></div>
+      <div class="popup-content enhanced">
+        <div class="popup-header">
+          <h2>
+            <i class="fas fa-plus-circle"></i>
+            Add New Vehicle
+          </h2>
+          <button class="close-btn" (click)="closePopup()" aria-label="Close popup">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <div *ngIf="successMessage" class="success-message inline">
+          <i class="fas fa-check-circle"></i>
+          <p>{{ successMessage }}</p>
+        </div>
+
+        <form [formGroup]="vehicleForm" (ngSubmit)="onSubmit()" class="enhanced-form">
+          <div class="form-group">
+            <label for="make">
+              <i class="fas fa-industry"></i>
+              Vehicle Make
+            </label>
+            <input id="make" 
+                   formControlName="make" 
+                   placeholder="e.g., Toyota, Tata, Eicher"
+                   class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label for="model">
+              <i class="fas fa-car"></i>
+              Vehicle Model
+            </label>
+            <input id="model" 
+                   formControlName="model" 
+                   placeholder="e.g., Camry, Nexon, Pro 2049"
+                   class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label for="city">
+              <i class="fas fa-map-marker-alt"></i>
+              Location
+            </label>
+            <input id="city" 
+                   formControlName="city" 
+                   placeholder="e.g., Mumbai, Delhi, Bangalore"
+                   class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label for="vehicleYear">
+              <i class="fas fa-calendar"></i>
+              Manufacturing Date
+            </label>
+            <input id="vehicleYear" 
+                   formControlName="vehicleYear" 
+                   type="date"
+                   class="form-input">
+          </div>
+
+          <button type="submit" class="submit-btn">
+            <i class="fas fa-save"></i>
+            Add Vehicle
+          </button>
         </form>
       </div>
     </div>
 
-    <!-- Edit Vehicle Popup -->
-    <div *ngIf="showEditPopup" class="popup">
-      <div class="popup-content">
-        <!-- Success message -->
-        <div *ngIf="successMessage" class="small-success-message">
+    <!-- Enhanced Edit Vehicle Popup -->
+    <div *ngIf="showEditPopup" class="popup modern">
+      <div class="popup-overlay" (click)="closeEditPopup()"></div>
+      <div class="popup-content enhanced">
+        <div class="popup-header">
+          <h2>
+            <i class="fas fa-edit"></i>
+            Edit Vehicle Details
+          </h2>
+          <button class="close-btn" (click)="closeEditPopup()" aria-label="Close popup">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <div *ngIf="successMessage" class="success-message inline">
+          <i class="fas fa-check-circle"></i>
           <p>{{ successMessage }}</p>
         </div>
-        <span class="close" (click)="closeEditPopup()">&times;</span>
-        <h2>Edit Vehicle</h2>
-        <form (ngSubmit)="onUpdate()">
-          <label for="editVehicleMake">Make:</label>
-          <input type="text" id="editVehicleMake" [(ngModel)]="editVehicleData.make" name="make"
-            placeholder="Enter vehicle make" required>
 
-          <label for="editVehicleModel">Model:</label>
-          <input type="text" id="editVehicleModel" [(ngModel)]="editVehicleData.model" name="model"
-            placeholder="Enter vehicle model" required>
+        <form (ngSubmit)="onUpdate()" class="enhanced-form">
+          <div class="form-group">
+            <label for="editVehicleMake">
+              <i class="fas fa-industry"></i>
+              Vehicle Make
+            </label>
+            <input type="text" 
+                   id="editVehicleMake" 
+                   [(ngModel)]="editVehicleData.make" 
+                   name="make"
+                   placeholder="Enter vehicle make" 
+                   required
+                   class="form-input">
+          </div>
 
-          <label for="editVehicleCity">City:</label>
-          <input type="text" id="editVehicleCity" [(ngModel)]="editVehicleData.location" name="city"
-            placeholder="Enter city" required>
+          <div class="form-group">
+            <label for="editVehicleModel">
+              <i class="fas fa-car"></i>
+              Vehicle Model
+            </label>
+            <input type="text" 
+                   id="editVehicleModel" 
+                   [(ngModel)]="editVehicleData.model" 
+                   name="model"
+                   placeholder="Enter vehicle model" 
+                   required
+                   class="form-input">
+          </div>
 
-          <label for="editVehicleYear">Vehicle Year:</label>
-          <input type="date" id="editVehicleYear" [(ngModel)]="editVehicleData.receivedDate" name="vehicleYear"
-            required>
+          <div class="form-group">
+            <label for="editVehicleCity">
+              <i class="fas fa-map-marker-alt"></i>
+              Location
+            </label>
+            <input type="text" 
+                   id="editVehicleCity" 
+                   [(ngModel)]="editVehicleData.location" 
+                   name="city"
+                   placeholder="Enter city" 
+                   required
+                   class="form-input">
+          </div>
 
-          <button type="submit" class="button">Update Vehicle</button>
+          <div class="form-group">
+            <label for="editVehicleYear">
+              <i class="fas fa-calendar"></i>
+              Received Date
+            </label>
+            <input type="date" 
+                   id="editVehicleYear" 
+                   [(ngModel)]="editVehicleData.receivedDate" 
+                   name="vehicleYear"
+                   required
+                   class="form-input">
+          </div>
+
+          <button type="submit" class="submit-btn">
+            <i class="fas fa-save"></i>
+            Update Vehicle
+          </button>
         </form>
       </div>
     </div>

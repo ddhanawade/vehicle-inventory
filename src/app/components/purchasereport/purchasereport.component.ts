@@ -1,29 +1,26 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { ChartOptions, ChartType, ChartDataset, ChartData } from 'chart.js';
-import { CommonModule, DatePipe, JsonPipe } from '@angular/common';
-import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatIcon, MatIconModule } from '@angular/material/icon';
-import { FormsModule } from '@angular/forms';
-import { MatCardModule } from '@angular/material/card';
-import { NgChartsModule } from 'ng2-charts';
-import { MatNativeDateModule } from '@angular/material/core';
-import { ReportingService } from '../../services/ReportingService';
-import { MonthlySalesRequest } from '../../models/MonthlySalesRequest';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatSortModule } from '@angular/material/sort';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MonthlySalesRequest } from '../../models/MonthlySalesRequest';
 import { VehicleModel } from '../../models/VehicleModel';
-// import { ChartsModule } from 'ng2-charts';
+import { ReportingService } from '../../services/ReportingService';
+import { CommonModule, DatePipe } from '@angular/common';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule, MatIcon } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSortModule } from '@angular/material/sort';
+import { NgChartsModule } from 'ng2-charts';
 
 @Component({
-  selector: 'app-vehicle-report',
+  selector: 'app-purchasereport',
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -43,18 +40,15 @@ import { VehicleModel } from '../../models/VehicleModel';
     MatPaginatorModule,
     MatIcon
   ],
-  templateUrl: './vehicle-report.component.html',
-  styleUrls: ['./vehicle-report.component.scss']
+  templateUrl: './purchasereport.component.html',
+  styleUrl: './purchasereport.component.scss'
 })
-export class VehicleReportComponent implements OnInit {
-
-  startDate: string = '';
+export class PurchasereportComponent {
+ startDate: string = '';
   endDate: string = '';
   city: string = '';
   make: string = '';
   model: string = '';
-  salesPersonName: string = '';
-  leadName: string = '';
 
   // Enhanced properties
   showAdvancedFilters: boolean = false;
@@ -75,11 +69,6 @@ export class VehicleReportComponent implements OnInit {
     'location',
     'invoiceValue',
     'interest',
-    'salesPersonName',
-    'leadName',
-    'vehicleStatus',
-    'dmsStatus',
-    'dealAmount',
     'status'
     
   ];
@@ -89,8 +78,8 @@ export class VehicleReportComponent implements OnInit {
   totalVehicles!: number;
 
   topModelData!: { labels: any; datasets: { data: any; label: string; backgroundColor: string[]; }[]; };
-  // salesPersonName: any;
-  // leadName: any;
+  salesPersonName: any;
+  leadName: any;
 
   constructor(
     private http: HttpClient, 
@@ -197,9 +186,7 @@ export class VehicleReportComponent implements OnInit {
       endDate: this.formatDate(new Date(this.endDate)),    // Format the endDate
       city: this.city || undefined,
       make: this.make || undefined,
-      model: this.model || undefined,
-      salesPersonName: this.salesPersonName || undefined,
-      leadName: this.leadName || undefined
+      model: this.model || undefined
     };
     
     this.reportService.getMonthlySalesReport(request).subscribe({
@@ -284,3 +271,4 @@ export class VehicleReportComponent implements OnInit {
     return truncateColumns.includes(column);
   }
 }
+

@@ -4,4 +4,6 @@ export interface MonthlySalesRequest {
   city?: string;
   make?: string;
   model?: string;
+  salesPersonName?: string;
+  leadName?: string;
   }

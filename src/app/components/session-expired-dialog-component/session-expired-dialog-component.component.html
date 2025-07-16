@@ -1,7 +1,155 @@
-<h1 mat-dialog-title>Session Expired</h1>
-    <div mat-dialog-content>
-      <p>Your session has expired. Please log in again.</p>
+<!-- Interactive Session Expired Dialog -->
+<div class="session-dialog" [class.visible]="isVisible" [class.pulse]="pulseAnimation">
+  
+  <!-- Header with Icon and Title -->
+  <div class="dialog-header">
+    <div class="icon-container" [class.critical]="isCountdownCritical" [class.warning]="isCountdownWarning">
+      <i class="fas fa-clock"></i>
     </div>
-    <div mat-dialog-actions>
-      <button mat-button mat-dialog-close (click)="navigateToLogin()">OK</button>
+    <h2>Session Expired</h2>
+    <div class="dialog-subtitle">
+      Your session has expired for security reasons
     </div>
+  </div>
+
+  <!-- Interactive Countdown Section -->
+  <div class="countdown-section">
+    <div class="countdown-display" 
+         [class.critical]="isCountdownCritical" 
+         [class.warning]="isCountdownWarning">
+      <div class="countdown-circle">
+        <svg class="countdown-svg" viewBox="0 0 100 100">
+          <circle class="countdown-bg" cx="50" cy="50" r="45"></circle>
+          <circle class="countdown-progress" 
+                  cx="50" cy="50" r="45"
+                  [style.stroke-dasharray]="282.6"
+                  [style.stroke-dashoffset]="282.6 - (282.6 * countdownPercentage / 100)">
+          </circle>
+        </svg>
+        <div class="countdown-text">
+          <span class="countdown-number">{{ countdown }}</span>
+          <span class="countdown-label">seconds</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="countdown-message">
+      <p *ngIf="!isCountdownCritical && !isCountdownWarning">
+        <i class="fas fa-info-circle"></i>
+        Redirecting to login in {{ countdown }} seconds
+      </p>
+      <p *ngIf="isCountdownWarning && !isCountdownCritical" class="warning-message">
+        <i class="fas fa-exclamation-triangle"></i>
+        Auto-redirect in {{ countdown }} seconds
+      </p>
+      <p *ngIf="isCountdownCritical" class="critical-message">
+        <i class="fas fa-exclamation-circle"></i>
+        Redirecting now! {{ countdown }} seconds left
+      </p>
+    </div>
+  </div>
+
+  <!-- Status Messages -->
+  <div class="status-messages">
+    <div class="refresh-success" [class.show]="false">
+      <i class="fas fa-check-circle"></i>
+      <span>Session refreshed successfully!</span>
+    </div>
+    <div class="refresh-error" [class.show]="false">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span>Failed to refresh session. Please try again.</span>
+    </div>
+  </div>
+
+  <!-- Interactive Action Buttons -->
+  <div class="action-buttons">
+    <!-- Primary Action - Login -->
+    <button class="btn btn-primary" 
+            (click)="navigateToLogin()"
+            [attr.aria-label]="'Navigate to login page (Enter key)'">
+      <i class="fas fa-sign-in-alt"></i>
+      <span>Go to Login</span>
+      <kbd class="keyboard-hint">Enter</kbd>
+    </button>
+
+    <!-- Secondary Action - Refresh Session -->
+    <button class="btn btn-secondary" 
+            *ngIf="canRefreshSession"
+            (click)="attemptRefreshSession()"
+            [disabled]="isRefreshing"
+            [attr.aria-label]="'Refresh session (Ctrl+R)'">
+      <div class="button-content">
+        <i class="fas fa-sync" [class.spin]="isRefreshing"></i>
+        <span>{{ refreshButtonText }}</span>
+      </div>
+      <kbd class="keyboard-hint" *ngIf="!isRefreshing">Ctrl+R</kbd>
+    </button>
+
+    <!-- Tertiary Action - Pause/Resume -->
+    <button class="btn btn-tertiary" 
+            (click)="pauseResumeCountdown()"
+            [attr.aria-label]="'Pause or resume countdown (Spacebar)'">
+      <i class="fas fa-pause" *ngIf="isCountdownActive"></i>
+      <i class="fas fa-play" *ngIf="!isCountdownActive"></i>
+      <span>{{ isCountdownActive ? 'Pause' : 'Resume' }}</span>
+      <kbd class="keyboard-hint">Space</kbd>
+    </button>
+  </div>
+
+  <!-- Keyboard Shortcuts Help -->
+  <div class="keyboard-shortcuts">
+    <div class="shortcuts-header">
+      <i class="fas fa-keyboard"></i>
+      <span>Keyboard Shortcuts</span>
+    </div>
+    <div class="shortcuts-grid">
+      <div class="shortcut-item">
+        <kbd>Enter</kbd>
+        <span>Go to Login</span>
+      </div>
+      <div class="shortcut-item">
+        <kbd>Ctrl+R</kbd>
+        <span>Refresh Session</span>
+      </div>
+      <div class="shortcut-item">
+        <kbd>Space</kbd>
+        <span>Pause/Resume</span>
+      </div>
+      <div class="shortcut-item">
+        <kbd>Esc</kbd>
+        <span>Shake Dialog</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress Bar for Overall Session -->
+  <div class="session-progress">
+    <div class="progress-bar">
+      <div class="progress-fill" 
+           [style.width.%]="countdownPercentage"
+           [class.critical]="isCountdownCritical"
+           [class.warning]="isCountdownWarning">
+      </div>
+    </div>
+    <div class="progress-text">
+      <span>Session timeout progress</span>
+      <span class="progress-percentage">{{ countdownPercentage | number:'1.0-0' }}%</span>
+    </div>
+  </div>
+
+  <!-- Footer with Additional Information -->
+  <div class="dialog-footer">
+    <div class="security-info">
+      <i class="fas fa-shield-alt"></i>
+      <span>This is a security measure to protect your account</span>
+    </div>
+    <div class="help-text">
+      <i class="fas fa-question-circle"></i>
+      <span>Need help? Contact support</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- Background Overlay with Blur Effect -->
+<div class="dialog-overlay" [class.visible]="isVisible"></div>

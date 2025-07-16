@@ -1,0 +1,345 @@
+// Test Vehicle Report Component Styles
+// Enhanced Design with Test-Specific Styling
+
+// Import existing vehicle report styles as base
+@import '../vehicle-report/vehicle-report.component.scss';
+
+// Test-specific color palette
+$test-primary: #6366f1; // Indigo for testing theme
+$test-secondary: #8b5cf6; // Purple for QA theme
+$test-success: #10b981; // Green for passed tests
+$test-warning: #f59e0b; // Amber for in-progress tests
+$test-danger: #ef4444; // Red for failed tests
+$test-info: #3b82f6; // Blue for general info
+
+// Override header icon color for test theme
+.header-section {
+  .header-content {
+    .header-icon {
+      i {
+        color: $test-primary;
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+        border-radius: 50%;
+        padding: 12px;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+      }
+    }
+
+    h2 {
+      background: linear-gradient(135deg, $test-primary 0%, $test-secondary 100%);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header-subtitle {
+      color: $test-primary;
+      font-weight: 600;
+    }
+  }
+
+  .header-stats {
+    .stat-card {
+      border-left: 4px solid $test-primary;
+      
+      &:nth-child(2) {
+        border-left-color: $test-secondary;
+      }
+      
+      &:nth-child(3) {
+        border-left-color: $test-info;
+      }
+    }
+  }
+}
+
+// Test-specific filter styling
+.filter-section {
+  .filter-title {
+    i {
+      color: $test-primary;
+    }
+  }
+
+  .filter-field {
+    .filter-icon {
+      color: $test-primary;
+    }
+
+    &:focus-within {
+      .mat-form-field-outline {
+        border-color: $test-primary;
+      }
+    }
+  }
+
+  .apply-btn {
+    background: linear-gradient(135deg, $test-primary 0%, $test-secondary 100%);
+    
+    &:hover {
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    }
+  }
+}
+
+// Enhanced status badges for test vehicles
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  position: relative;
+  transition: all 0.3s ease;
+
+  &::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  &.active {
+    background: linear-gradient(135deg, $test-success 0%, #34d399 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+
+    &::before {
+      background: rgba(255, 255, 255, 0.8);
+      animation: pulse 2s infinite;
+    }
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    }
+  }
+
+  &.in-progress {
+    background: linear-gradient(135deg, $test-warning 0%, #fbbf24 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+
+    &::before {
+      background: rgba(255, 255, 255, 0.8);
+      animation: spin 2s linear infinite;
+    }
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+    }
+  }
+
+  &.failed {
+    background: linear-gradient(135deg, $test-danger 0%, #f87171 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+
+    &::before {
+      background: rgba(255, 255, 255, 0.8);
+    }
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+    }
+  }
+
+  &.on-hold {
+    background: linear-gradient(135deg, #6b7280 0%, #9ca3af 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(107, 114, 128, 0.3);
+
+    &::before {
+      background: rgba(255, 255, 255, 0.8);
+    }
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(107, 114, 128, 0.4);
+    }
+  }
+}
+
+// Table enhancements for test data
+.enhanced-table {
+  th {
+    background: linear-gradient(135deg, 
+      rgba(99, 102, 241, 0.05) 0%, 
+      rgba(139, 92, 246, 0.03) 100%);
+    border-bottom: 2px solid rgba(99, 102, 241, 0.1);
+
+    &:hover {
+      background: linear-gradient(135deg, 
+        rgba(99, 102, 241, 0.08) 0%, 
+        rgba(139, 92, 246, 0.05) 100%);
+    }
+  }
+
+  tr:hover {
+    background: linear-gradient(135deg, 
+      rgba(99, 102, 241, 0.02) 0%, 
+      rgba(139, 92, 246, 0.01) 100%);
+    box-shadow: -4px 0 0 rgba(99, 102, 241, 0.2);
+  }
+}
+
+// Loading spinner customization
+.loading-spinner {
+  .spinner {
+    border: 3px solid rgba(99, 102, 241, 0.1);
+    border-top: 3px solid $test-primary;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+}
+
+// Export button styling
+.export-btn {
+  border-color: $test-primary;
+  color: $test-primary;
+  
+  &:hover {
+    background: $test-primary;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  }
+}
+
+// Performance score styling
+.enhanced-cell {
+  .cell-content {
+    span {
+      &[data-column="performanceScore"] {
+        font-weight: 600;
+        padding: 4px 8px;
+        border-radius: 12px;
+        
+        // Color coding based on performance score
+        &:contains("9"), &:contains("8") {
+          background: rgba(16, 185, 129, 0.1);
+          color: #065f46;
+        }
+        
+        &:contains("7"), &:contains("6") {
+          background: rgba(245, 158, 11, 0.1);
+          color: #92400e;
+        }
+        
+        &:contains("5"), &:contains("4"), &:contains("3") {
+          background: rgba(239, 68, 68, 0.1);
+          color: #991b1b;
+        }
+      }
+    }
+  }
+}
+
+// Safety rating badges
+.cell-content span:contains("A+"),
+.cell-content span:contains("A") {
+  background: linear-gradient(135deg, $test-success 0%, #34d399 100%);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.cell-content span:contains("B") {
+  background: linear-gradient(135deg, $test-warning 0%, #fbbf24 100%);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+// Test facility badges
+.cell-content span[data-column="testFacility"] {
+  background: rgba(99, 102, 241, 0.1);
+  color: $test-primary;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 0.8rem;
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .header-stats {
+    flex-direction: column;
+    gap: 12px;
+
+    .stat-card {
+      min-width: auto;
+      text-align: center;
+    }
+  }
+
+  .filter-content .filter-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .status-badge {
+    padding: 4px 8px;
+    font-size: 0.7rem;
+  }
+}
+
+// Animation keyframes
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Print styles for test reports
+@media print {
+  .filter-section,
+  .table-actions,
+  .loading-container {
+    display: none !important;
+  }
+
+  .header-section {
+    border-bottom: 2px solid #000;
+    margin-bottom: 20px;
+  }
+
+  .status-badge {
+    border: 1px solid #000 !important;
+    background: white !important;
+    color: black !important;
+  }
+
+  .enhanced-table {
+    th, td {
+      border: 1px solid #000 !important;
+      background: white !important;
+      color: black !important;
+    }
+  }
+} 

@@ -82,6 +82,9 @@ export class EditVehicleDialogComponent {
       phoneNumber: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
       orderStatus: ['', [Validators.required]],
       remarks: [''],
+      dealAmount: [''],
+      dmsStatus: [''],
+      vehicleStatus: ['']
     });
   }
 
@@ -228,6 +231,7 @@ onUpdate(): void {
           ? new Date(this.vehicleForm.get('deliveryDate')?.value).toISOString()
           : null
       };
+      console.log('Updating order with data:', JSON.stringify(formData));
       this.orderService.updateOrder(formData.orderId, formData).subscribe({
         next: (response) => {
           setTimeout(() => {

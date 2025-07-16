@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Monthly Sales Report</title>
+  <title>Test Vehicle Report</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 
@@ -14,40 +14,36 @@
     <div class="header-section">
       <div class="header-content">
         <div class="header-icon">
-          <i class="fas fa-chart-line"></i>
+          <i class="fas fa-flask"></i>
         </div>
-        <h2>Sales Report</h2>
+        <h2>Test Vehicle Report</h2>
         <div class="header-subtitle">
-          <!-- <span>Comprehensive Sales Analytics</span> -->
+          <span>Vehicle Testing & QA Analytics</span>
         </div>
       </div>
-      <div class="header-stats" *ngIf="!isLoading && totalVehicles > 0">
+      <!-- <div class="header-stats" *ngIf="!isLoading && totalTestVehicles > 0">
         <div class="stat-card">
-          <div class="stat-number">{{totalVehicles}}</div>
-          <div class="stat-label">Total Records</div>
+          <div class="stat-number">{{totalTestVehicles}}</div>
+          <div class="stat-label">Test Vehicles</div>
         </div>
         <div class="stat-card">
-          <div class="stat-number">{{getUniqueCount('make')}}</div>
-          <div class="stat-label">Unique Makes</div>
+          <div class="stat-number">{{getActiveTestsCount()}}</div>
+          <div class="stat-label">Active Tests</div>
         </div>
         <div class="stat-card">
-          <div class="stat-number">{{getUniqueCount('location')}}</div>
-          <div class="stat-label">Locations</div>
+          <div class="stat-number">{{getUniqueCount('testType')}}</div>
+          <div class="stat-label">Test Types</div>
         </div>
-      </div>
+      </div> -->
     </div>
 
     <!-- Enhanced Filter Section -->
-    <div class="filter-section" [class.expanded]="showAdvancedFilters">
+    <!-- <div class="filter-section">
       <div class="filter-header">
         <div class="filter-title">
           <i class="fas fa-filter"></i>
-          <span>Filter Options</span>
+          <span>Test Vehicle Filters</span>
         </div>
-        <!-- <button class="toggle-filters" (click)="toggleAdvancedFilters()">
-          <i class="fas fa-chevron-down" [class.rotated]="showAdvancedFilters"></i>
-          <span>{{showAdvancedFilters ? 'Less' : 'More'}} Options</span>
-        </button> -->
       </div>
       
       <div class="filter-content compact">
@@ -55,9 +51,9 @@
           <mat-form-field appearance="outline" class="filter-field mini">
             <mat-label>
               <mat-icon class="filter-icon">event</mat-icon>
-              <span class="visually-hidden">Start Date</span>
+              <span class="visually-hidden">Test Start Date</span>
             </mat-label>
-            <input matInput [matDatepicker]="startPicker" [(ngModel)]="startDate" (dateChange)="onFilterChange()" placeholder="Start">
+            <input matInput [matDatepicker]="startPicker" [(ngModel)]="testStartDate" (dateChange)="onFilterChange()" placeholder="Test Start">
             <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
             <mat-datepicker #startPicker></mat-datepicker>
           </mat-form-field>
@@ -65,54 +61,59 @@
           <mat-form-field appearance="outline" class="filter-field mini">
             <mat-label>
               <mat-icon class="filter-icon">event</mat-icon>
-              <span class="visually-hidden">End Date</span>
+              <span class="visually-hidden">Test End Date</span>
             </mat-label>
-            <input matInput [matDatepicker]="endPicker" [(ngModel)]="endDate" (dateChange)="onFilterChange()" placeholder="End">
+            <input matInput [matDatepicker]="endPicker" [(ngModel)]="testEndDate" (dateChange)="onFilterChange()" placeholder="Test End">
             <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
             <mat-datepicker #endPicker></mat-datepicker>
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="filter-field mini">
             <mat-label>
-              <mat-icon class="filter-icon">location_city</mat-icon>
-              <span class="visually-hidden">City</span>
+              <mat-icon class="filter-icon">science</mat-icon>
+              <span class="visually-hidden">Test Type</span>
             </mat-label>
-            <input matInput [(ngModel)]="city" placeholder="City" (input)="onFilterChange()">
+            <mat-select [(ngModel)]="testType" (selectionChange)="onFilterChange()">
+              <mat-option value="">All Test Types</mat-option>
+              <mat-option value="Performance">Performance Test</mat-option>
+              <mat-option value="Safety">Safety Test</mat-option>
+              <mat-option value="Durability">Durability Test</mat-option>
+              <mat-option value="Emissions">Emissions Test</mat-option>
+              <mat-option value="Fuel Economy">Fuel Economy Test</mat-option>
+              <mat-option value="QA">Quality Assurance</mat-option>
+            </mat-select>
           </mat-form-field>
 
-          <!-- <ng-container *ngIf="showAdvancedFilters"> -->
-            <mat-form-field appearance="outline" class="filter-field mini">
-              <mat-label>
-                <mat-icon class="filter-icon">directions_car</mat-icon>
-                <span class="visually-hidden">Make</span>
-              </mat-label>
-              <input matInput [(ngModel)]="make" placeholder="Make" (input)="onFilterChange()">
-            </mat-form-field>
+          <mat-form-field appearance="outline" class="filter-field mini">
+            <mat-label>
+              <mat-icon class="filter-icon">assignment</mat-icon>
+              <span class="visually-hidden">Test Status</span>
+            </mat-label>
+            <mat-select [(ngModel)]="testStatus" (selectionChange)="onFilterChange()">
+              <mat-option value="">All Status</mat-option>
+              <mat-option value="In Progress">In Progress</mat-option>
+              <mat-option value="Completed">Completed</mat-option>
+              <mat-option value="On Hold">On Hold</mat-option>
+              <mat-option value="Failed">Failed</mat-option>
+              <mat-option value="Passed">Passed</mat-option>
+            </mat-select>
+          </mat-form-field>
 
-            <mat-form-field appearance="outline" class="filter-field mini">
-              <mat-label>
-                <mat-icon class="filter-icon">model_training</mat-icon>
-                <span class="visually-hidden">Model</span>
-              </mat-label>
-              <input matInput [(ngModel)]="model" placeholder="Model" (input)="onFilterChange()">
-            </mat-form-field>
+          <mat-form-field appearance="outline" class="filter-field mini">
+            <mat-label>
+              <mat-icon class="filter-icon">directions_car</mat-icon>
+              <span class="visually-hidden">Vehicle Make</span>
+            </mat-label>
+            <input matInput [(ngModel)]="vehicleMake" placeholder="Vehicle Make" (input)="onFilterChange()">
+          </mat-form-field>
 
-            <mat-form-field appearance="outline" class="filter-field mini">
-              <mat-label>
-                <mat-icon class="filter-icon">person</mat-icon>
-                <span class="visually-hidden">Sales Person</span>
-              </mat-label>
-              <input matInput [(ngModel)]="salesPersonName" placeholder="Sales Person" (input)="onFilterChange()">
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="filter-field mini">
-              <mat-label>
-                <mat-icon class="filter-icon">supervisor_account</mat-icon>
-                <span class="visually-hidden">Sales Lead</span>
-              </mat-label>
-              <input matInput [(ngModel)]="leadName" placeholder="Sales Lead" (input)="onFilterChange()">
-            </mat-form-field>
-          <!-- </ng-container> -->
+          <mat-form-field appearance="outline" class="filter-field mini">
+            <mat-label>
+              <mat-icon class="filter-icon">person</mat-icon>
+              <span class="visually-hidden">Test Engineer</span>
+            </mat-label>
+            <input matInput [(ngModel)]="testEngineer" placeholder="Test Engineer" (input)="onFilterChange()">
+          </mat-form-field>
 
           <div class="filter-actions compact-actions" style="display: flex; gap: 10px; align-items: center;">
             <button mat-raised-button color="primary"
@@ -138,14 +139,14 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <!-- Loading State -->
     <div class="loading-container" *ngIf="isLoading">
       <div class="loading-spinner">
         <div class="spinner"></div>
       </div>
-      <div class="loading-text">Loading vehicle data...</div>
+      <div class="loading-text">Loading test vehicle data...</div>
     </div>
 
     <!-- Enhanced Table Container -->
@@ -153,22 +154,22 @@
       <div class="table-header">
         <div class="table-title">
           <i class="fas fa-table"></i>
-          <span>Vehicle Data</span>
+          <span>Test Vehicle Data</span>
         </div>
         <div class="table-actions">
           <button mat-stroked-button (click)="exportData('csv')" class="export-btn">
             <i class="fas fa-download"></i>
             <span>Export CSV</span>
           </button>
-          <!-- <button mat-stroked-button (click)="exportData('pdf')" class="export-btn">
-            <i class="fas fa-file-pdf"></i>
-            <span>Export PDF</span>
+          <!-- <button mat-stroked-button (click)="generateTestReport()" class="export-btn">
+            <i class="fas fa-file-alt"></i>
+            <span>Test Report</span>
           </button> -->
         </div>
       </div>
       
       <div class="responsive-table">
-        <table mat-table [dataSource]="dataSource" matSort class="enhanced-table">
+        <table mat-table [dataSource]="dataSource" matSort #sort class="enhanced-table">
           <!-- Enhanced column definitions -->
           <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
             <th mat-header-cell *matHeaderCellDef mat-sort-header class="enhanced-header"> 
@@ -179,7 +180,15 @@
             </th>
             <td mat-cell *matCellDef="let item" [class.truncate]="shouldTruncate(column)" class="enhanced-cell">
               <div class="cell-content">
-                <span>{{ getColumnValue(item, column) }}</span>
+                <span *ngIf="column === 'testStatus'" 
+                      class="status-badge"
+                      [class.active]="item.testStatus === 'Passed' || item.testStatus === 'Completed'"
+                      [class.in-progress]="item.testStatus === 'In Progress'"
+                      [class.failed]="item.testStatus === 'Failed'"
+                      [class.on-hold]="item.testStatus === 'On Hold'">
+                  {{ item.testStatus }}
+                </span>
+                <span *ngIf="column !== 'testStatus'">{{ getColumnValue(item, column) }}</span>
               </div>
             </td>
           </ng-container>
@@ -191,7 +200,7 @@
             <td class="mat-cell no-data-cell" [attr.colspan]="displayedColumns.length">
               <div class="no-data-content">
                 <i class="fas fa-search"></i>
-                <span>No vehicles found matching the selected criteria</span>
+                <span>No test vehicles found matching the selected criteria</span>
               </div>
             </td>
           </tr>
@@ -199,14 +208,15 @@
       </div>
     
       <mat-paginator 
-        [pageSizeOptions]="[5, 10, 25, 100]"
+        #paginator
+        [pageSizeOptions]="[5, 10, 25, 50]"
         [pageSize]="10"
-        [length]="totalVehicles"
+        [length]="totalTestVehicles"
         showFirstLastButtons
-        aria-label="Select page of vehicles"
+        aria-label="Select page of test vehicles"
         class="enhanced-paginator">
       </mat-paginator>
     </div>
   </div>
 </body>
-</html>
+</html> 

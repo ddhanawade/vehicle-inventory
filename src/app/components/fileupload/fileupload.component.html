@@ -1,41 +1,331 @@
-<mat-card class="file-upload-wrapper">
-  <mat-card-title class="upload-title">Upload Your Fleet Data</mat-card-title>
-  <div class="file-upload-container">
-    <label for="fileInput" class="file-label">
-      <mat-icon class="upload-icon">cloud_upload</mat-icon>
-      Select File to Upload
-    </label>
-    <input id="fileInput" type="file" (change)="onFileSelected($event)" />
-    <span *ngIf="selectedFileName" class="file-name">
-      <mat-icon class="file-icon">description</mat-icon>
-      {{ selectedFileName }}
-    </span>
-    <div class="button-group">
-      <button mat-raised-button color="primary" (click)="uploadFile()" [disabled]="isLoading">
-        <mat-icon *ngIf="!isLoading">publish</mat-icon>
-        <span *ngIf="!isLoading">Upload File</span>
-        <mat-progress-spinner *ngIf="isLoading" diameter="20" mode="indeterminate"></mat-progress-spinner>
+<!-- Enhanced Dual-Functionality File Upload Component -->
+<div class="dual-upload-container">
+  
+  <!-- Modern Header Section -->
+  <div class="upload-header">
+    <div class="header-icon">
+      <i class="fas fa-cloud-upload-alt"></i>
+    </div>
+    <h2 class="upload-title">File Upload Center</h2>
+    <p class="upload-subtitle">Manage your fleet data and test vehicle uploads</p>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="tab-navigation">
+    <div class="tab-buttons">
+      <button 
+        class="tab-button"
+        [class.active]="activeTab === 'fleet'"
+        (click)="switchTab('fleet')">
+        <mat-icon>directions_car</mat-icon>
+        <span>Fleet Data Upload</span>
+        <div class="tab-indicator"></div>
       </button>
-      <button mat-raised-button color="accent" (click)="downloadTemplate()">
-        <mat-icon>file_download</mat-icon>
-        Download Template
+      <button 
+        class="tab-button"
+        [class.active]="activeTab === 'test'"
+        (click)="switchTab('test')">
+        <mat-icon>build</mat-icon>
+        <span>Test Vehicles Upload</span>
+        <div class="tab-indicator"></div>
       </button>
     </div>
-    <mat-card *ngIf="successMessage" class="success-card">
-      <mat-card-content>
-        <mat-icon color="primary">check_circle</mat-icon>
-        <span>{{ successMessage }}</span>
-      </mat-card-content>
-    </mat-card>
-    <mat-card *ngIf="errorMessage" class="error-card">
-      <mat-card-content>
-        <mat-icon color="warn">error</mat-icon>
-        <span>{{ errorMessage }}</span>
-      </mat-card-content>
+  </div>
+
+  <!-- Fleet Data Upload Tab -->
+  <div class="tab-content" *ngIf="activeTab === 'fleet'">
+    <mat-card class="modern-upload-card fleet-card">
+      
+      <!-- Fleet Header -->
+      <div class="upload-section-header">
+        <div class="section-icon fleet-icon">
+          <mat-icon>fleet_management</mat-icon>
+        </div>
+        <div class="section-info">
+          <h3>Fleet Data Upload</h3>
+          <p>Upload your vehicle fleet management data</p>
+        </div>
+      </div>
+
+      <!-- Drag & Drop Zone for Fleet -->
+      <div class="drop-zone" 
+           [class.drag-over]="fleetDragOver"
+           (dragover)="onDragOver($event, 'fleet')"
+           (dragleave)="onDragLeave('fleet')"
+           (drop)="onDrop($event, 'fleet')">
+        
+        <!-- Upload Icon Animation -->
+        <div class="upload-icon-container">
+          <div class="upload-icon-wrapper">
+            <mat-icon class="upload-icon animated">cloud_upload</mat-icon>
+          </div>
+        </div>
+
+        <!-- Upload Content -->
+        <div class="upload-content">
+          <h3 class="drop-text">Drop your fleet data file here</h3>
+          <p class="drop-subtext">or</p>
+          
+          <!-- File Input Section -->
+          <div class="file-input-section">
+            <label for="fleetFileInput" class="enhanced-file-label">
+              <mat-icon>folder_open</mat-icon>
+              <span>Browse Fleet Data</span>
+            </label>
+            <input id="fleetFileInput" 
+                   type="file" 
+                   (change)="onFileSelected($event, 'fleet')" 
+                   accept=".csv,.xlsx,.xls" />
+          </div>
+
+          <!-- File Info -->
+          <div class="file-formats">
+            <span class="format-text">Supported formats:</span>
+            <div class="format-badges">
+              <span class="format-badge">CSV</span>
+              <!-- <span class="format-badge">XLSX</span>
+              <span class="format-badge">XLS</span> -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Selected File Display -->
+        <div class="selected-file" *ngIf="fleetSelectedFileName">
+          <div class="file-preview">
+            <div class="file-icon-container">
+              <mat-icon class="file-icon">description</mat-icon>
+            </div>
+            <div class="file-details">
+              <span class="file-name">{{ fleetSelectedFileName }}</span>
+              <span class="file-size">{{ getFileSize(fleetSelectedFile) }}</span>
+            </div>
+            <button class="remove-file-btn" (click)="removeFile('fleet')">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons for Fleet -->
+      <div class="action-buttons">
+        <button mat-raised-button 
+                class="upload-btn primary"
+                (click)="uploadFile('fleet')" 
+                [disabled]="!fleetSelectedFileName || fleetIsLoading">
+          <div class="btn-content">
+            <mat-icon *ngIf="!fleetIsLoading">publish</mat-icon>
+            <span *ngIf="!fleetIsLoading">Upload Fleet Data</span>
+            <mat-progress-spinner *ngIf="fleetIsLoading" 
+                                  diameter="20" 
+                                  mode="indeterminate">
+            </mat-progress-spinner>
+            <span *ngIf="fleetIsLoading">Uploading...</span>
+          </div>
+        </button>
+        
+        <button mat-raised-button 
+                class="template-btn secondary"
+                (click)="downloadTemplate('fleet')">
+          <mat-icon>file_download</mat-icon>
+          <span>Download Fleet Template</span>
+        </button>
+      </div>
+
+      <!-- Fleet Messages -->
+      <div class="message-container">
+        <!-- Success Message -->
+        <div class="success-message animate-in" *ngIf="fleetSuccessMessage">
+          <div class="message-content">
+            <div class="message-icon success">
+              <mat-icon>check_circle</mat-icon>
+            </div>
+            <div class="message-text">
+              <h4>Fleet Upload Successful!</h4>
+              <p>{{ fleetSuccessMessage }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Error Message -->
+        <div class="error-message animate-in" *ngIf="fleetErrorMessage">
+          <div class="message-content">
+            <div class="message-icon error">
+              <mat-icon>error</mat-icon>
+            </div>
+            <div class="message-text">
+              <h4>Fleet Upload Failed</h4>
+              <p>{{ fleetErrorMessage }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </mat-card>
   </div>
-  <p class="upload-note centered-note">
-    <mat-icon color="warn" class="note-icon">warning</mat-icon>
-    Ensure your file matches the template format to avoid errors.
-  </p>
-</mat-card>
+
+  <!-- Test Vehicles Upload Tab -->
+  <div class="tab-content" *ngIf="activeTab === 'test'">
+    <mat-card class="modern-upload-card test-card">
+      
+      <!-- Test Header -->
+      <div class="upload-section-header">
+        <div class="section-icon test-icon">
+          <mat-icon>engineering</mat-icon>
+        </div>
+        <div class="section-info">
+          <h3>Test Vehicles Upload</h3>
+          <p>Upload test vehicle data and configurations</p>
+        </div>
+      </div>
+
+      <!-- Drag & Drop Zone for Test -->
+      <div class="drop-zone" 
+           [class.drag-over]="testDragOver"
+           (dragover)="onDragOver($event, 'test')"
+           (dragleave)="onDragLeave('test')"
+           (drop)="onDrop($event, 'test')">
+        
+        <!-- Upload Icon Animation -->
+        <div class="upload-icon-container">
+          <div class="upload-icon-wrapper">
+            <mat-icon class="upload-icon animated">science</mat-icon>
+          </div>
+        </div>
+
+        <!-- Upload Content -->
+        <div class="upload-content">
+          <h3 class="drop-text">Drop your test vehicle file here</h3>
+          <p class="drop-subtext">or</p>
+          
+          <!-- File Input Section -->
+          <div class="file-input-section">
+            <label for="testFileInput" class="enhanced-file-label">
+              <mat-icon>folder_open</mat-icon>
+              <span>Browse Test Data</span>
+            </label>
+            <input id="testFileInput" 
+                   type="file" 
+                   (change)="onFileSelected($event, 'test')" 
+                   accept=".csv,.xlsx,.xls" />
+          </div>
+
+          <!-- File Info -->
+          <div class="file-formats">
+            <span class="format-text">Supported formats:</span>
+            <div class="format-badges">
+              <span class="format-badge">CSV</span>
+              <!-- <span class="format-badge">XLSX</span>
+              <span class="format-badge">XLS</span> -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Selected File Display -->
+        <div class="selected-file" *ngIf="testSelectedFileName">
+          <div class="file-preview">
+            <div class="file-icon-container">
+              <mat-icon class="file-icon">description</mat-icon>
+            </div>
+            <div class="file-details">
+              <span class="file-name">{{ testSelectedFileName }}</span>
+              <span class="file-size">{{ getFileSize(testSelectedFile) }}</span>
+            </div>
+            <button class="remove-file-btn" (click)="removeFile('test')">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons for Test -->
+      <div class="action-buttons">
+        <button mat-raised-button 
+                class="upload-btn primary"
+                (click)="uploadFile('test')" 
+                [disabled]="!testSelectedFileName || testIsLoading">
+          <div class="btn-content">
+            <mat-icon *ngIf="!testIsLoading">science</mat-icon>
+            <span *ngIf="!testIsLoading">Upload Test Data</span>
+            <mat-progress-spinner *ngIf="testIsLoading" 
+                                  diameter="20" 
+                                  mode="indeterminate">
+            </mat-progress-spinner>
+            <span *ngIf="testIsLoading">Processing...</span>
+          </div>
+        </button>
+        
+        <button mat-raised-button 
+                class="template-btn secondary"
+                (click)="downloadTemplate('test')">
+          <mat-icon>file_download</mat-icon>
+          <span>Download Test Template</span>
+        </button>
+      </div>
+
+      <!-- Test Messages -->
+      <div class="message-container">
+        <!-- Success Message -->
+        <div class="success-message animate-in" *ngIf="testSuccessMessage">
+          <div class="message-content">
+            <div class="message-icon success">
+              <mat-icon>check_circle</mat-icon>
+            </div>
+            <div class="message-text">
+              <h4>Test Upload Successful!</h4>
+              <p>{{ testSuccessMessage }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Error Message -->
+        <div class="error-message animate-in" *ngIf="testErrorMessage">
+          <div class="message-content">
+            <div class="message-icon error">
+              <mat-icon>error</mat-icon>
+            </div>
+            <div class="message-text">
+              <h4>Test Upload Failed</h4>
+              <p>{{ testErrorMessage }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+
+  <!-- Enhanced Info Section -->
+  <div class="info-section">
+    <div class="info-cards">
+      <!-- Fleet Info Card -->
+      <div class="info-card fleet-info" *ngIf="activeTab === 'fleet'">
+        <div class="info-icon">
+          <mat-icon>info</mat-icon>
+        </div>
+        <div class="info-content">
+          <h4>Fleet Upload Guidelines</h4>
+          <ul class="info-list">
+            <li>Ensure your file matches the fleet template format</li>
+            <li>Include all vehicle identification details</li>
+            <li>Maximum file size: 10MB</li>
+            <li>All required columns must be filled</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Test Info Card -->
+      <div class="info-card test-info" *ngIf="activeTab === 'test'">
+        <div class="info-icon">
+          <mat-icon>info</mat-icon>
+        </div>
+        <div class="info-content">
+          <h4>Test Vehicle Guidelines</h4>
+          <ul class="info-list">
+            <li>Include test configuration parameters</li>
+            <li>Specify test vehicle categories</li>
+            <li>Maximum file size: 10MB</li>
+            <li>Include test results and metrics</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

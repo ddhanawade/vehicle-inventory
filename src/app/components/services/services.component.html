@@ -5,61 +5,356 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vehicle Inventory Management - Services</title>
-    <!-- <link rel="stylesheet" href="styles.css"> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
 <body>
   <div class="page-container">
     <div class="services-container">
-      <div class="services-header">
-        <h1><i class="fas fa-tools"></i> Our Services</h1>
+      <div class="services-header" (mouseenter)="onHeaderHover()" (mouseleave)="onHeaderLeave()">
+        <!-- Animated Background Elements -->
+        <div class="header-bg-elements">
+          <div class="floating-icon" style="animation-delay: 0s;"><i class="fas fa-car"></i></div>
+          <div class="floating-icon" style="animation-delay: 1s;"><i class="fas fa-cogs"></i></div>
+          <div class="floating-icon" style="animation-delay: 2s;"><i class="fas fa-chart-line"></i></div>
+          <div class="floating-icon" style="animation-delay: 0.5s;"><i class="fas fa-warehouse"></i></div>
+        </div>
+        
+        <!-- Animated Gradient Overlay -->
+        <div class="gradient-overlay"></div>
+        
+        <!-- Main Header Content -->
+        <div class="header-content">
+          <h1 class="animated-heading" [class.hovered]="isHeaderHovered">
+            <span class="icon-wrapper">
+              <i class="fas fa-tools main-icon"></i>
+              <div class="icon-pulse"></div>
+            </span>
+            <span class="title-text">
+              <span class="word" style="animation-delay: 0.1s;">Our</span>
+              <span class="word" style="animation-delay: 0.3s;">Services</span>
+            </span>
+          </h1>
+          
+          <!-- Subtitle with typewriter effect -->
+          <p class="subtitle" [class.show]="showSubtitle">
+            <span class="typewriter">Comprehensive solutions for your vehicle management needs</span>
+          </p>
+          
+          <!-- Interactive Elements -->
+          <div class="header-decorations">
+            <div class="sparkle" *ngFor="let sparkle of sparkles; let i = index" 
+                 [style.left.%]="sparkle.x" 
+                 [style.top.%]="sparkle.y"
+                 [style.animation-delay.s]="sparkle.delay">
+              ✨
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="services-grid">
-        <div class="service-card">
+        <!-- Inventory Management Card -->
+        <div class="service-card inventory-card" 
+             (mouseenter)="onInventoryHover()" 
+             (mouseleave)="onInventoryLeave()">
           <div class="service-icon">
             <i class="fas fa-warehouse"></i>
           </div>
           <h2>Inventory Management</h2>
           <p>Our Inventory Management service ensures that your vehicle inventory is accurately tracked, updated, and managed efficiently.</p>
-          <a routerLink="/home-page" class="service-link">Vehicle Tracking <i class="fas fa-arrow-right"></i></a>
+          
+          <!-- Interactive Inventory Options -->
+          <div class="service-options" [class.expanded]="isInventoryHovered">
+            <div class="options-header">
+              <span class="options-title">
+                <i class="fas fa-warehouse"></i>
+                Management Features
+              </span>
+              <div class="feature-count">4 Features</div>
+            </div>
+            
+            <div class="feature-grid">
+              <div class="feature-item" 
+                   (mouseenter)="onFeatureHover('tracking')"
+                   (mouseleave)="onFeatureLeave()">
+                <div class="feature-icon">
+                  <i class="fas fa-search-location"></i>
+                </div>
+                <div class="feature-info">
+                  <span class="feature-name">Real-time Tracking</span>
+                  <span class="feature-desc">Live vehicle status</span>
+                </div>
+              </div>
+              
+              <div class="feature-item"
+                   (mouseenter)="onFeatureHover('updates')"
+                   (mouseleave)="onFeatureLeave()">
+                <div class="feature-icon">
+                  <i class="fas fa-sync-alt"></i>
+                </div>
+                <div class="feature-info">
+                  <span class="feature-name">Auto Updates</span>
+                  <span class="feature-desc">Automated sync</span>
+                </div>
+              </div>
+              
+              <div class="feature-item"
+                   (mouseenter)="onFeatureHover('alerts')"
+                   (mouseleave)="onFeatureLeave()">
+                <div class="feature-icon">
+                  <i class="fas fa-bell"></i>
+                </div>
+                <div class="feature-info">
+                  <span class="feature-name">Smart Alerts</span>
+                  <span class="feature-desc">Instant notifications</span>
+                </div>
+              </div>
+              
+              <div class="feature-item"
+                   (mouseenter)="onFeatureHover('analytics')"
+                   (mouseleave)="onFeatureLeave()">
+                <div class="feature-icon">
+                  <i class="fas fa-chart-bar"></i>
+                </div>
+                <div class="feature-info">
+                  <span class="feature-name">Data Analytics</span>
+                  <span class="feature-desc">Performance insights</span>
+                </div>
+              </div>
+            </div>
+            
+            <a routerLink="/home-page" class="primary-action-btn">
+              <i class="fas fa-arrow-right"></i>
+              Access Vehicle Tracking
+            </a>
+          </div>
         </div>
 
-        <div class="service-card">
+        <!-- Bulk Upload Card -->
+        <div class="service-card upload-card" 
+             (mouseenter)="onUploadHover()" 
+             (mouseleave)="onUploadLeave()">
           <div class="service-icon">
-            <i class="fas fa-map-marker-alt"></i>
+            <i class="fas fa-upload"></i>
           </div>
           <h2>Bulk Upload</h2>
-          <p>Bulk Upload enables seamless and efficient updating of data in a single operation.</p>
-          <!-- <a class="service-link">Learn More <i class="fas fa-arrow-right"></i></a> -->
-          <a routerLink="/bulk-upload" class="service-link">Bulk Upload <i class="fas fa-arrow-right"></i></a>
+          <p>Bulk Upload enables seamless and efficient updating of data in a single operation with comprehensive validation.</p>
+          
+          <!-- Interactive Upload Options -->
+          <div class="service-options" [class.expanded]="isUploadHovered">
+            <div class="options-header">
+              <span class="options-title">
+                <i class="fas fa-upload"></i>
+                Upload Capabilities
+              </span>
+              <div class="feature-count">3 Methods</div>
+            </div>
+            
+            <div class="upload-methods">
+              <div class="method-item"
+                   (mouseenter)="onMethodHover('csv')"
+                   (mouseleave)="onMethodLeave()">
+                <div class="method-icon">
+                  <i class="fas fa-file-csv"></i>
+                </div>
+                <div class="method-info">
+                  <span class="method-name">CSV Import</span>
+                  <span class="method-desc">Excel & CSV files</span>
+                </div>
+                <div class="method-status">
+                  <i class="fas fa-check-circle"></i>
+                </div>
+              </div>
+              
+              <div class="method-item"
+                   (mouseenter)="onMethodHover('batch')"
+                   (mouseleave)="onMethodLeave()">
+                <div class="method-icon">
+                  <i class="fas fa-layer-group"></i>
+                </div>
+                <div class="method-info">
+                  <span class="method-name">Batch Processing</span>
+                  <span class="method-desc">Multiple files at once</span>
+                </div>
+                <div class="method-status">
+                  <i class="fas fa-check-circle"></i>
+                </div>
+              </div>
+              
+              <div class="method-item"
+                   (mouseenter)="onMethodHover('validation')"
+                   (mouseleave)="onMethodLeave()">
+                <div class="method-icon">
+                  <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="method-info">
+                  <span class="method-name">Error Validation</span>
+                  <span class="method-desc">Data quality checks</span>
+                </div>
+                <div class="method-status">
+                  <i class="fas fa-check-circle"></i>
+                </div>
+              </div>
+            </div>
+            
+            <a routerLink="/bulk-upload" class="primary-action-btn">
+              <i class="fas fa-cloud-upload-alt"></i>
+              Start Bulk Upload
+            </a>
+          </div>
         </div>
 
-        <!-- <div class="service-card">
-          <div class="service-icon">
-            <i class="fas fa-chart-line"></i>
-          </div>
-          <h2>Sales Management</h2>
-          <p>Our Sales Management tool helps you manage your sales pipeline, track leads, and improve your sales process.</p>
-          <a class="service-link">Learn More <i class="fas fa-arrow-right"></i></a>
-        </div> -->
-
-        <div class="service-card">
+        <!-- Reporting & Analytics Card -->
+        <div class="service-card reporting-card" 
+             (mouseenter)="onReportingHover()" 
+             (mouseleave)="onReportingLeave()">
           <div class="service-icon">
             <i class="fas fa-chart-bar"></i>
           </div>
           <h2>Reporting & Analytics</h2>
-          <p>We offer comprehensive reporting and analytics to give you insights into your inventory and sales.</p>
-          <a routerLink="/monthly-report" class="service-link">View Reports <i class="fas fa-arrow-right"></i></a>
+          <p>We offer comprehensive reporting and analytics to give you insights into your inventory and sales performance.</p>
+          
+          <!-- Interactive Report Options -->
+          <div class="service-options" [class.expanded]="isReportingHovered">
+            <div class="options-header">
+              <span class="options-title">
+                <i class="fas fa-chart-line"></i>
+                Available Reports
+              </span>
+              <div class="feature-count">3 Reports</div>
+            </div>
+            
+            <div class="report-buttons">
+              <a routerLink="/monthly-report" 
+                 class="report-button sales-report"
+                 (mouseenter)="onReportButtonHover('sales')"
+                 (mouseleave)="onReportButtonLeave()">
+                <div class="report-icon">
+                  <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="report-info">
+                  <span class="report-name">Sales Report</span>
+                  <span class="report-desc">Monthly sales analytics</span>
+                </div>
+                <i class="fas fa-arrow-right report-arrow"></i>
+              </a>
+              
+              <a routerLink="/purchase-report" 
+                 class="report-button purchase-report"
+                 (mouseenter)="onReportButtonHover('purchase')"
+                 (mouseleave)="onReportButtonLeave()">
+                <div class="report-icon">
+                  <i class="fas fa-shopping-cart"></i>
+                </div>
+                <div class="report-info">
+                  <span class="report-name">Purchase Report</span>
+                  <span class="report-desc">Vehicle purchase analytics</span>
+                </div>
+                <i class="fas fa-arrow-right report-arrow"></i>
+              </a>
+              
+              <a routerLink="/test-vehicle-report" 
+                 class="report-button test-vehicle-report"
+                 (mouseenter)="onReportButtonHover('testVehicle')"
+                 (mouseleave)="onReportButtonLeave()">
+                <div class="report-icon">
+                  <i class="fas fa-flask"></i>
+                </div>
+                <div class="report-info">
+                  <span class="report-name">Test Vehicle Report</span>
+                  <span class="report-desc">Vehicle testing & QA analytics</span>
+                </div>
+                <i class="fas fa-arrow-right report-arrow"></i>
+              </a>
+            </div>
+            
+            <!-- Quick Stats -->
+            <div class="quick-stats">
+              <div class="stat-item">
+                <i class="fas fa-chart-pie"></i>
+                <span>Real-time Data</span>
+              </div>
+              <div class="stat-item">
+                <i class="fas fa-download"></i>
+                <span>Export Ready</span>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="service-card">
+        <!-- Customer Support Card -->
+        <div class="service-card support-card" 
+             (mouseenter)="onSupportHover()" 
+             (mouseleave)="onSupportLeave()">
           <div class="service-icon">
             <i class="fas fa-headset"></i>
           </div>
           <h2>Customer Support</h2>
           <p>Our Customer Support team is here to assist you with any issues or questions you may have about our services.</p>
-          <a href="https://forms.gle/SU3wrwoqz1TnfhQ86" target="_blank" class="service-link">Contact Support <i class="fas fa-arrow-right"></i></a>
+          
+          <!-- Interactive Support Options -->
+          <div class="service-options" [class.expanded]="isSupportHovered">
+            <div class="options-header">
+              <span class="options-title">
+                <i class="fas fa-headset"></i>
+                Support Channels
+              </span>
+              <div class="feature-count">24/7 Available</div>
+            </div>
+            
+            <div class="support-channels">
+              <div class="channel-item"
+                   (mouseenter)="onChannelHover('form')"
+                   (mouseleave)="onChannelLeave()">
+                <div class="channel-icon">
+                  <i class="fas fa-envelope"></i>
+                </div>
+                <div class="channel-info">
+                  <span class="channel-name">Contact Form</span>
+                  <span class="channel-desc">Submit your queries</span>
+                </div>
+                <div class="channel-status">
+                  <span class="status-badge">Active</span>
+                </div>
+              </div>
+              
+              <!-- <div class="channel-item"
+                   (mouseenter)="onChannelHover('chat')"
+                   (mouseleave)="onChannelLeave()">
+                <div class="channel-icon">
+                  <i class="fas fa-comments"></i>
+                </div>
+                <div class="channel-info">
+                  <span class="channel-name">Live Chat</span>
+                  <span class="channel-desc">Instant responses</span>
+                </div>
+                <div class="channel-status">
+                  <span class="status-badge online">Online</span>
+                </div>
+              </div>
+              
+              <div class="channel-item"
+                   (mouseenter)="onChannelHover('docs')"
+                   (mouseleave)="onChannelLeave()">
+                <div class="channel-icon">
+                  <i class="fas fa-book"></i>
+                </div>
+                <div class="channel-info">
+                  <span class="channel-name">Knowledge Base</span>
+                  <span class="channel-desc">Self-help resources</span>
+                </div>
+                <div class="channel-status">
+                  <span class="status-badge">Updated</span>
+                </div>
+              </div> -->
+            </div>
+            
+            <a href="https://forms.gle/SU3wrwoqz1TnfhQ86" target="_blank" class="primary-action-btn">
+              <i class="fas fa-life-ring"></i>
+              Get Support Now
+            </a>
+          </div>
         </div>
       </div>
     </div>

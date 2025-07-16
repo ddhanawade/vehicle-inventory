@@ -21,64 +21,262 @@ import { Location } from '@angular/common';
   styleUrl: './fileupload.component.scss'
 })
 export class FileuploadComponent {
-  [x: string]: any;
 
+  // Tab management
+  activeTab: 'fleet' | 'test' = 'fleet';
+
+  // Fleet data upload properties
+  fleetSelectedFile: File | null = null;
+  fleetSelectedFileName: string | null = null;
+  fleetSuccessMessage: string | null = null;
+  fleetErrorMessage: string | null = null;
+  fleetIsLoading: boolean = false;
+  fleetDragOver: boolean = false;
+
+  // Test vehicles upload properties
+  testSelectedFile: File | null = null;
+  testSelectedFileName: string | null = null;
+  testSuccessMessage: string | null = null;
+  testErrorMessage: string | null = null;
+  testIsLoading: boolean = false;
+  testDragOver: boolean = false;
+
+  // Legacy properties for backward compatibility
   selectedFile: File | null = null;
   selectedFileName: string | null = null;
-
   successMessage: string | null = null;
   errorMessage: string | null = null;
   isUploading = false;
   isLoading: boolean = false;
 
+  constructor(private http: HttpClient, private dataService: DataService) {}
 
-  constructor(private http: HttpClient, private dataService : DataService) {}
+  // Tab switching functionality
+  switchTab(tab: 'fleet' | 'test'): void {
+    this.activeTab = tab;
+    this.clearMessages();
+  }
 
-  onFileSelected(event: Event): void {
+  // File selection handler
+  onFileSelected(event: Event, type: 'fleet' | 'test'): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
-      this.selectedFile = input.files[0];
-      this.selectedFileName = this.selectedFile.name;
+      const file = input.files[0];
+      
+      if (type === 'fleet') {
+        this.fleetSelectedFile = file;
+        this.fleetSelectedFileName = file.name;
+        this.fleetErrorMessage = null;
+        this.fleetSuccessMessage = null;
+      } else {
+        this.testSelectedFile = file;
+        this.testSelectedFileName = file.name;
+        this.testErrorMessage = null;
+        this.testSuccessMessage = null;
+      }
     } else {
-      this.selectedFile = null;
-      this.selectedFileName = null;
+      if (type === 'fleet') {
+        this.fleetSelectedFile = null;
+        this.fleetSelectedFileName = null;
+      } else {
+        this.testSelectedFile = null;
+        this.testSelectedFileName = null;
+      }
     }
   }
 
-  uploadFile(): void {
-    if (!this.selectedFile) {
-      this.errorMessage = "Please select a file before uploading.";
-      this.successMessage = ''; // Clear success message
-      return;
+  // Drag and drop handlers
+  onDragOver(event: DragEvent, type: 'fleet' | 'test'): void {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    if (type === 'fleet') {
+      this.fleetDragOver = true;
+    } else {
+      this.testDragOver = true;
+    }
+  }
+
+  onDragLeave(type: 'fleet' | 'test'): void {
+    if (type === 'fleet') {
+      this.fleetDragOver = false;
+    } else {
+      this.testDragOver = false;
+    }
+  }
+
+  onDrop(event: DragEvent, type: 'fleet' | 'test'): void {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    if (type === 'fleet') {
+      this.fleetDragOver = false;
+    } else {
+      this.testDragOver = false;
     }
 
-    this.isLoading = true; // Show spinner
-    this.successMessage = null;
-    this.errorMessage = null;
+    const files = event.dataTransfer?.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      
+      // Check file type
+      const allowedTypes = ['.csv', '.xlsx', '.xls'];
+      const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
+      
+      if (allowedTypes.includes(fileExtension)) {
+        if (type === 'fleet') {
+          this.fleetSelectedFile = file;
+          this.fleetSelectedFileName = file.name;
+          this.fleetErrorMessage = null;
+          this.fleetSuccessMessage = null;
+        } else {
+          this.testSelectedFile = file;
+          this.testSelectedFileName = file.name;
+          this.testErrorMessage = null;
+          this.testSuccessMessage = null;
+        }
+      } else {
+        if (type === 'fleet') {
+          this.fleetErrorMessage = 'Please select a valid file type (CSV, XLSX, XLS)';
+        } else {
+          this.testErrorMessage = 'Please select a valid file type (CSV, XLSX, XLS)';
+        }
+      }
+    }
+  }
+
+  // File upload handler
+  uploadFile(type: 'fleet' | 'test'): void {
+    let selectedFile: File | null;
+    
+    if (type === 'fleet') {
+      selectedFile = this.fleetSelectedFile;
+      if (!selectedFile) {
+        this.fleetErrorMessage = "Please select a file before uploading.";
+        this.fleetSuccessMessage = null;
+        return;
+      }
+      this.fleetIsLoading = true;
+      this.fleetSuccessMessage = null;
+      this.fleetErrorMessage = null;
+    } else {
+      selectedFile = this.testSelectedFile;
+      if (!selectedFile) {
+        this.testErrorMessage = "Please select a file before uploading.";
+        this.testSuccessMessage = null;
+        return;
+      }
+      this.testIsLoading = true;
+      this.testSuccessMessage = null;
+      this.testErrorMessage = null;
+    }
 
     const formData = new FormData();
-    formData.append('file', this.selectedFile);
+    formData.append('file', selectedFile);
 
-    this.dataService.bulkUpload(formData).subscribe({
+    if (type === 'fleet') {
+      // Use existing fleet data upload API
+      this.dataService.bulkUpload(formData).subscribe({
+        next: (response: any) => {
+          this.fleetIsLoading = false;
+          this.fleetSuccessMessage = response.message || 'Fleet data uploaded successfully!';
+          this.fleetErrorMessage = null;
+        },
+        error: (error: any) => {
+          this.fleetIsLoading = false;
+          this.fleetErrorMessage = "Fleet data upload failed. Please try again.";
+          this.fleetSuccessMessage = null;
+          console.error('Fleet upload error:', error);
+        }
+      });
+    } else {
+      // Use test vehicles upload API (you'll need to implement this in DataService)
+      this.uploadTestVehicles(formData);
+    }
+  }
+
+  // Test vehicles upload method (placeholder for future API implementation)
+  uploadTestVehicles(formData: FormData): void {
+    console.log("uploadTestVehicles" + JSON.stringify(formData));
+    this.dataService.uploadTestVehicles(formData).subscribe({
       next: (response: any) => {
-        this.isLoading = false; // Hide spinner
-        this.successMessage = response.message; // Access the 'message' property
-        this.errorMessage = ''; // Clear error message
+        this.testIsLoading = false;
+        this.testSuccessMessage = response.message || 'Test vehicle data uploaded successfully!';
+        this.testErrorMessage = null;
       },
       error: (error: any) => {
-        this.isLoading = false; // Hide spinner
-        this.errorMessage =  "File upload failed. Please try again."; // Handle error message
-        this.successMessage = ''; // Clear success message
-        this['location'].reload(); // Refresh the component
+        this.testIsLoading = false;
+        this.testErrorMessage = "Test vehicle upload failed. Please try again.";
+        this.testSuccessMessage = null;
+        console.error('Test upload error:', error);
       }
     });
   }
 
-  downloadTemplate(): void {
+  // Template download handler
+  downloadTemplate(type: 'fleet' | 'test'): void {
     const link = document.createElement('a');
-    link.href = 'assets/Demo_File_Fleet_Manager.csv';
-    link.download = 'Demo_File_Fleet_Manager.csv';
+    
+    if (type === 'fleet') {
+      link.href = 'assets/Demo_File_Fleet_Manager.csv';
+      link.download = 'Demo_File_Fleet_Manager.csv';
+    } else {
+      // TODO: Add test vehicle template file
+      link.href = 'assets/Demo_File_Test_Vehicles.csv';
+      link.download = 'Demo_File_Test_Vehicles.csv';
+    }
+    
     link.click();
   }
 
+  // Remove selected file
+  removeFile(type: 'fleet' | 'test'): void {
+    if (type === 'fleet') {
+      this.fleetSelectedFile = null;
+      this.fleetSelectedFileName = null;
+      this.fleetErrorMessage = null;
+      this.fleetSuccessMessage = null;
+    } else {
+      this.testSelectedFile = null;
+      this.testSelectedFileName = null;
+      this.testErrorMessage = null;
+      this.testSuccessMessage = null;
+    }
+  }
+
+  // Get file size in human readable format
+  getFileSize(file: File | null): string {
+    if (!file) return '';
+    
+    const bytes = file.size;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    
+    if (bytes === 0) return '0 Bytes';
+    
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
+  }
+
+  // Clear all messages
+  clearMessages(): void {
+    this.fleetSuccessMessage = null;
+    this.fleetErrorMessage = null;
+    this.testSuccessMessage = null;
+    this.testErrorMessage = null;
+  }
+
+  // Legacy method for backward compatibility
+  onFileSelected_Legacy(event: Event): void {
+    this.onFileSelected(event, 'fleet');
+  }
+
+  // Legacy method for backward compatibility
+  uploadFile_Legacy(): void {
+    this.uploadFile('fleet');
+  }
+
+  // Legacy method for backward compatibility
+  downloadTemplate_Legacy(): void {
+    this.downloadTemplate('fleet');
+  }
 }

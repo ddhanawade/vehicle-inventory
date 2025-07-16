@@ -1,157 +1,577 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vehicle Inventory Management</title>
-</head>
-
-<body>
-   <div class="page-container">
-  <div class="add-vehicle-container">
-    <div class="form-header">
-      <h2><i class="fas fa-car"></i> Add Vehicle</h2>
-        <!-- <div class="stepper">
-            <div *ngFor="let step of steps; let i = index"
-                [class.active]="currentTab === i"
-                [class.completed]="i < currentTab">
-            {{ i + 1 }}
-            </div>
-        </div> -->
-    </div>
-    <form [formGroup]="vehicleForm" (ngSubmit)="onSubmit()">
-      <div class="tab-container">
-        <!-- Tab Navigation -->
-        <div class="tab-header">
-          <button type="button" class="tab-button" [class.active]="currentTab === 0" (click)="setTab(0)">
-            <i class="fas fa-info-circle"></i>
-            <span>Basic Details</span>
-          </button>
-          <button type="button" class="tab-button" [class.active]="currentTab === 1" (click)="setTab(1)">
-            <i class="fas fa-cogs"></i>
-            <span>Specifications</span>
-          </button>
-          <button type="button" class="tab-button" [class.active]="currentTab === 2" (click)="setTab(2)">
-            <i class="fas fa-clipboard-list"></i>
-            <span>Additional Info</span>
-          </button>
+<!-- Enhanced Add Vehicle Component -->
+<div class="add-vehicle-container">
+  <!-- Enhanced Header Section -->
+  <div class="form-header">
+    <div class="header-content">
+      <div class="header-title">
+        <div class="title-icon">
+          <i class="fas fa-car"></i>
         </div>
+        <div class="title-text">
+          <h2>Add New Vehicle</h2>
+          <p class="subtitle">Add a new vehicle to your inventory with detailed specifications</p>
+        </div>
+      </div>
+      
+      <!-- Progress Indicator -->
+      <div class="progress-section">
+        <div class="progress-steps">
+          <div class="step" [class.active]="currentTab === 0" [class.completed]="currentTab > 0">
+            <div class="step-circle">
+              <i class="fas fa-info-circle" *ngIf="currentTab >= 0"></i>
+              <i class="fas fa-check" *ngIf="currentTab > 0"></i>
+            </div>
+            <span class="step-label">Basic Details</span>
+          </div>
+          <div class="step-connector" [class.completed]="currentTab > 0"></div>
+          <div class="step" [class.active]="currentTab === 1" [class.completed]="currentTab > 1">
+            <div class="step-circle">
+              <i class="fas fa-cogs" *ngIf="currentTab >= 1"></i>
+              <i class="fas fa-check" *ngIf="currentTab > 1"></i>
+            </div>
+            <span class="step-label">Specifications</span>
+          </div>
+          <div class="step-connector" [class.completed]="currentTab > 1"></div>
+          <div class="step" [class.active]="currentTab === 2" [class.completed]="currentTab > 2">
+            <div class="step-circle">
+              <i class="fas fa-clipboard-list" *ngIf="currentTab >= 2"></i>
+              <i class="fas fa-check" *ngIf="currentTab > 2"></i>
+            </div>
+            <span class="step-label">Additional Info</span>
+          </div>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width.%]="getProgressPercentage()"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 
+  <!-- Form Container -->
+  <div class="form-container">
+    <form [formGroup]="vehicleForm" (ngSubmit)="onSubmit()" class="enhanced-form">
+      <!-- Tab Navigation -->
+      <div class="tab-navigation">
+        <button type="button" class="tab-button" 
+                [class.active]="currentTab === 0" 
+                [class.completed]="currentTab > 0"
+                [class.disabled]="false"
+                (click)="setTab(0)">
+          <div class="tab-icon">
+            <i class="fas fa-info-circle"></i>
+          </div>
+          <div class="tab-content">
+            <span class="tab-title">Basic Details</span>
+            <span class="tab-description">Vehicle make, model, and basic info</span>
+          </div>
+          <div class="tab-indicator"></div>
+        </button>
+        
+        <button type="button" class="tab-button" 
+                [class.active]="currentTab === 1" 
+                [class.completed]="currentTab > 1"
+                [class.disabled]="currentTab < 1 && !isCurrentTabValid()"
+                (click)="setTab(1)">
+          <div class="tab-icon">
+            <i class="fas fa-cogs"></i>
+          </div>
+          <div class="tab-content">
+            <span class="tab-title">Specifications</span>
+            <span class="tab-description">Technical details and identifiers</span>
+          </div>
+          <div class="tab-indicator"></div>
+        </button>
+        
+        <button type="button" class="tab-button" 
+                [class.active]="currentTab === 2" 
+                [class.completed]="currentTab > 2"
+                [class.disabled]="currentTab < 2 && !isCurrentTabValid()"
+                (click)="setTab(2)">
+          <div class="tab-icon">
+            <i class="fas fa-clipboard-list"></i>
+          </div>
+          <div class="tab-content">
+            <span class="tab-title">Additional Info</span>
+            <span class="tab-description">Purchase details and status</span>
+          </div>
+          <div class="tab-indicator"></div>
+        </button>
+      </div>
+
+      <!-- Tab Content -->
+      <div class="tab-content-container">
         <!-- Basic Details Tab -->
         <div class="tab-content" *ngIf="currentTab === 0">
-          <div class="form-group">
-            <label for="make">Make <span class="required">*</span></label>
-            <select id="make" formControlName="make" (change)="onMakeChange($event)">
-              <option value="" disabled>Select Make</option>
-              <option *ngFor="let make of makes" [value]="make">{{ make }}</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="model">Model Name <span class="required">*</span></label>
-            <select id="model" formControlName="model">
-              <option value="" disabled>Select Model</option>
-              <option *ngFor="let v of filteredModels" [value]="v.model">{{ v.model }}</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="grade">Grade <span class="required">*</span></label>
-            <input type="text" id="grade" formControlName="grade" placeholder="Enter Grade" />
-          </div>
-          <div class="form-group">
-            <label for="fuelType">Fuel Type <span class="required">*</span></label>
-            <select id="fuelType" formControlName="fuelType">
-              <option value="" disabled>Select Fuel Type</option>
-              <option *ngFor="let fuel of fuelTypes" [value]="fuel">{{ fuel }}</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="suffix">Suffix <span class="required">*</span></label>
-            <input type="text" id="suffix" formControlName="suffix" placeholder="Enter Suffix" />
-          </div>
-          <div class="form-group">
-            <label for="manufactureDate">Manufacture Year <span class="required">*</span></label>
-            <input type="text" id="manufactureDate" formControlName="manufactureDate" placeholder="Enter Manufacture Year" />
+          <div class="form-grid">
+            <div class="form-group" [class.filled]="vehicleForm.get('make')?.value" [class.error]="vehicleForm.get('make')?.invalid && (vehicleForm.get('make')?.dirty || vehicleForm.get('make')?.touched)">
+              <label for="make" class="form-label">
+                <i class="fas fa-industry label-icon"></i>
+                <span>Vehicle Make</span>
+                <span class="required">*</span>
+              </label>
+              <div class="input-wrapper">
+                <select id="make" formControlName="make" class="form-select" (change)="onMakeChange($event)" (focus)="onFieldFocus('make')" (blur)="onFieldBlur('make')">
+                  <option value="" disabled>Select Vehicle Make</option>
+                  <option *ngFor="let make of makes" [value]="make">{{ make }}</option>
+                </select>
+                <div class="select-arrow">
+                  <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="input-border"></div>
+                <div class="validation-icon">
+                  <i class="fas fa-check" *ngIf="vehicleForm.get('make')?.valid && vehicleForm.get('make')?.value"></i>
+                  <i class="fas fa-exclamation-triangle" *ngIf="vehicleForm.get('make')?.invalid && (vehicleForm.get('make')?.dirty || vehicleForm.get('make')?.touched)"></i>
+                </div>
+              </div>
+              <div class="field-hint">
+                <span *ngIf="!vehicleForm.get('make')?.invalid || (!vehicleForm.get('make')?.dirty && !vehicleForm.get('make')?.touched)">Choose the vehicle manufacturer</span>
+                <span *ngIf="vehicleForm.get('make')?.invalid && (vehicleForm.get('make')?.dirty || vehicleForm.get('make')?.touched)" class="error-text">Vehicle make is required</span>
+              </div>
+            </div>
+
+            <div class="form-group" [class.filled]="vehicleForm.get('model')?.value" [class.error]="vehicleForm.get('model')?.invalid && (vehicleForm.get('model')?.dirty || vehicleForm.get('model')?.touched)">
+              <label for="model" class="form-label">
+                <i class="fas fa-car label-icon"></i>
+                <span>Model Name</span>
+                <span class="required">*</span>
+              </label>
+              <div class="input-wrapper">
+                <select id="model" formControlName="model" class="form-select" (focus)="onFieldFocus('model')" (blur)="onFieldBlur('model')">
+                  <option value="" disabled>Select Model</option>
+                  <option *ngFor="let v of filteredModels" [value]="v.model">{{ v.model }}</option>
+                </select>
+                <div class="select-arrow">
+                  <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="input-border"></div>
+                <div class="validation-icon">
+                  <i class="fas fa-check" *ngIf="vehicleForm.get('model')?.valid && vehicleForm.get('model')?.value"></i>
+                  <i class="fas fa-exclamation-triangle" *ngIf="vehicleForm.get('model')?.invalid && (vehicleForm.get('model')?.dirty || vehicleForm.get('model')?.touched)"></i>
+                </div>
+              </div>
+              <div class="field-hint">
+                <span *ngIf="!vehicleForm.get('model')?.invalid || (!vehicleForm.get('model')?.dirty && !vehicleForm.get('model')?.touched)">Select the specific model</span>
+                <span *ngIf="vehicleForm.get('model')?.invalid && (vehicleForm.get('model')?.dirty || vehicleForm.get('model')?.touched)" class="error-text">Model name is required</span>
+              </div>
+            </div>
+
+            <div class="form-group" [class.filled]="vehicleForm.get('grade')?.value" [class.error]="vehicleForm.get('grade')?.invalid && (vehicleForm.get('grade')?.dirty || vehicleForm.get('grade')?.touched)">
+              <label for="grade" class="form-label">
+                <i class="fas fa-star label-icon"></i>
+                <span>Grade</span>
+                <span class="required">*</span>
+              </label>
+              <div class="input-wrapper">
+                <input type="text" id="grade" formControlName="grade" class="form-input" placeholder="Enter vehicle grade" (focus)="onFieldFocus('grade')" (blur)="onFieldBlur('grade')">
+                <div class="input-border"></div>
+                <div class="validation-icon">
+                  <i class="fas fa-check" *ngIf="vehicleForm.get('grade')?.valid && vehicleForm.get('grade')?.value"></i>
+                  <i class="fas fa-exclamation-triangle" *ngIf="vehicleForm.get('grade')?.invalid && (vehicleForm.get('grade')?.dirty || vehicleForm.get('grade')?.touched)"></i>
+                </div>
+              </div>
+              <div class="field-hint">
+                <span *ngIf="!vehicleForm.get('grade')?.invalid || (!vehicleForm.get('grade')?.dirty && !vehicleForm.get('grade')?.touched)">Enter the vehicle grade or trim level</span>
+                <span *ngIf="vehicleForm.get('grade')?.invalid && (vehicleForm.get('grade')?.dirty || vehicleForm.get('grade')?.touched)" class="error-text">Grade is required</span>
+              </div>
+            </div>
+
+            <div class="form-group" [class.filled]="vehicleForm.get('fuelType')?.value" [class.error]="vehicleForm.get('fuelType')?.invalid && (vehicleForm.get('fuelType')?.dirty || vehicleForm.get('fuelType')?.touched)">
+              <label for="fuelType" class="form-label">
+                <i class="fas fa-gas-pump label-icon"></i>
+                <span>Fuel Type</span>
+                <span class="required">*</span>
+              </label>
+              <div class="input-wrapper">
+                <select id="fuelType" formControlName="fuelType" class="form-select" (focus)="onFieldFocus('fuelType')" (blur)="onFieldBlur('fuelType')">
+                  <option value="" disabled>Select Fuel Type</option>
+                  <option *ngFor="let fuel of fuelTypes" [value]="fuel">{{ fuel }}</option>
+                </select>
+                <div class="select-arrow">
+                  <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="input-border"></div>
+                <div class="validation-icon">
+                  <i class="fas fa-check" *ngIf="vehicleForm.get('fuelType')?.valid && vehicleForm.get('fuelType')?.value"></i>
+                  <i class="fas fa-exclamation-triangle" *ngIf="vehicleForm.get('fuelType')?.invalid && (vehicleForm.get('fuelType')?.dirty || vehicleForm.get('fuelType')?.touched)"></i>
+                </div>
+              </div>
+              <div class="field-hint">
+                <span *ngIf="!vehicleForm.get('fuelType')?.invalid || (!vehicleForm.get('fuelType')?.dirty && !vehicleForm.get('fuelType')?.touched)">Choose the fuel type</span>
+                <span *ngIf="vehicleForm.get('fuelType')?.invalid && (vehicleForm.get('fuelType')?.dirty || vehicleForm.get('fuelType')?.touched)" class="error-text">Fuel type is required</span>
+              </div>
+            </div>
+
+            <div class="form-group" [class.filled]="vehicleForm.get('suffix')?.value" [class.error]="vehicleForm.get('suffix')?.invalid && (vehicleForm.get('suffix')?.dirty || vehicleForm.get('suffix')?.touched)">
+              <label for="suffix" class="form-label">
+                <i class="fas fa-tag label-icon"></i>
+                <span>Suffix</span>
+                <span class="required">*</span>
+              </label>
+              <div class="input-wrapper">
+                <input type="text" id="suffix" formControlName="suffix" class="form-input" placeholder="Enter suffix" (focus)="onFieldFocus('suffix')" (blur)="onFieldBlur('suffix')">
+                <div class="input-border"></div>
+                <div class="validation-icon">
+                  <i class="fas fa-check" *ngIf="vehicleForm.get('suffix')?.valid && vehicleForm.get('suffix')?.value"></i>
+                  <i class="fas fa-exclamation-triangle" *ngIf="vehicleForm.get('suffix')?.invalid && (vehicleForm.get('suffix')?.dirty || vehicleForm.get('suffix')?.touched)"></i>
+                </div>
+              </div>
+              <div class="field-hint">
+                <span *ngIf="!vehicleForm.get('suffix')?.invalid || (!vehicleForm.get('suffix')?.dirty && !vehicleForm.get('suffix')?.touched)">Enter the vehicle suffix</span>
+                <span *ngIf="vehicleForm.get('suffix')?.invalid && (vehicleForm.get('suffix')?.dirty || vehicleForm.get('suffix')?.touched)" class="error-text">Suffix is required</span>
+              </div>
+            </div>
+
+            <div class="form-group" [class.filled]="vehicleForm.get('manufactureDate')?.value" [class.error]="vehicleForm.get('manufactureDate')?.invalid && (vehicleForm.get('manufactureDate')?.dirty || vehicleForm.get('manufactureDate')?.touched)">
+              <label for="manufactureDate" class="form-label">
+                <i class="fas fa-calendar-alt label-icon"></i>
+                <span>Manufacture Year</span>
+                <span class="required">*</span>
+              </label>
+              <div class="input-wrapper">
+                <input type="text" id="manufactureDate" formControlName="manufactureDate" class="form-input" placeholder="Enter manufacture year" (focus)="onFieldFocus('manufactureDate')" (blur)="onFieldBlur('manufactureDate')">
+                <div class="input-border"></div>
+                <div class="validation-icon">
+                  <i class="fas fa-check" *ngIf="vehicleForm.get('manufactureDate')?.valid && vehicleForm.get('manufactureDate')?.value"></i>
+                  <i class="fas fa-exclamation-triangle" *ngIf="vehicleForm.get('manufactureDate')?.invalid && (vehicleForm.get('manufactureDate')?.dirty || vehicleForm.get('manufactureDate')?.touched)"></i>
+                </div>
+              </div>
+              <div class="field-hint">
+                <span *ngIf="!vehicleForm.get('manufactureDate')?.invalid || (!vehicleForm.get('manufactureDate')?.dirty && !vehicleForm.get('manufactureDate')?.touched)">Enter the year of manufacture</span>
+                <span *ngIf="vehicleForm.get('manufactureDate')?.invalid && (vehicleForm.get('manufactureDate')?.dirty || vehicleForm.get('manufactureDate')?.touched)" class="error-text">Manufacture year is required</span>
+              </div>
+            </div>
           </div>
         </div>
 
         <!-- Specifications Tab -->
         <div class="tab-content" *ngIf="currentTab === 1">
-          <div class="form-group">
-            <label for="exteriorColor">Exterior Color <span class="required">*</span></label>
-            <input type="text" id="exteriorColor" formControlName="exteriorColor" placeholder="Enter Exterior Color" />
-          </div>
-          <div class="form-group">
-            <label for="interiorColor">Interior Color <span class="required">*</span></label>
-            <input type="text" id="interiorColor" formControlName="interiorColor" placeholder="Enter Interior Color" />
-          </div>
-          <div class="form-group">
-            <label for="chassisNumber">Chassis Number <span class="required">*</span></label>
-            <input type="text" id="chassisNumber" formControlName="chassisNumber" placeholder="Enter Chassis Number" />
-          </div>
-          <div class="form-group">
-            <label for="engineNumber">Engine Number <span class="required">*</span></label>
-            <input type="text" id="engineNumber" formControlName="engineNumber" placeholder="Enter Engine Number" />
-          </div>
-          <div class="form-group">
-            <label for="keyNumber">Key Number <span class="required">*</span></label>
-            <input type="text" id="keyNumber" formControlName="keyNumber" placeholder="Enter Key Number" />
+          <div class="form-grid">
+            <div class="form-group" [class.filled]="vehicleForm.get('exteriorColor')?.value" [class.error]="vehicleForm.get('exteriorColor')?.invalid && (vehicleForm.get('exteriorColor')?.dirty || vehicleForm.get('exteriorColor')?.touched)">
+              <label for="exteriorColor" class="form-label">
+                <i class="fas fa-palette label-icon"></i>
+                <span>Exterior Color</span>
+                <span class="required">*</span>
+              </label>
+              <div class="input-wrapper">
+                <input type="text" id="exteriorColor" formControlName="exteriorColor" class="form-input" placeholder="Enter exterior color" (focus)="onFieldFocus('exteriorColor')" (blur)="onFieldBlur('exteriorColor')">
+                <div class="input-border"></div>
+                <div class="validation-icon">
+                  <i class="fas fa-check" *ngIf="vehicleForm.get('exteriorColor')?.valid && vehicleForm.get('exteriorColor')?.value"></i>
+                  <i class="fas fa-exclamation-triangle" *ngIf="vehicleForm.get('exteriorColor')?.invalid && (vehicleForm.get('exteriorColor')?.dirty || vehicleForm.get('exteriorColor')?.touched)"></i>
+                </div>
+              </div>
+              <div class="field-hint">
+                <span *ngIf="!vehicleForm.get('exteriorColor')?.invalid || (!vehicleForm.get('exteriorColor')?.dirty && !vehicleForm.get('exteriorColor')?.touched)">Enter the exterior color</span>
+                <span *ngIf="vehicleForm.get('exteriorColor')?.invalid && (vehicleForm.get('exteriorColor')?.dirty || vehicleForm.get('exteriorColor')?.touched)" class="error-text">Exterior color is required</span>
+              </div>
+            </div>
+
+            <div class="form-group" [class.filled]="vehicleForm.get('interiorColor')?.value" [class.error]="vehicleForm.get('interiorColor')?.invalid && (vehicleForm.get('interiorColor')?.dirty || vehicleForm.get('interiorColor')?.touched)">
+              <label for="interiorColor" class="form-label">
+                <i class="fas fa-couch label-icon"></i>
+                <span>Interior Color</span>
+                <span class="required">*</span>
+              </label>
+              <div class="input-wrapper">
+                <input type="text" id="interiorColor" formControlName="interiorColor" class="form-input" placeholder="Enter interior color" (focus)="onFieldFocus('interiorColor')" (blur)="onFieldBlur('interiorColor')">
+                <div class="input-border"></div>
+                <div class="validation-icon">
+                  <i class="fas fa-check" *ngIf="vehicleForm.get('interiorColor')?.valid && vehicleForm.get('interiorColor')?.value"></i>
+                  <i class="fas fa-exclamation-triangle" *ngIf="vehicleForm.get('interiorColor')?.invalid && (vehicleForm.get('interiorColor')?.dirty || vehicleForm.get('interiorColor')?.touched)"></i>
+                </div>
+              </div>
+              <div class="field-hint">
+                <span *ngIf="!vehicleForm.get('interiorColor')?.invalid || (!vehicleForm.get('interiorColor')?.dirty && !vehicleForm.get('interiorColor')?.touched)">Enter the interior color</span>
+                <span *ngIf="vehicleForm.get('interiorColor')?.invalid && (vehicleForm.get('interiorColor')?.dirty || vehicleForm.get('interiorColor')?.touched)" class="error-text">Interior color is required</span>
+              </div>
+            </div>
+
+            <div class="form-group" [class.filled]="vehicleForm.get('chassisNumber')?.value" [class.error]="vehicleForm.get('chassisNumber')?.invalid && (vehicleForm.get('chassisNumber')?.dirty || vehicleForm.get('chassisNumber')?.touched)">
+              <label for="chassisNumber" class="form-label">
+                <i class="fas fa-hashtag label-icon"></i>
+                <span>Chassis Number</span>
+                <span class="required">*</span>
+              </label>
+              <div class="input-wrapper">
+                <input type="text" id="chassisNumber" formControlName="chassisNumber" class="form-input" placeholder="Enter chassis number" (focus)="onFieldFocus('chassisNumber')" (blur)="onFieldBlur('chassisNumber')">
+                <div class="input-border"></div>
+                <div class="validation-icon">
+                  <i class="fas fa-check" *ngIf="vehicleForm.get('chassisNumber')?.valid && vehicleForm.get('chassisNumber')?.value"></i>
+                  <i class="fas fa-exclamation-triangle" *ngIf="vehicleForm.get('chassisNumber')?.invalid && (vehicleForm.get('chassisNumber')?.dirty || vehicleForm.get('chassisNumber')?.touched)"></i>
+                </div>
+              </div>
+              <div class="field-hint">
+                <span *ngIf="!vehicleForm.get('chassisNumber')?.invalid || (!vehicleForm.get('chassisNumber')?.dirty && !vehicleForm.get('chassisNumber')?.touched)">Enter the chassis number</span>
+                <span *ngIf="vehicleForm.get('chassisNumber')?.invalid && (vehicleForm.get('chassisNumber')?.dirty || vehicleForm.get('chassisNumber')?.touched)" class="error-text">Chassis number is required</span>
+              </div>
+            </div>
+
+            <div class="form-group" [class.filled]="vehicleForm.get('engineNumber')?.value" [class.error]="vehicleForm.get('engineNumber')?.invalid && (vehicleForm.get('engineNumber')?.dirty || vehicleForm.get('engineNumber')?.touched)">
+              <label for="engineNumber" class="form-label">
+                <i class="fas fa-cog label-icon"></i>
+                <span>Engine Number</span>
+                <span class="required">*</span>
+              </label>
+              <div class="input-wrapper">
+                <input type="text" id="engineNumber" formControlName="engineNumber" class="form-input" placeholder="Enter engine number" (focus)="onFieldFocus('engineNumber')" (blur)="onFieldBlur('engineNumber')">
+                <div class="input-border"></div>
+                <div class="validation-icon">
+                  <i class="fas fa-check" *ngIf="vehicleForm.get('engineNumber')?.valid && vehicleForm.get('engineNumber')?.value"></i>
+                  <i class="fas fa-exclamation-triangle" *ngIf="vehicleForm.get('engineNumber')?.invalid && (vehicleForm.get('engineNumber')?.dirty || vehicleForm.get('engineNumber')?.touched)"></i>
+                </div>
+              </div>
+              <div class="field-hint">
+                <span *ngIf="!vehicleForm.get('engineNumber')?.invalid || (!vehicleForm.get('engineNumber')?.dirty && !vehicleForm.get('engineNumber')?.touched)">Enter the engine number</span>
+                <span *ngIf="vehicleForm.get('engineNumber')?.invalid && (vehicleForm.get('engineNumber')?.dirty || vehicleForm.get('engineNumber')?.touched)" class="error-text">Engine number is required</span>
+              </div>
+            </div>
+
+            <div class="form-group" [class.filled]="vehicleForm.get('keyNumber')?.value" [class.error]="vehicleForm.get('keyNumber')?.invalid && (vehicleForm.get('keyNumber')?.dirty || vehicleForm.get('keyNumber')?.touched)">
+              <label for="keyNumber" class="form-label">
+                <i class="fas fa-key label-icon"></i>
+                <span>Key Number</span>
+                <span class="required">*</span>
+              </label>
+              <div class="input-wrapper">
+                <input type="text" id="keyNumber" formControlName="keyNumber" class="form-input" placeholder="Enter key number" (focus)="onFieldFocus('keyNumber')" (blur)="onFieldBlur('keyNumber')">
+                <div class="input-border"></div>
+                <div class="validation-icon">
+                  <i class="fas fa-check" *ngIf="vehicleForm.get('keyNumber')?.valid && vehicleForm.get('keyNumber')?.value"></i>
+                  <i class="fas fa-exclamation-triangle" *ngIf="vehicleForm.get('keyNumber')?.invalid && (vehicleForm.get('keyNumber')?.dirty || vehicleForm.get('keyNumber')?.touched)"></i>
+                </div>
+              </div>
+              <div class="field-hint">
+                <span *ngIf="!vehicleForm.get('keyNumber')?.invalid || (!vehicleForm.get('keyNumber')?.dirty && !vehicleForm.get('keyNumber')?.touched)">Enter the key number</span>
+                <span *ngIf="vehicleForm.get('keyNumber')?.invalid && (vehicleForm.get('keyNumber')?.dirty || vehicleForm.get('keyNumber')?.touched)" class="error-text">Key number is required</span>
+              </div>
+            </div>
           </div>
         </div>
 
         <!-- Additional Info Tab -->
         <div class="tab-content" *ngIf="currentTab === 2">
-          <div class="form-group">
-            <label for="location">Location <span class="required">*</span></label>
-            <input type="text" id="location" formControlName="location" placeholder="Enter Location" />
-          </div>
-          <div class="form-group">
-            <label for="status">Status <span class="required">*</span></label>
-            <select id="status" formControlName="status">
-              <option value="" disabled>Select Status</option>
-              <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="receivedDate">Received Date <span class="required">*</span></label>
-            <input type="date" id="receivedDate" formControlName="receivedDate" />
-          </div>
-          <div class="form-group">
-            <label for="invoiceDate">Invoice Date <span class="required">*</span></label>
-            <input type="date" id="invoiceDate" formControlName="invoiceDate" />
-          </div>
-          <div class="form-group">
-            <label for="invoiceNumber">Invoice Number <span class="required">*</span></label>
-            <input type="text" id="invoiceNumber" formControlName="invoiceNumber" placeholder="Enter Invoice Number" />
-          </div>
-          <div class="form-group">
-            <label for="purchaseDealer">Purchase Dealer <span class="required">*</span></label>
-            <input type="text" id="purchaseDealer" formControlName="purchaseDealer" placeholder="Enter Purchase Dealer" />
-          </div>
-          <div class="form-group">
-            <label for="invoiceValue">Invoice Value <span class="required">*</span></label>
-            <input type="text" id="invoiceValue" formControlName="invoiceValue" placeholder="Enter Invoice Value" />
+          <div class="form-grid">
+            <div class="form-group" [class.filled]="vehicleForm.get('location')?.value" [class.error]="vehicleForm.get('location')?.invalid && (vehicleForm.get('location')?.dirty || vehicleForm.get('location')?.touched)">
+              <label for="location" class="form-label">
+                <i class="fas fa-map-marker-alt label-icon"></i>
+                <span>Location</span>
+                <span class="required">*</span>
+              </label>
+              <div class="input-wrapper">
+                <input type="text" id="location" formControlName="location" class="form-input" placeholder="Enter location" (focus)="onFieldFocus('location')" (blur)="onFieldBlur('location')">
+                <div class="input-border"></div>
+                <div class="validation-icon">
+                  <i class="fas fa-check" *ngIf="vehicleForm.get('location')?.valid && vehicleForm.get('location')?.value"></i>
+                  <i class="fas fa-exclamation-triangle" *ngIf="vehicleForm.get('location')?.invalid && (vehicleForm.get('location')?.dirty || vehicleForm.get('location')?.touched)"></i>
+                </div>
+              </div>
+              <div class="field-hint">
+                <span *ngIf="!vehicleForm.get('location')?.invalid || (!vehicleForm.get('location')?.dirty && !vehicleForm.get('location')?.touched)">Enter the vehicle location</span>
+                <span *ngIf="vehicleForm.get('location')?.invalid && (vehicleForm.get('location')?.dirty || vehicleForm.get('location')?.touched)" class="error-text">Location is required</span>
+              </div>
+            </div>
+
+            <div class="form-group" [class.filled]="vehicleForm.get('status')?.value" [class.error]="vehicleForm.get('status')?.invalid && (vehicleForm.get('status')?.dirty || vehicleForm.get('status')?.touched)">
+              <label for="status" class="form-label">
+                <i class="fas fa-info-circle label-icon"></i>
+                <span>Status</span>
+                <span class="required">*</span>
+              </label>
+              <div class="input-wrapper">
+                <select id="status" formControlName="status" class="form-select" (focus)="onFieldFocus('status')" (blur)="onFieldBlur('status')">
+                  <option value="" disabled>Select Status</option>
+                  <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+                </select>
+                <div class="select-arrow">
+                  <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="input-border"></div>
+                <div class="validation-icon">
+                  <i class="fas fa-check" *ngIf="vehicleForm.get('status')?.valid && vehicleForm.get('status')?.value"></i>
+                  <i class="fas fa-exclamation-triangle" *ngIf="vehicleForm.get('status')?.invalid && (vehicleForm.get('status')?.dirty || vehicleForm.get('status')?.touched)"></i>
+                </div>
+              </div>
+              <div class="field-hint">
+                <span *ngIf="!vehicleForm.get('status')?.invalid || (!vehicleForm.get('status')?.dirty && !vehicleForm.get('status')?.touched)">Select the vehicle status</span>
+                <span *ngIf="vehicleForm.get('status')?.invalid && (vehicleForm.get('status')?.dirty || vehicleForm.get('status')?.touched)" class="error-text">Status is required</span>
+              </div>
+            </div>
+
+            <div class="form-group" [class.filled]="vehicleForm.get('receivedDate')?.value" [class.error]="vehicleForm.get('receivedDate')?.invalid && (vehicleForm.get('receivedDate')?.dirty || vehicleForm.get('receivedDate')?.touched)">
+              <label for="receivedDate" class="form-label">
+                <i class="fas fa-calendar-check label-icon"></i>
+                <span>Received Date</span>
+                <span class="required">*</span>
+              </label>
+              <div class="input-wrapper">
+                <input type="date" id="receivedDate" formControlName="receivedDate" class="form-input" (focus)="onFieldFocus('receivedDate')" (blur)="onFieldBlur('receivedDate')">
+                <div class="input-border"></div>
+                <div class="validation-icon">
+                  <i class="fas fa-check" *ngIf="vehicleForm.get('receivedDate')?.valid && vehicleForm.get('receivedDate')?.value"></i>
+                  <i class="fas fa-exclamation-triangle" *ngIf="vehicleForm.get('receivedDate')?.invalid && (vehicleForm.get('receivedDate')?.dirty || vehicleForm.get('receivedDate')?.touched)"></i>
+                </div>
+              </div>
+              <div class="field-hint">
+                <span *ngIf="!vehicleForm.get('receivedDate')?.invalid || (!vehicleForm.get('receivedDate')?.dirty && !vehicleForm.get('receivedDate')?.touched)">Select the received date</span>
+                <span *ngIf="vehicleForm.get('receivedDate')?.invalid && (vehicleForm.get('receivedDate')?.dirty || vehicleForm.get('receivedDate')?.touched)" class="error-text">Received date is required</span>
+              </div>
+            </div>
+
+            <div class="form-group" [class.filled]="vehicleForm.get('invoiceDate')?.value" [class.error]="vehicleForm.get('invoiceDate')?.invalid && (vehicleForm.get('invoiceDate')?.dirty || vehicleForm.get('invoiceDate')?.touched)">
+              <label for="invoiceDate" class="form-label">
+                <i class="fas fa-file-invoice label-icon"></i>
+                <span>Invoice Date</span>
+                <span class="required">*</span>
+              </label>
+              <div class="input-wrapper">
+                <input type="date" id="invoiceDate" formControlName="invoiceDate" class="form-input" (focus)="onFieldFocus('invoiceDate')" (blur)="onFieldBlur('invoiceDate')">
+                <div class="input-border"></div>
+                <div class="validation-icon">
+                  <i class="fas fa-check" *ngIf="vehicleForm.get('invoiceDate')?.valid && vehicleForm.get('invoiceDate')?.value"></i>
+                  <i class="fas fa-exclamation-triangle" *ngIf="vehicleForm.get('invoiceDate')?.invalid && (vehicleForm.get('invoiceDate')?.dirty || vehicleForm.get('invoiceDate')?.touched)"></i>
+                </div>
+              </div>
+              <div class="field-hint">
+                <span *ngIf="!vehicleForm.get('invoiceDate')?.invalid || (!vehicleForm.get('invoiceDate')?.dirty && !vehicleForm.get('invoiceDate')?.touched)">Select the invoice date</span>
+                <span *ngIf="vehicleForm.get('invoiceDate')?.invalid && (vehicleForm.get('invoiceDate')?.dirty || vehicleForm.get('invoiceDate')?.touched)" class="error-text">Invoice date is required</span>
+              </div>
+            </div>
+
+            <div class="form-group" [class.filled]="vehicleForm.get('invoiceNumber')?.value" [class.error]="vehicleForm.get('invoiceNumber')?.invalid && (vehicleForm.get('invoiceNumber')?.dirty || vehicleForm.get('invoiceNumber')?.touched)">
+              <label for="invoiceNumber" class="form-label">
+                <i class="fas fa-receipt label-icon"></i>
+                <span>Invoice Number</span>
+                <span class="required">*</span>
+              </label>
+              <div class="input-wrapper">
+                <input type="text" id="invoiceNumber" formControlName="invoiceNumber" class="form-input" placeholder="Enter invoice number" (focus)="onFieldFocus('invoiceNumber')" (blur)="onFieldBlur('invoiceNumber')">
+                <div class="input-border"></div>
+                <div class="validation-icon">
+                  <i class="fas fa-check" *ngIf="vehicleForm.get('invoiceNumber')?.valid && vehicleForm.get('invoiceNumber')?.value"></i>
+                  <i class="fas fa-exclamation-triangle" *ngIf="vehicleForm.get('invoiceNumber')?.invalid && (vehicleForm.get('invoiceNumber')?.dirty || vehicleForm.get('invoiceNumber')?.touched)"></i>
+                </div>
+              </div>
+              <div class="field-hint">
+                <span *ngIf="!vehicleForm.get('invoiceNumber')?.invalid || (!vehicleForm.get('invoiceNumber')?.dirty && !vehicleForm.get('invoiceNumber')?.touched)">Enter the invoice number</span>
+                <span *ngIf="vehicleForm.get('invoiceNumber')?.invalid && (vehicleForm.get('invoiceNumber')?.dirty || vehicleForm.get('invoiceNumber')?.touched)" class="error-text">Invoice number is required</span>
+              </div>
+            </div>
+
+            <div class="form-group" [class.filled]="vehicleForm.get('purchaseDealer')?.value" [class.error]="vehicleForm.get('purchaseDealer')?.invalid && (vehicleForm.get('purchaseDealer')?.dirty || vehicleForm.get('purchaseDealer')?.touched)">
+              <label for="purchaseDealer" class="form-label">
+                <i class="fas fa-handshake label-icon"></i>
+                <span>Purchase Dealer</span>
+                <span class="required">*</span>
+              </label>
+              <div class="input-wrapper">
+                <input type="text" id="purchaseDealer" formControlName="purchaseDealer" class="form-input" placeholder="Enter purchase dealer" (focus)="onFieldFocus('purchaseDealer')" (blur)="onFieldBlur('purchaseDealer')">
+                <div class="input-border"></div>
+                <div class="validation-icon">
+                  <i class="fas fa-check" *ngIf="vehicleForm.get('purchaseDealer')?.valid && vehicleForm.get('purchaseDealer')?.value"></i>
+                  <i class="fas fa-exclamation-triangle" *ngIf="vehicleForm.get('purchaseDealer')?.invalid && (vehicleForm.get('purchaseDealer')?.dirty || vehicleForm.get('purchaseDealer')?.touched)"></i>
+                </div>
+              </div>
+              <div class="field-hint">
+                <span *ngIf="!vehicleForm.get('purchaseDealer')?.invalid || (!vehicleForm.get('purchaseDealer')?.dirty && !vehicleForm.get('purchaseDealer')?.touched)">Enter the purchase dealer name</span>
+                <span *ngIf="vehicleForm.get('purchaseDealer')?.invalid && (vehicleForm.get('purchaseDealer')?.dirty || vehicleForm.get('purchaseDealer')?.touched)" class="error-text">Purchase dealer is required</span>
+              </div>
+            </div>
+
+            <div class="form-group" [class.filled]="vehicleForm.get('invoiceValue')?.value" [class.error]="vehicleForm.get('invoiceValue')?.invalid && (vehicleForm.get('invoiceValue')?.dirty || vehicleForm.get('invoiceValue')?.touched)">
+              <label for="invoiceValue" class="form-label">
+                <i class="fas fa-dollar-sign label-icon"></i>
+                <span>Invoice Value</span>
+                <span class="required">*</span>
+              </label>
+              <div class="input-wrapper">
+                <input type="text" id="invoiceValue" formControlName="invoiceValue" class="form-input" placeholder="Enter invoice value" (focus)="onFieldFocus('invoiceValue')" (blur)="onFieldBlur('invoiceValue')">
+                <div class="input-border"></div>
+                <div class="validation-icon">
+                  <i class="fas fa-check" *ngIf="vehicleForm.get('invoiceValue')?.valid && vehicleForm.get('invoiceValue')?.value"></i>
+                  <i class="fas fa-exclamation-triangle" *ngIf="vehicleForm.get('invoiceValue')?.invalid && (vehicleForm.get('invoiceValue')?.dirty || vehicleForm.get('invoiceValue')?.touched)"></i>
+                </div>
+              </div>
+              <div class="field-hint">
+                <span *ngIf="!vehicleForm.get('invoiceValue')?.invalid || (!vehicleForm.get('invoiceValue')?.dirty && !vehicleForm.get('invoiceValue')?.touched)">Enter the invoice value</span>
+                <span *ngIf="vehicleForm.get('invoiceValue')?.invalid && (vehicleForm.get('invoiceValue')?.dirty || vehicleForm.get('invoiceValue')?.touched)" class="error-text">Invoice value is required</span>
+              </div>
+              </div>
+              <div class="form-row">
+                
+                <div class="form-group" [class.filled]="vehicleForm.get('remarks')?.value" [class.error]="vehicleForm.get('remarks')?.invalid && (vehicleForm.get('remarks')?.dirty || vehicleForm.get('remarks')?.touched)" style="flex: 1;">
+                  <label for="remarks" class="form-label">
+                    <i class="fas fa-comment-dots label-icon"></i>
+                    <span>Remarks</span>
+                    <span class="required">*</span>
+                  </label>
+                  <div class="input-wrapper">
+                    <input type="text" id="remarks" formControlName="remarks" class="form-input" placeholder="Enter remarks" (focus)="onFieldFocus('remarks')" (blur)="onFieldBlur('remarks')">
+                    <div class="input-border"></div>
+                    <div class="validation-icon">
+                      <i class="fas fa-check" *ngIf="vehicleForm.get('remarks')?.valid && vehicleForm.get('remarks')?.value"></i>
+                      <i class="fas fa-exclamation-triangle" *ngIf="vehicleForm.get('remarks')?.invalid && (vehicleForm.get('remarks')?.dirty || vehicleForm.get('remarks')?.touched)"></i>
+                    </div>
+                  </div>
+                  <div class="field-hint">
+                    <span *ngIf="!vehicleForm.get('remarks')?.invalid || (!vehicleForm.get('remarks')?.dirty && !vehicleForm.get('remarks')?.touched)">Enter the remarks</span>
+                    <span *ngIf="vehicleForm.get('remarks')?.invalid && (vehicleForm.get('remarks')?.dirty || vehicleForm.get('remarks')?.touched)" class="error-text">Remarks is required</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
+      <!-- Form Actions -->
       <div class="form-actions">
-        <button type="button" class="nav-button" [disabled]="currentTab === 0" (click)="previousTab()">
-          <i class="fas fa-arrow-left"></i> Previous
+        <button type="button" class="btn-secondary" [disabled]="currentTab === 0" (click)="previousTab()">
+          <i class="fas fa-arrow-left"></i>
+          <span>Previous</span>
         </button>
-        <button type="button" class="nav-button" *ngIf="currentTab < 2" (click)="nextTab()">
-          Next <i class="fas fa-arrow-right"></i>
+        
+        <div class="action-spacer"></div>
+        
+        <button type="button" class="btn-primary" *ngIf="currentTab < 2" (click)="nextTab()" [disabled]="!isCurrentTabValid()">
+          <span>Next</span>
+          <i class="fas fa-arrow-right"></i>
         </button>
-        <button type="submit" class="submit-button" *ngIf="currentTab === 2" [disabled]="vehicleForm.invalid">
-          <i class="fas fa-check-circle"></i> Add Vehicle
+        
+        <button type="submit" class="btn-submit" *ngIf="currentTab === 2" [disabled]="vehicleForm.invalid || isSubmitting" [class.loading]="isSubmitting">
+          <div class="btn-content">
+            <i class="fas fa-check-circle" *ngIf="!isSubmitting"></i>
+            <div class="loading-spinner" *ngIf="isSubmitting">
+              <div class="spinner-ring"></div>
+            </div>
+            <span>{{isSubmitting ? 'Adding Vehicle...' : 'Add Vehicle'}}</span>
+          </div>
         </button>
-      </div>
-      <div *ngIf="successMessage" class="success-message">
-        {{ successMessage }}
       </div>
     </form>
   </div>
-</div>
-</body>
 
-</html>
+  <!-- Enhanced Success Message -->
+  <div *ngIf="successMessage" class="success-notification">
+    <div class="notification-content">
+      <div class="notification-icon">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <div class="notification-text">
+        <h4>Success!</h4>
+        <p>{{ successMessage }}</p>
+      </div>
+      <button class="close-notification" (click)="clearSuccessMessage()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="notification-progress">
+      <div class="progress-line"></div>
+    </div>
+  </div>
+
+  <!-- Background Decorations -->
+  <div class="background-decoration">
+    <div class="decoration-circle circle-1"></div>
+    <div class="decoration-circle circle-2"></div>
+    <div class="decoration-circle circle-3"></div>
+  </div>
+</div>

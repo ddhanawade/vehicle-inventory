@@ -77,7 +77,8 @@ export class UpdateVehicleComponent implements OnInit {
       invoiceDate: ['', Validators.required],
       invoiceNumber: ['', Validators.required],
       purchaseDealer: ['', Validators.required],
-      invoiceValue: ['', Validators.required]
+      invoiceValue: ['', Validators.required],
+      remarks: ['', Validators.required]
     });
   }
 
