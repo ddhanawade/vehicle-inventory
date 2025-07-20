@@ -62,7 +62,7 @@ export class FileuploadComponent {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
-      
+
       if (type === 'fleet') {
         this.fleetSelectedFile = file;
         this.fleetSelectedFileName = file.name;
@@ -89,7 +89,7 @@ export class FileuploadComponent {
   onDragOver(event: DragEvent, type: 'fleet' | 'test'): void {
     event.preventDefault();
     event.stopPropagation();
-    
+
     if (type === 'fleet') {
       this.fleetDragOver = true;
     } else {
@@ -108,7 +108,7 @@ export class FileuploadComponent {
   onDrop(event: DragEvent, type: 'fleet' | 'test'): void {
     event.preventDefault();
     event.stopPropagation();
-    
+
     if (type === 'fleet') {
       this.fleetDragOver = false;
     } else {
@@ -118,11 +118,11 @@ export class FileuploadComponent {
     const files = event.dataTransfer?.files;
     if (files && files.length > 0) {
       const file = files[0];
-      
+
       // Check file type
       const allowedTypes = ['.csv', '.xlsx', '.xls'];
       const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
-      
+
       if (allowedTypes.includes(fileExtension)) {
         if (type === 'fleet') {
           this.fleetSelectedFile = file;
@@ -148,7 +148,7 @@ export class FileuploadComponent {
   // File upload handler
   uploadFile(type: 'fleet' | 'test'): void {
     let selectedFile: File | null;
-    
+
     if (type === 'fleet') {
       selectedFile = this.fleetSelectedFile;
       if (!selectedFile) {
@@ -216,16 +216,15 @@ export class FileuploadComponent {
   // Template download handler
   downloadTemplate(type: 'fleet' | 'test'): void {
     const link = document.createElement('a');
-    
+
     if (type === 'fleet') {
       link.href = 'assets/Demo_File_Fleet_Manager.csv';
       link.download = 'Demo_File_Fleet_Manager.csv';
     } else {
-      // TODO: Add test vehicle template file
       link.href = 'assets/Demo_File_Test_Vehicles.csv';
       link.download = 'Demo_File_Test_Vehicles.csv';
     }
-    
+
     link.click();
   }
 
@@ -247,12 +246,12 @@ export class FileuploadComponent {
   // Get file size in human readable format
   getFileSize(file: File | null): string {
     if (!file) return '';
-    
+
     const bytes = file.size;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    
+
     if (bytes === 0) return '0 Bytes';
-    
+
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
     return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
   }
