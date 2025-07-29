@@ -164,11 +164,11 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       if (this.hasRole('ADMIN')) {
         this.filteredStocksList = [...this.carDetailsList]; // Show all data for ADMIN
       } else if (this.hasRole('TATA')) {
-        this.filteredStocksList = this.carDetailsList.filter(car => car.make === 'Tata');
+        this.filteredStocksList = this.carDetailsList.filter(car => car.make?.toLowerCase() === 'tata');
       } else if (this.hasRole('TOYOTA')) {
-        this.filteredStocksList = this.carDetailsList.filter(car => car.make === 'Toyota');
+        this.filteredStocksList = this.carDetailsList.filter(car => car.make?.toLowerCase() === 'toyota');
       } else if (this.hasRole('EICHER')) {
-        this.filteredStocksList = this.carDetailsList.filter(car => car.make === 'Eicher');
+        this.filteredStocksList = this.carDetailsList.filter(car => car.make?.toLowerCase() === 'eicher');
       } else {
         this.filteredStocksList = []; // Default to an empty list if no roles match
       }
@@ -203,11 +203,11 @@ getObjectKeys(obj: any): string[] {
     if (this.hasRole('ADMIN')) {
       roleFilteredList = [...this.uniqueVehicleModel]; // Show all data for ADMIN
     } else if (this.hasRole('TATA')) {
-      roleFilteredList = this.uniqueVehicleModel.filter(car => car.make === 'Tata');
+      roleFilteredList = this.uniqueVehicleModel.filter(car => car.make?.toLowerCase() === 'tata');
     } else if (this.hasRole('TOYOTA')) {
-      roleFilteredList = this.uniqueVehicleModel.filter(car => car.make === 'Toyota');
+      roleFilteredList = this.uniqueVehicleModel.filter(car => car.make?.toLowerCase() === 'toyota');
     } else if (this.hasRole('EICHER')) {
-      roleFilteredList = this.uniqueVehicleModel.filter(car => car.make === 'Eicher');
+      roleFilteredList = this.uniqueVehicleModel.filter(car => car.make?.toLowerCase() === 'eicher');
     }
 
     // Apply search term filtering on the role-filtered list
@@ -292,11 +292,11 @@ getObjectKeys(obj: any): string[] {
     if (this.hasRole('ADMIN')) {
       return this.carDetailsList.length; // Total count for ADMIN
     } else if (this.hasRole('TATA')) {
-      return this.carDetailsList.filter(car => car.make === 'Tata').length;
+      return this.carDetailsList.filter(car => car.make?.toLowerCase() === 'tata').length;
     } else if (this.hasRole('TOYOTA')) {
-      return this.carDetailsList.filter(car => car.make === 'Toyota').length;
+      return this.carDetailsList.filter(car => car.make?.toLowerCase() === 'toyota').length;
     } else if (this.hasRole('EICHER')) {
-      return this.carDetailsList.filter(car => car.make === 'Eicher').length;
+      return this.carDetailsList.filter(car => car.make?.toLowerCase() === 'eicher').length;
     }
     return 0; // Default to 0 if no roles match
   }
@@ -306,11 +306,11 @@ getObjectKeys(obj: any): string[] {
     if (this.hasRole('ADMIN')) {
       filteredList = [...this.carDetailsList]; // All data for ADMIN
     } else if (this.hasRole('TATA')) {
-      filteredList = this.carDetailsList.filter(car => car.make === 'Tata');
+      filteredList = this.carDetailsList.filter(car => car.make?.toLowerCase() === 'tata');
     } else if (this.hasRole('TOYOTA')) {
-      filteredList = this.carDetailsList.filter(car => car.make === 'Toyota');
+      filteredList = this.carDetailsList.filter(car => car.make?.toLowerCase() === 'toyota');
     } else if (this.hasRole('EICHER')) {
-      filteredList = this.carDetailsList.filter(car => car.make === 'Eicher');
+      filteredList = this.carDetailsList.filter(car => car.make?.toLowerCase() === 'eicher');
     }
 
     // Group by city (uppercase) and count vehicles to avoid duplicates
@@ -394,11 +394,11 @@ getObjectKeys(obj: any): string[] {
         if (this.hasRole('ADMIN')) {
           this.filteredModelStockList = [...this.uniqueVehicleModel]; // Show all data for ADMIN
         } else if (this.hasRole('TATA')) {
-          this.filteredModelStockList = this.uniqueVehicleModel.filter(car => car.make === 'Tata');
+          this.filteredModelStockList = this.uniqueVehicleModel.filter(car => car.make?.toLowerCase() === 'tata');
         } else if (this.hasRole('TOYOTA')) {
-          this.filteredModelStockList = this.uniqueVehicleModel.filter(car => car.make === 'Toyota');
+          this.filteredModelStockList = this.uniqueVehicleModel.filter(car => car.make?.toLowerCase() === 'toyota');
         } else if (this.hasRole('EICHER')) {
-          this.filteredModelStockList = this.uniqueVehicleModel.filter(car => car.make === 'Eicher');
+          this.filteredModelStockList = this.uniqueVehicleModel.filter(car => car.make?.toLowerCase() === 'eicher');
         } else {
           this.filteredModelStockList = []; // Default to an empty list if no roles match
         }
@@ -415,7 +415,22 @@ getObjectKeys(obj: any): string[] {
 
   // Add this method to your DashboardComponent class
   getModelCount(model: string): number {
-    return this.carDetailsList.filter(car => car.model === model).length;
+    // Apply role-based filtering first
+    let filteredList = this.carDetailsList;
+    
+    if (this.hasRole('ADMIN')) {
+      filteredList = [...this.carDetailsList]; // Show all data for ADMIN
+    } else if (this.hasRole('TATA')) {
+      filteredList = this.carDetailsList.filter(car => car.make?.toLowerCase() === 'tata');
+    } else if (this.hasRole('TOYOTA')) {
+      filteredList = this.carDetailsList.filter(car => car.make?.toLowerCase() === 'toyota');
+    } else if (this.hasRole('EICHER')) {
+      filteredList = this.carDetailsList.filter(car => car.make?.toLowerCase() === 'eicher');
+    } else {
+      filteredList = []; // Default to empty list if no roles match
+    }
+    
+    return filteredList.filter(car => car.model === model).length;
   }
 
   getAgeCountByModel(): void {

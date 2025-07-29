@@ -360,6 +360,10 @@ export class VehicleDetailsComponent implements OnInit {
   getColumnValue(item: VehicleModel, column: string): string {
   const value = item[column as keyof VehicleModel];
 
+  if (column === 'make' && value) {
+    return value.toString().toUpperCase();
+  }
+
   if (column === 'manufactureDate' && value) {
     // If value is a year (e.g., "2024"), just return it
     if (/^\d{4}$/.test(value.toString())) {

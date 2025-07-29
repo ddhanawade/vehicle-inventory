@@ -19,7 +19,7 @@ export class AddVehicleComponent implements OnInit{
   models: any[] = [];
   makes: any[] = [];
   fuelTypes = ['PETROL', 'DISEL', 'ELECTRIC', 'HYBRID'];
-  statuses = ['AVAILABLE', 'SOLD', 'IN_TRANSIT', 'BOOKED', 'FREE'];
+  statuses = ['AVAILABLE', 'SOLD', 'IN_TRANSIT', 'BOOKED', 'FREE', 'STOCK'];
   filteredModels: { make: string; model: string }[] = [];
   selectedMake: string = '';
   user: UserModel | null = null;

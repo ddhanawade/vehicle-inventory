@@ -112,7 +112,7 @@
               <div class="input-wrapper">
                 <select id="make" formControlName="make" class="form-select" (change)="onMakeChange($event)" (focus)="onFieldFocus('make')" (blur)="onFieldBlur('make')">
                   <option value="" disabled>Select Vehicle Make</option>
-                  <option *ngFor="let make of makes" [value]="make">{{ make }}</option>
+                  <option *ngFor="let make of makes" [value]="make">{{ make | uppercase }}</option>
                 </select>
                 <div class="select-arrow">
                   <i class="fas fa-chevron-down"></i>

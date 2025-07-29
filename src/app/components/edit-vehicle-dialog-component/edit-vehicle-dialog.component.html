@@ -134,7 +134,9 @@
             <mat-option value="AVAILABLE">AVAILABLE</mat-option>
             <mat-option value="SOLD">SOLD</mat-option>
             <mat-option value="BOOKED">BOOKED</mat-option>
+            <mat-option value="IN_TRANSIT">IN_TRANSIT</mat-option>
             <mat-option value="FREE">FREE</mat-option>
+            <mat-option value="STOCK">STOCK</mat-option>
           </mat-select>
           <mat-icon matSuffix>info</mat-icon>
           <mat-error *ngIf="vehicleForm.get('vehicleStatus')?.hasError('required')">

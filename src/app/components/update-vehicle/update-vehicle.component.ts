@@ -50,7 +50,7 @@ export class UpdateVehicleComponent implements OnInit {
   makes = ['Tata', 'Toyota', 'Eicher'];
   models = ['Corolla', 'Civic', 'Focus', 'X5', 'C-Class'];
   fuelTypes = ['PETROL', 'DIESEL', 'ELECTRIC', 'HYBRID'];
-  statuses = ['AVAILABLE', 'SOLD', 'IN_TRANSIT', 'BOOKED', 'FREE'];
+  statuses = ['AVAILABLE', 'SOLD', 'IN_TRANSIT', 'BOOKED', 'FREE', 'STOCK'];
   sort: any;
   paginator: any;
 
