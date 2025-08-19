@@ -70,7 +70,7 @@
         <button type="button" class="tab-button" 
                 [class.active]="currentTab === 1" 
                 [class.completed]="currentTab > 1"
-                [class.disabled]="currentTab < 1 && !isCurrentTabValid()"
+                [class.disabled]="false"
                 (click)="setTab(1)">
           <div class="tab-icon">
             <i class="fas fa-cogs"></i>
@@ -85,7 +85,7 @@
         <button type="button" class="tab-button" 
                 [class.active]="currentTab === 2" 
                 [class.completed]="currentTab > 2"
-                [class.disabled]="currentTab < 2 && !isCurrentTabValid()"
+                [class.disabled]="false"
                 (click)="setTab(2)">
           <div class="tab-icon">
             <i class="fas fa-clipboard-list"></i>
@@ -205,7 +205,7 @@
               <label for="suffix" class="form-label">
                 <i class="fas fa-tag label-icon"></i>
                 <span>Suffix</span>
-                <span class="required">*</span>
+                
               </label>
               <div class="input-wrapper">
                 <input type="text" id="suffix" formControlName="suffix" class="form-input" placeholder="Enter suffix" (focus)="onFieldFocus('suffix')" (blur)="onFieldBlur('suffix')">
@@ -225,7 +225,7 @@
               <label for="manufactureDate" class="form-label">
                 <i class="fas fa-calendar-alt label-icon"></i>
                 <span>Manufacture Year</span>
-                <span class="required">*</span>
+                
               </label>
               <div class="input-wrapper">
                 <input type="text" id="manufactureDate" formControlName="manufactureDate" class="form-input" placeholder="Enter manufacture year" (focus)="onFieldFocus('manufactureDate')" (blur)="onFieldBlur('manufactureDate')">
@@ -250,7 +250,7 @@
               <label for="exteriorColor" class="form-label">
                 <i class="fas fa-palette label-icon"></i>
                 <span>Exterior Color</span>
-                <span class="required">*</span>
+                
               </label>
               <div class="input-wrapper">
                 <input type="text" id="exteriorColor" formControlName="exteriorColor" class="form-input" placeholder="Enter exterior color" (focus)="onFieldFocus('exteriorColor')" (blur)="onFieldBlur('exteriorColor')">
@@ -270,7 +270,7 @@
               <label for="interiorColor" class="form-label">
                 <i class="fas fa-couch label-icon"></i>
                 <span>Interior Color</span>
-                <span class="required">*</span>
+                
               </label>
               <div class="input-wrapper">
                 <input type="text" id="interiorColor" formControlName="interiorColor" class="form-input" placeholder="Enter interior color" (focus)="onFieldFocus('interiorColor')" (blur)="onFieldBlur('interiorColor')">
@@ -330,7 +330,7 @@
               <label for="keyNumber" class="form-label">
                 <i class="fas fa-key label-icon"></i>
                 <span>Key Number</span>
-                <span class="required">*</span>
+                
               </label>
               <div class="input-wrapper">
                 <input type="text" id="keyNumber" formControlName="keyNumber" class="form-input" placeholder="Enter key number" (focus)="onFieldFocus('keyNumber')" (blur)="onFieldBlur('keyNumber')">
@@ -401,7 +401,7 @@
               <label for="receivedDate" class="form-label">
                 <i class="fas fa-calendar-check label-icon"></i>
                 <span>Received Date</span>
-                <span class="required">*</span>
+                
               </label>
               <div class="input-wrapper">
                 <input type="date" id="receivedDate" formControlName="receivedDate" class="form-input" (focus)="onFieldFocus('receivedDate')" (blur)="onFieldBlur('receivedDate')">
@@ -441,7 +441,7 @@
               <label for="invoiceNumber" class="form-label">
                 <i class="fas fa-receipt label-icon"></i>
                 <span>Invoice Number</span>
-                <span class="required">*</span>
+                
               </label>
               <div class="input-wrapper">
                 <input type="text" id="invoiceNumber" formControlName="invoiceNumber" class="form-input" placeholder="Enter invoice number" (focus)="onFieldFocus('invoiceNumber')" (blur)="onFieldBlur('invoiceNumber')">
@@ -461,7 +461,7 @@
               <label for="purchaseDealer" class="form-label">
                 <i class="fas fa-handshake label-icon"></i>
                 <span>Purchase Dealer</span>
-                <span class="required">*</span>
+                
               </label>
               <div class="input-wrapper">
                 <input type="text" id="purchaseDealer" formControlName="purchaseDealer" class="form-input" placeholder="Enter purchase dealer" (focus)="onFieldFocus('purchaseDealer')" (blur)="onFieldBlur('purchaseDealer')">
@@ -502,7 +502,7 @@
                   <label for="remarks" class="form-label">
                     <i class="fas fa-comment-dots label-icon"></i>
                     <span>Remarks</span>
-                    <span class="required">*</span>
+                    
                   </label>
                   <div class="input-wrapper">
                     <input type="text" id="remarks" formControlName="remarks" class="form-input" placeholder="Enter remarks" (focus)="onFieldFocus('remarks')" (blur)="onFieldBlur('remarks')">
@@ -531,7 +531,7 @@
         
         <div class="action-spacer"></div>
         
-        <button type="button" class="btn-primary" *ngIf="currentTab < 2" (click)="nextTab()" [disabled]="!isCurrentTabValid()">
+        <button type="button" class="btn-primary" *ngIf="currentTab < 2" (click)="nextTab()">
           <span>Next</span>
           <i class="fas fa-arrow-right"></i>
         </button>

@@ -4,11 +4,11 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AuthService } from '../../services/AuthService';
 import { interval, Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
-import { DecimalPipe } from '@angular/common';
+import { CommonModule, DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-session-expired-dialog',
-  imports: [DecimalPipe],
+  imports: [CommonModule, DecimalPipe],
   templateUrl: './session-expired-dialog-component.component.html',
   styleUrls: ['./session-expired-dialog-component.component.scss']
 })

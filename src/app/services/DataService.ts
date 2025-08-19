@@ -8,8 +8,8 @@ import { VehicleModel } from '../models/VehicleModel';
 })
 export class DataService {
 
-  
-  //private baseUrl = 'http://localhost:8081/api/vehicles';
+
+  // private baseUrl = 'http://localhost:8081/api/vehicles';
   private baseUrl = 'https://fleet-manager.in/api/vehicles';
 
   constructor(private http: HttpClient) {}
@@ -19,11 +19,23 @@ export class DataService {
   }
 
   addVehicle(vehicle: any): Observable<any> {
-    return this.http.post<any>(this.baseUrl, vehicle);
+    const payload = {
+      ...vehicle,
+      make: (vehicle?.make || '').toString().toUpperCase().trim(),
+      model: (vehicle?.model || '').toString().toUpperCase().trim(),
+      location: (vehicle?.location || '').toString().toUpperCase().trim(),
+    };
+    return this.http.post<any>(this.baseUrl, payload);
   }
 
   updateVehicleDetails(vehicleData: any): Observable<any> {
-    return this.http.put(`${this.baseUrl}/${vehicleData.id}`, vehicleData);
+    const payload = {
+      ...vehicleData,
+      make: (vehicleData?.make || '').toString().toUpperCase().trim(),
+      model: (vehicleData?.model || '').toString().toUpperCase().trim(),
+      location: (vehicleData?.location || '').toString().toUpperCase().trim(),
+    };
+    return this.http.put(`${this.baseUrl}/${vehicleData.id}`, payload);
   }
 
   deleteVehicleDetails(id: number): Observable<any> {

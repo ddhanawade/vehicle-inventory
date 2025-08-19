@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MonthlySalesRequest } from '../../models/MonthlySalesRequest';
+import { MonthlyPurchaseRequest } from '../../models/MonthlyPurchaseRequest';
 import { VehicleModel } from '../../models/VehicleModel';
 import { ReportingService } from '../../services/ReportingService';
 import { CommonModule, DatePipe } from '@angular/common';
@@ -44,7 +44,7 @@ import { NgChartsModule } from 'ng2-charts';
   styleUrl: './purchasereport.component.scss'
 })
 export class PurchasereportComponent {
- startDate: string = '';
+  startDate: string = '';
   endDate: string = '';
   city: string = '';
   make: string = '';
@@ -70,7 +70,7 @@ export class PurchasereportComponent {
     'invoiceValue',
     'interest',
     'status'
-    
+
   ];
   dataSource: any;
   sort: any;
@@ -82,8 +82,8 @@ export class PurchasereportComponent {
   leadName: any;
 
   constructor(
-    private http: HttpClient, 
-    private reportService: ReportingService, 
+    private http: HttpClient,
+    private reportService: ReportingService,
     private cdr: ChangeDetectorRef // Inject ChangeDetectorRef
   ) { }
 
@@ -116,7 +116,7 @@ export class PurchasereportComponent {
     this.model = '';
     this.salesPersonName = '';
     this.leadName = '';
-    
+
     // Reset the data source
     this.dataSource = new MatTableDataSource<VehicleModel>([]);
     this.totalVehicles = 0;
@@ -127,7 +127,7 @@ export class PurchasereportComponent {
     if (!this.carDetailsList || this.carDetailsList.length === 0) {
       return 0;
     }
-    
+
     const uniqueValues = new Set();
     this.carDetailsList.forEach(item => {
       const value = item[column as keyof VehicleModel];
@@ -135,7 +135,7 @@ export class PurchasereportComponent {
         uniqueValues.add(value);
       }
     });
-    
+
     return uniqueValues.size;
   }
 
@@ -156,7 +156,7 @@ export class PurchasereportComponent {
     const headers = this.displayedColumns.map(col => this.getColumnHeader(col));
     const csvContent = [
       headers.join(','),
-      ...this.carDetailsList.map(item => 
+      ...this.carDetailsList.map(item =>
         this.displayedColumns.map(col => {
           const value = this.getColumnValue(item, col);
           return `"${value}"`;
@@ -180,25 +180,34 @@ export class PurchasereportComponent {
 
   fetchMonthlySales(): void {
     this.isLoading = true;
-    
-    const request: MonthlySalesRequest = {
-      startDate: this.formatDate(new Date(this.startDate)), // Format the startDate
-      endDate: this.formatDate(new Date(this.endDate)),    // Format the endDate
+
+    const start = this.safeParseDate(this.startDate);
+    const end = this.safeParseDate(this.endDate);
+
+    if (!start || !end) {
+      this.isLoading = false;
+      alert('Please select both Start and End dates.');
+      return;
+    }
+
+    const request: MonthlyPurchaseRequest = {
+      startDate: this.formatDate(start),
+      endDate: this.formatDate(end),
       city: this.city || undefined,
       make: this.make || undefined,
       model: this.model || undefined
     };
-    
-    this.reportService.getMonthlySalesReport(request).subscribe({
+
+    this.reportService.getMonthlyPurchaseReport(request).subscribe({
       next: (result: VehicleModel[]) => {
         this.carDetailsList = result;
         this.dataSource = new MatTableDataSource<VehicleModel>(this.carDetailsList);
-        console.log("monthly sales data", this.dataSource);
-  
+        console.log("monthly Purchase data", this.dataSource);
+
         // Set up sorting and pagination
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
-  
+
         // Configure custom sorting
         this.dataSource.sortingDataAccessor = (item: VehicleModel, property: string) => {
           switch (property) {
@@ -213,7 +222,7 @@ export class PurchasereportComponent {
               return item[property]?.toString() || '';
           }
         };
-  
+
         // Update the filter predicate
         this.dataSource.filterPredicate = (data: VehicleModel, filter: string) => {
           return Object.keys(data).some(key => {
@@ -223,7 +232,7 @@ export class PurchasereportComponent {
               value.toString().toLowerCase().includes(filter.toLowerCase());
           });
         };
-  
+
         this.totalVehicles = this.carDetailsList.length;
         this.isLoading = false;
         this.cdr.detectChanges(); // Trigger change detection
@@ -235,12 +244,18 @@ export class PurchasereportComponent {
       }
     });
   }
-  
+
   private formatDate(date: Date): string {
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`; // Format as YYYY-MM-DD
+    return `${year}-${month}-${day}`;
+  }
+
+  private safeParseDate(input: string): Date | null {
+    if (!input) return null;
+    const d = new Date(input);
+    return isNaN(d.getTime()) ? null : d;
   }
 
   applyFilters(): void {

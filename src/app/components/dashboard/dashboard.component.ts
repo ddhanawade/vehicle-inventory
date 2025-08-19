@@ -20,13 +20,13 @@ interface AgeResult {
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, DatePipe, RouterLink, 
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, DatePipe, RouterLink,
     MatPaginatorModule,  MatTableModule, MatSortModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent implements OnInit, AfterViewInit {
-  
+
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -35,14 +35,14 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   vehicleOrderDetails: any;
   isLoading: boolean = false;
 
-  
+
   // Enhanced slider navigation method
   scrollSlider(direction: 'left' | 'right'): void {
     const slider = document.querySelector('.stats-slider') as HTMLElement;
     if (slider) {
       const scrollAmount = 280; // Width of one card plus gap
       const currentScroll = slider.scrollLeft;
-      
+
       if (direction === 'left') {
         slider.scrollTo({
           left: Math.max(0, currentScroll - scrollAmount),
@@ -66,11 +66,11 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   // Get current date for welcome section
   getCurrentDate(): string {
     const now = new Date();
-    const options: Intl.DateTimeFormatOptions = { 
-      weekday: 'long', 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
+    const options: Intl.DateTimeFormatOptions = {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
     };
     return now.toLocaleDateString('en-US', options);
   }
@@ -80,9 +80,78 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.showPopup = true;
   }
 
-  // Navigate to reports functionality  
+  // Navigate to reports functionality
   navigateToReports(): void {
     this.router.navigate(['/vehicle-report']);
+  }
+
+  // Open quick menu for total vehicles
+  totalMenuOpen = false;
+
+  toggleTotalMenu(): void {
+    this.totalMenuOpen = !this.totalMenuOpen;
+    // When opening, set focus to first item shortly
+    if (this.totalMenuOpen) {
+      setTimeout(() => {
+        const btn = document.querySelector<HTMLButtonElement>('.total-menu .menu-item');
+        btn?.focus();
+      }, 0);
+    }
+    // Attach one-time outside click handler
+    if (this.totalMenuOpen) {
+      const close = (e: MouseEvent) => {
+        const target = e.target as HTMLElement;
+        if (!target.closest('.total-menu') && !target.closest('.stat-card')) {
+          this.totalMenuOpen = false;
+          document.removeEventListener('click', close);
+        }
+      };
+      setTimeout(() => document.addEventListener('click', close), 0);
+    }
+  }
+
+  onTotalMenuKeydown(event: KeyboardEvent): void {
+    const items = Array.from(document.querySelectorAll<HTMLButtonElement>('.total-menu .menu-item'));
+    const currentIndex = items.findIndex(el => el === document.activeElement);
+    if (event.key === 'ArrowRight') {
+      items[(currentIndex + 1) % items.length]?.focus();
+      event.preventDefault();
+    } else if (event.key === 'ArrowLeft') {
+      items[(currentIndex - 1 + items.length) % items.length]?.focus();
+      event.preventDefault();
+    } else if (event.key === 'Tab') {
+      // keep focus inside
+      if (event.shiftKey && currentIndex === 0) {
+        items[items.length - 1]?.focus();
+        event.preventDefault();
+      } else if (!event.shiftKey && currentIndex === items.length - 1) {
+        items[0]?.focus();
+        event.preventDefault();
+      }
+    }
+  }
+
+  private getUserMake(): 'Tata' | 'Toyota' | 'Eicher' | null {
+    if (this.hasRole('TATA')) return 'Tata';
+    if (this.hasRole('TOYOTA')) return 'Toyota';
+    if (this.hasRole('EICHER')) return 'Eicher';
+    return null;
+  }
+
+  onTotalVehiclesClick(): void {
+    if (this.hasRole('ADMIN')) {
+      this.toggleTotalMenu();
+      return;
+    }
+    const userMake = this.getUserMake();
+    if (userMake) {
+      this.goToMake(userMake);
+    }
+  }
+
+  goToMake(make: 'Tata' | 'Toyota' | 'Eicher'): void {
+    this.totalMenuOpen = false;
+    this.router.navigate([`/vehicle-by-make/${make}`]);
   }
 
   displayedColumns: string[] = [
@@ -144,7 +213,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       this.user = JSON.parse(storedUser);
       //console.log('Retrieved User from Storage:', this.user);
     }
-    
+
     this.getCarDetails();
     this.getAgeCountByModel();
     // Subscribe to the user observable to get the current user
@@ -158,11 +227,12 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
   getCarDetails(): void {
     this.vehicleService.getData().subscribe((data: VehicleModel[]) => {
-      this.carDetailsList = data;
+      // Keep only active vehicles in the main list (exclude SOLD)
+      this.carDetailsList = (data || []).filter(v => (v.vehicleStatus || '').toLowerCase() !== 'sold');
 
       // Filter the data based on roles
       if (this.hasRole('ADMIN')) {
-        this.filteredStocksList = [...this.carDetailsList]; // Show all data for ADMIN
+        this.filteredStocksList = [...this.carDetailsList]; // Show all active data for ADMIN
       } else if (this.hasRole('TATA')) {
         this.filteredStocksList = this.carDetailsList.filter(car => car.make?.toLowerCase() === 'tata');
       } else if (this.hasRole('TOYOTA')) {
@@ -185,19 +255,19 @@ getObjectKeys(obj: any): string[] {
   return Object.keys(obj);
 }
   filterVehicles(): void {
-    const searchTermLower = this.searchTerm.toLowerCase();
+    const searchTermLower = (this.searchTerm || '').toLowerCase().trim();
     this.filteredModelStockList = this.uniqueVehicleModel.filter((stock) => {
-      const matchesMake = this.selectedMake ? stock.make.toLowerCase() === this.selectedMake.toLowerCase() : true;
-      const matchesSearch = stock.make.toLowerCase().includes(searchTermLower) ||
-        stock.model.toLowerCase().includes(searchTermLower) ||
-        stock.location.toLowerCase().includes(searchTermLower);
-      return matchesMake && matchesSearch;
+      const matchesMake = this.selectedMake ? (stock.make || '').toLowerCase() === this.selectedMake.toLowerCase() : true;
+      const matchesSearch = (stock.make || '').toLowerCase().includes(searchTermLower) ||
+        (stock.model || '').toLowerCase().includes(searchTermLower) ||
+        (stock.location || '').toLowerCase().trim().includes(searchTermLower);
+      return matchesMake && (searchTermLower ? matchesSearch : true);
     });
   }
 
   filterStocks(): void {
-    const searchTermLower = this.searchTerm.toLowerCase();
-    
+    const searchTermLower = (this.searchTerm || '').toLowerCase().trim();
+
     // Apply role-based filtering first
     let roleFilteredList: VehicleModel[] = [];
     if (this.hasRole('ADMIN')) {
@@ -212,9 +282,9 @@ getObjectKeys(obj: any): string[] {
 
     // Apply search term filtering on the role-filtered list
     this.filteredModelStockList = roleFilteredList.filter((stock) => {
-      return stock.make.toLowerCase().includes(searchTermLower) ||
-        stock.model.toLowerCase().includes(searchTermLower) ||
-        stock.location.toLowerCase().includes(searchTermLower);
+      return (stock.make || '').toLowerCase().includes(searchTermLower) ||
+        (stock.model || '').toLowerCase().includes(searchTermLower) ||
+        (stock.location || '').toLowerCase().trim().includes(searchTermLower);
     });
   }
 
@@ -276,6 +346,13 @@ getObjectKeys(obj: any): string[] {
   }
 
   onDelete(stock: VehicleModel): void {
+    if (!this.hasRole('ADMIN')) {
+      alert('Only admins can delete vehicles.');
+      return;
+    }
+    const confirmed = confirm('Are you sure you want to delete this vehicle? This action cannot be undone.');
+    if (!confirmed) return;
+
     this.vehicleService.deleteVehicleDetails(stock.id).subscribe(
       () => {
         this.successMessage = 'Vehicle details deleted successfully!';
@@ -288,30 +365,28 @@ getObjectKeys(obj: any): string[] {
     );
   }
 
-  getTotalCarsAvailable(): number {
+  // Returns list filtered by persona and current brand selection (for ADMIN)
+  private getContextVehicles(): VehicleModel[] {
+    const all = this.carDetailsList || [];
+    const isActiveVehicle = (c: VehicleModel) => (c.vehicleStatus || '').toLowerCase() !== 'sold';
     if (this.hasRole('ADMIN')) {
-      return this.carDetailsList.length; // Total count for ADMIN
-    } else if (this.hasRole('TATA')) {
-      return this.carDetailsList.filter(car => car.make?.toLowerCase() === 'tata').length;
-    } else if (this.hasRole('TOYOTA')) {
-      return this.carDetailsList.filter(car => car.make?.toLowerCase() === 'toyota').length;
-    } else if (this.hasRole('EICHER')) {
-      return this.carDetailsList.filter(car => car.make?.toLowerCase() === 'eicher').length;
+      if (this.selectedMake) {
+        return all.filter(c => isActiveVehicle(c) && c.make?.toLowerCase() === this.selectedMake.toLowerCase());
+      }
+      return all.filter(isActiveVehicle);
     }
-    return 0; // Default to 0 if no roles match
+    if (this.hasRole('TATA')) return all.filter(c => isActiveVehicle(c) && c.make?.toLowerCase() === 'tata');
+    if (this.hasRole('TOYOTA')) return all.filter(c => isActiveVehicle(c) && c.make?.toLowerCase() === 'toyota');
+    if (this.hasRole('EICHER')) return all.filter(c => isActiveVehicle(c) && c.make?.toLowerCase() === 'eicher');
+    return [];
+  }
+
+  getTotalCarsAvailable(): number {
+    return this.getContextVehicles().length;
   }
 
   getCityWiseModelCounts(): { city: string; count: number }[] {
-    let filteredList: any[] = [];
-    if (this.hasRole('ADMIN')) {
-      filteredList = [...this.carDetailsList]; // All data for ADMIN
-    } else if (this.hasRole('TATA')) {
-      filteredList = this.carDetailsList.filter(car => car.make?.toLowerCase() === 'tata');
-    } else if (this.hasRole('TOYOTA')) {
-      filteredList = this.carDetailsList.filter(car => car.make?.toLowerCase() === 'toyota');
-    } else if (this.hasRole('EICHER')) {
-      filteredList = this.carDetailsList.filter(car => car.make?.toLowerCase() === 'eicher');
-    }
+    const filteredList = this.getContextVehicles();
 
     // Group by city (uppercase) and count vehicles to avoid duplicates
     const cityCounts = filteredList.reduce((acc, car) => {
@@ -325,7 +400,7 @@ getObjectKeys(obj: any): string[] {
     return Object.keys(cityCounts).map(city => ({
       city,
       count: cityCounts[city]
-    })).sort((a, b) => b.count - a.count); // Sort by count descending
+    })).sort((a, b) => b.count - a.count);
   }
 
   logout(): void {
@@ -355,7 +430,7 @@ getObjectKeys(obj: any): string[] {
 
   calculateVehicleAge(count: string): AgeResult {
     try {
-      
+
       // Check if we have a valid date
       if (!count || isNaN(Number(count))) {
         return { days: 0, status: 'recent', label: 'Invalid Date' };
@@ -382,23 +457,42 @@ getObjectKeys(obj: any): string[] {
       return { days: 0, status: 'recent', label: 'Error' };
     }
   }
-  
+
 
   getUniqueModelDetails(): void {
     this.isLoading = true; // Start loading
     this.vehicleService.getUnqiueVehicleModels().subscribe({
       next: (data: VehicleModel[]) => {
-        this.uniqueVehicleModel = data;
-  
+        // Use all models from the server response; do not drop models whose representative row is SOLD
+        // Counts and totals elsewhere already exclude SOLD
+        const list = (data || []);
+
+        // Normalize casing for deduplication (display remains uppercased via template)
+        const byKey = new Map<string, VehicleModel>();
+        for (const v of list) {
+          const normMake = (v.make || '').toUpperCase().trim();
+          const normModel = (v.model || '').toUpperCase().trim();
+          const normLoc = (v.location || '').toUpperCase().trim();
+          const key = `${normMake}|${normModel}`;
+          if (!byKey.has(key)) {
+            // keep original object but attach normalized fields for display/filtering if needed
+            (v as any).normalizedMake = normMake;
+            (v as any).normalizedModel = normModel;
+            (v as any).normalizedLocation = normLoc;
+            byKey.set(key, v);
+          }
+        }
+        this.uniqueVehicleModel = Array.from(byKey.values());
+
         // Filter the data based on roles
         if (this.hasRole('ADMIN')) {
           this.filteredModelStockList = [...this.uniqueVehicleModel]; // Show all data for ADMIN
         } else if (this.hasRole('TATA')) {
-          this.filteredModelStockList = this.uniqueVehicleModel.filter(car => car.make?.toLowerCase() === 'tata');
+          this.filteredModelStockList = this.uniqueVehicleModel.filter(car => (car.make || '').toLowerCase() === 'tata');
         } else if (this.hasRole('TOYOTA')) {
-          this.filteredModelStockList = this.uniqueVehicleModel.filter(car => car.make?.toLowerCase() === 'toyota');
+          this.filteredModelStockList = this.uniqueVehicleModel.filter(car => (car.make || '').toLowerCase() === 'toyota');
         } else if (this.hasRole('EICHER')) {
-          this.filteredModelStockList = this.uniqueVehicleModel.filter(car => car.make?.toLowerCase() === 'eicher');
+          this.filteredModelStockList = this.uniqueVehicleModel.filter(car => (car.make || '').toLowerCase() === 'eicher');
         } else {
           this.filteredModelStockList = []; // Default to an empty list if no roles match
         }
@@ -417,7 +511,7 @@ getObjectKeys(obj: any): string[] {
   getModelCount(model: string): number {
     // Apply role-based filtering first
     let filteredList = this.carDetailsList;
-    
+
     if (this.hasRole('ADMIN')) {
       filteredList = [...this.carDetailsList]; // Show all data for ADMIN
     } else if (this.hasRole('TATA')) {
@@ -429,8 +523,9 @@ getObjectKeys(obj: any): string[] {
     } else {
       filteredList = []; // Default to empty list if no roles match
     }
-    
-    return filteredList.filter(car => car.model === model).length;
+
+    const target = (model || '').toLowerCase();
+    return filteredList.filter(car => (car.model || '').toLowerCase() === target && (car.vehicleStatus || '').toLowerCase() !== 'sold').length;
   }
 
   getAgeCountByModel(): void {
@@ -442,23 +537,34 @@ getObjectKeys(obj: any): string[] {
   getVehiclesByLocation(location: string): void {
     this.selectedLocation = location;
 
+    const targetLocation = (location || '').toLowerCase();
+
     if (this.hasRole('ADMIN')) {
-      this.locationVehicles = this.carDetailsList.filter(car => car.location === location);
+      const selected = (this.selectedMake || '').toLowerCase();
+      this.locationVehicles = this.carDetailsList.filter(car =>
+        (car.location || '').toLowerCase() === targetLocation && (!selected || (car.make || '').toLowerCase() === selected) && (car.vehicleStatus || '').toLowerCase() !== 'sold'
+      );
     } else if (this.hasRole('TATA')) {
-      this.locationVehicles = this.carDetailsList.filter(car => (car.location === location && car.make === 'Tata'));
+      this.locationVehicles = this.carDetailsList.filter(car =>
+        (car.location || '').toLowerCase() === targetLocation && (car.make || '').toLowerCase() === 'tata' && (car.vehicleStatus || '').toLowerCase() !== 'sold'
+      );
     } else if (this.hasRole('TOYOTA')) {
-      this.locationVehicles = this.carDetailsList.filter(car => (car.location === location && car.make === 'Toyota'));
+      this.locationVehicles = this.carDetailsList.filter(car =>
+        (car.location || '').toLowerCase() === targetLocation && (car.make || '').toLowerCase() === 'toyota' && (car.vehicleStatus || '').toLowerCase() !== 'sold'
+      );
     } else if (this.hasRole('EICHER')) {
-      this.locationVehicles = this.carDetailsList.filter(car => (car.location === location && car.make === 'Eicher'));
+      this.locationVehicles = this.carDetailsList.filter(car =>
+        (car.location || '').toLowerCase() === targetLocation && (car.make || '').toLowerCase() === 'eicher' && (car.vehicleStatus || '').toLowerCase() !== 'sold'
+      );
     } else {
       this.locationVehicles = []; // Default to an empty list if no roles match
     }
 
     this.locationDataSource = new MatTableDataSource<VehicleModel>(this.locationVehicles);
-    
+
     // Show modal immediately
     this.showLocationDetails = true;
-    
+
     // Set up sorting and pagination immediately after view update
     requestAnimationFrame(() => {
       if (this.paginator && this.sort) {
@@ -471,7 +577,7 @@ getObjectKeys(obj: any): string[] {
   // Add method to close location details - Instant close
   closeLocationDetails(): void {
     this.showLocationDetails = false;
-    // Clean up data immediately  
+    // Clean up data immediately
     this.selectedLocation = null;
     this.locationVehicles = [];
     this.locationDataSource = new MatTableDataSource<VehicleModel>([]);
@@ -499,5 +605,25 @@ getObjectKeys(obj: any): string[] {
   }
   model(model: any) {
     throw new Error('Method not implemented.');
+  }
+
+  // Compute age distribution for a given model from active, context-aware vehicles
+  private getAgeBucketsForModel(model: string): { lt30: number; b3060: number; gt60: number } {
+    const target = (model || '').toLowerCase();
+    const vehicles = this.getContextVehicles().filter(v => (v.model || '').toLowerCase() === target);
+    let lt30 = 0, b3060 = 0, gt60 = 0;
+    for (const v of vehicles) {
+      const days = typeof v.age === 'number' ? v.age : Number(v.age || 0);
+      if (!isFinite(days)) continue;
+      if (days <= 30) lt30++;
+      else if (days > 30 && days <= 60) b3060++;
+      else if (days > 60) gt60++;
+    }
+    return { lt30, b3060, gt60 };
+  }
+
+  getAgeCountForModel(model: string, bucket: 'lt30' | 'b3060' | 'gt60'): number {
+    const b = this.getAgeBucketsForModel(model);
+    return bucket === 'lt30' ? b.lt30 : bucket === 'b3060' ? b.b3060 : b.gt60;
   }
 }

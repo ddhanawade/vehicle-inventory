@@ -1,7 +1,7 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 
 export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
-  const excludedPattern = /^(http:\/\/52\.66\.207\.66:8081)/;
+  const excludedPattern = /^(http:\/\/52\.66\.207\.66:8081|http:\/\/localhost:8081\/auth)/;
 
   if (!excludedPattern.test(req.url)) {
     const token = localStorage.getItem('authToken');

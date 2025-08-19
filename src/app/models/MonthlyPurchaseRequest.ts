@@ -1,4 +1,4 @@
-export interface MonthlySalesRequest {
+export interface MonthlyPurchaseRequest {
 	startDate: string;
 	endDate: string;
 	city?: string;
@@ -6,4 +6,4 @@ export interface MonthlySalesRequest {
 	model?: string;
 	salesPersonName?: string;
 	leadName?: string;
-}
+} 

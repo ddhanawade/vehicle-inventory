@@ -49,8 +49,8 @@ export class UpdateVehicleComponent implements OnInit {
 
   makes = ['Tata', 'Toyota', 'Eicher'];
   models = ['Corolla', 'Civic', 'Focus', 'X5', 'C-Class'];
-  fuelTypes = ['PETROL', 'DIESEL', 'ELECTRIC', 'HYBRID'];
-  statuses = ['AVAILABLE', 'SOLD', 'IN_TRANSIT', 'BOOKED', 'FREE', 'STOCK'];
+  fuelTypes = ['PETROL', 'DIESEL', 'ELECTRIC', 'HYBRID', 'CNG'];
+  statuses = ['TRANSIT', 'STOCK', 'AVAILABLE', 'SOLD', 'BILLED', 'WATER', 'FRESH', 'FREE'];
   sort: any;
   paginator: any;
 
@@ -64,21 +64,21 @@ export class UpdateVehicleComponent implements OnInit {
       model: ['', Validators.required],
       grade: ['', Validators.required],
       fuelType: ['', Validators.required],
-      suffix: ['', Validators.required],
-      manufactureDate: ['', Validators.required],
-      exteriorColor: ['', Validators.required],
-      interiorColor: ['', Validators.required],
+      suffix: [''],
+      manufactureDate: [''],
+      exteriorColor: [''],
+      interiorColor: [''],
       chassisNumber: ['', Validators.required],
       engineNumber: ['', Validators.required],
-      keyNumber: ['', Validators.required],
+      keyNumber: [''],
       location: ['', Validators.required],
       vehicleStatus: ['', Validators.required],
-      receivedDate: ['', Validators.required],
+      receivedDate: [''],
       invoiceDate: ['', Validators.required],
-      invoiceNumber: ['', Validators.required],
-      purchaseDealer: ['', Validators.required],
+      invoiceNumber: [''],
+      purchaseDealer: [''],
       invoiceValue: ['', Validators.required],
-      remarks: ['', Validators.required]
+      remarks: ['']
     });
   }
 

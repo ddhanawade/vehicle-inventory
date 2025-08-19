@@ -101,7 +101,7 @@
           <div class="filter-actions compact-actions" style="display: flex; gap: 10px; align-items: center;">
             <button mat-raised-button color="primary"
                     (click)="applyFilters()"
-                    [disabled]="isLoading"
+                    [disabled]="isLoading || !startDate || !endDate"
                     class="apply-btn"
                     [attr.aria-label]="isLoading ? 'Loading' : 'Apply Filters'"
                     style="display: flex; align-items: center; gap: 6px; font-weight: 600; box-shadow: 0 2px 8px rgba(33,147,176,0.10); border-radius: 6px; padding: 0 16px;">

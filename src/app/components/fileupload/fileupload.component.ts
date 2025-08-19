@@ -171,28 +171,154 @@ export class FileuploadComponent {
       this.testErrorMessage = null;
     }
 
-    const formData = new FormData();
-    formData.append('file', selectedFile);
+    // Normalize CSV (uppercase MAKE/MODEL/LOCATION) when applicable
+    this.normalizeCsvFile(selectedFile)
+      .then((normalizedFile) => {
+        const formData = new FormData();
+        formData.append('file', normalizedFile);
 
-    if (type === 'fleet') {
-      // Use existing fleet data upload API
-      this.dataService.bulkUpload(formData).subscribe({
-        next: (response: any) => {
-          this.fleetIsLoading = false;
-          this.fleetSuccessMessage = response.message || 'Fleet data uploaded successfully!';
-          this.fleetErrorMessage = null;
-        },
-        error: (error: any) => {
-          this.fleetIsLoading = false;
-          this.fleetErrorMessage = "Fleet data upload failed. Please try again.";
-          this.fleetSuccessMessage = null;
-          console.error('Fleet upload error:', error);
+        if (type === 'fleet') {
+          // Use existing fleet data upload API
+          this.dataService.bulkUpload(formData).subscribe({
+            next: (response: any) => {
+              this.fleetIsLoading = false;
+              this.fleetSuccessMessage = response.message || 'Fleet data uploaded successfully!';
+              this.fleetErrorMessage = null;
+            },
+            error: (error: any) => {
+              this.fleetIsLoading = false;
+              this.extractErrorMessageAsync(error)
+                .then((msg) => {
+                  this.fleetErrorMessage = msg || 'Fleet data upload failed. Please try again.';
+                })
+                .catch(() => {
+                  this.fleetErrorMessage = 'Fleet data upload failed. Please try again.';
+                });
+              this.fleetSuccessMessage = null;
+              console.error('Fleet upload error:', error);
+            }
+          });
+        } else {
+          // Use test vehicles upload API
+          this.uploadTestVehicles(formData);
+        }
+      })
+      .catch((err) => {
+        console.warn('CSV normalization skipped due to error:', err);
+        const fallbackForm = new FormData();
+        fallbackForm.append('file', selectedFile as File);
+        if (type === 'fleet') {
+          this.dataService.bulkUpload(fallbackForm).subscribe({
+            next: (response: any) => {
+              this.fleetIsLoading = false;
+              this.fleetSuccessMessage = response.message || 'Fleet data uploaded successfully!';
+              this.fleetErrorMessage = null;
+            },
+            error: (error: any) => {
+              this.fleetIsLoading = false;
+              this.extractErrorMessageAsync(error)
+                .then((msg) => {
+                  this.fleetErrorMessage = msg || 'Fleet data upload failed. Please try again.';
+                })
+                .catch(() => {
+                  this.fleetErrorMessage = 'Fleet data upload failed. Please try again.';
+                });
+              this.fleetSuccessMessage = null;
+              console.error('Fleet upload error:', error);
+            }
+          });
+        } else {
+          this.uploadTestVehicles(fallbackForm);
         }
       });
-    } else {
-      // Use test vehicles upload API (you'll need to implement this in DataService)
-      this.uploadTestVehicles(formData);
+  }
+
+  // Safely normalize CSV by uppercasing specific columns before upload
+  private async normalizeCsvFile(file: File): Promise<File> {
+    try {
+      const name = file.name || '';
+      const ext = name.split('.').pop()?.toLowerCase();
+      if (ext !== 'csv') {
+        return file; // Only normalize CSV; pass others through (xlsx/xls)
+      }
+
+      const text = await this.readFileAsText(file);
+      const eol = text.includes('\r\n') ? '\r\n' : '\n';
+      const lines = text.split(/\r?\n/).filter(l => l.length > 0);
+      if (lines.length === 0) return file;
+
+      const headerRaw = lines[0];
+      const headers = this.parseCsvLine(headerRaw).map(h => h.replace(/^[\"]|[\"]$/g, '').trim());
+      const indexByLower: Record<string, number> = {};
+      headers.forEach((h, i) => indexByLower[h.toLowerCase()] = i);
+
+      const makeIdx = indexByLower['make'];
+      const modelIdx = indexByLower['model'];
+      const locationIdx = indexByLower['location'];
+
+      const out: string[] = [];
+      // Preserve original header exactly to avoid backend header mismatches
+      out.push(headerRaw);
+
+      for (let i = 1; i < lines.length; i++) {
+        const rowVals = this.parseCsvLine(lines[i]);
+        const nextVals = [...rowVals];
+        if (makeIdx !== undefined && nextVals[makeIdx] !== undefined) nextVals[makeIdx] = (nextVals[makeIdx] || '').toString().toUpperCase().trim();
+        if (modelIdx !== undefined && nextVals[modelIdx] !== undefined) nextVals[modelIdx] = (nextVals[modelIdx] || '').toString().toUpperCase().trim();
+        if (locationIdx !== undefined && nextVals[locationIdx] !== undefined) nextVals[locationIdx] = (nextVals[locationIdx] || '').toString().toUpperCase().trim();
+
+        const serialized = nextVals.map(v => this.escapeCsv(v ?? ''));
+        out.push(serialized.join(','));
+      }
+
+      const normalized = out.join(eol);
+      return new File([normalized], name, { type: 'text/csv' });
+    } catch (e) {
+      // On any parsing error, fall back to original file
+      return file;
     }
+  }
+
+  private readFileAsText(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve((reader.result as string) || '');
+      reader.onerror = () => reject(reader.error || new Error('Failed to read file'));
+      reader.readAsText(file);
+    });
+  }
+
+  private parseCsvLine(line: string): string[] {
+    const values: string[] = [];
+    let currentValue = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i];
+      if (char === '"') {
+        // toggle quote mode unless it's an escaped quote
+        if (inQuotes && line[i + 1] === '"') {
+          currentValue += '"';
+          i++; // skip escaped quote
+        } else {
+          inQuotes = !inQuotes;
+        }
+      } else if (char === ',' && !inQuotes) {
+        values.push(currentValue.trim());
+        currentValue = '';
+      } else {
+        currentValue += char;
+      }
+    }
+    values.push(currentValue.trim());
+    return values;
+  }
+
+  private escapeCsv(value: string): string {
+    if (/[",\n]/.test(value)) {
+      // escape quotes and wrap in quotes
+      return '"' + value.replace(/"/g, '""') + '"';
+    }
+    return value;
   }
 
   // Test vehicles upload method (placeholder for future API implementation)
@@ -277,5 +403,135 @@ export class FileuploadComponent {
   // Legacy method for backward compatibility
   downloadTemplate_Legacy(): void {
     this.downloadTemplate('fleet');
+  }
+
+  private async extractErrorMessageAsync(error: any): Promise<string> {
+    try {
+      if (!error) return '';
+
+      // If backend returned a Blob (e.g., text/plain), read it
+      if (error?.error instanceof Blob) {
+        const text = await error.error.text();
+        const parsed = this.tryParseJson(text);
+        if (parsed) {
+          return this.buildMessageFromBody(parsed);
+        }
+        const dupFromText = this.tryExtractDuplicatesFromText(text);
+        if (dupFromText) return dupFromText;
+        return text || '';
+      }
+
+      // If error.error is a string (plain text or JSON string)
+      if (typeof error?.error === 'string') {
+        const str = error.error;
+        const parsed = this.tryParseJson(str);
+        if (parsed) {
+          return this.buildMessageFromBody(parsed);
+        }
+        const dupFromText = this.tryExtractDuplicatesFromText(str);
+        if (dupFromText) return dupFromText;
+        return str;
+      }
+
+      // If error.error is already an object/array
+      if (error?.error && typeof error.error === 'object') {
+        // Check common nested fields that may contain text
+        const nestedText: string | undefined = (error.error as any)?.text;
+        if (typeof nestedText === 'string' && nestedText.trim().length > 0) {
+          const parsed = this.tryParseJson(nestedText);
+          if (parsed) return this.buildMessageFromBody(parsed);
+          const dupFromText = this.tryExtractDuplicatesFromText(nestedText);
+          if (dupFromText) return dupFromText;
+          return nestedText;
+        }
+
+        const nestedBody: any = (error.error as any)?.body;
+        if (nestedBody) {
+          if (typeof nestedBody === 'string') {
+            const parsed = this.tryParseJson(nestedBody);
+            if (parsed) return this.buildMessageFromBody(parsed);
+            const dupFromText = this.tryExtractDuplicatesFromText(nestedBody);
+            if (dupFromText) return dupFromText;
+            return nestedBody;
+          }
+          if (typeof nestedBody === 'object') {
+            const msg = this.buildMessageFromBody(nestedBody);
+            if (msg) return msg;
+          }
+        }
+
+        return this.buildMessageFromBody(error.error);
+      }
+
+      // Fall back to top-level message
+      if (typeof error?.message === 'string') {
+        const dupFromText = this.tryExtractDuplicatesFromText(error.message);
+        if (dupFromText) return dupFromText;
+        return error.message;
+      }
+
+      // As a fallback, use status code text if available
+      if (typeof error?.status === 'number') {
+        return `Request failed with status ${error.status}${error.statusText ? ' - ' + error.statusText : ''}`;
+      }
+      return '';
+    } catch {
+      return '';
+    }
+  }
+
+  private tryParseJson(text: string): any | null {
+    try {
+      return JSON.parse(text);
+    } catch {
+      return null;
+    }
+  }
+
+  private buildMessageFromBody(body: any): string {
+    try {
+      // If body is an array, use the first element
+      const obj = Array.isArray(body) ? (body[0] ?? {}) : body;
+
+      // Common shapes from backend
+      const duplicates: string[] | undefined = obj?.duplicates;
+      const messageField: string | undefined = obj?.message;
+      const errorField: string | undefined = obj?.error;
+
+      if (Array.isArray(duplicates) && duplicates.length > 0) {
+        const prefix = (messageField || errorField || 'Duplicate chassis numbers found').replace(/[:.]?$/,'');
+        return `${prefix}: ${duplicates.join(', ')}`;
+      }
+
+      if (typeof messageField === 'string' && messageField.trim().length > 0) return messageField;
+      if (typeof errorField === 'string' && errorField.trim().length > 0) return errorField;
+
+      // As a last resort, stringify compactly (avoid huge dumps)
+      const json = JSON.stringify(obj);
+      const dupText = this.tryExtractDuplicatesFromText(json);
+      if (dupText) return dupText;
+      return json;
+    } catch {
+      return '';
+    }
+  }
+
+  private tryExtractDuplicatesFromText(text: string): string | null {
+    if (!text) return null;
+    const match = text.match(/duplicates=\[([^\]]+)\]/i) || text.match(/"duplicates"\s*:\s*\[([^\]]+)\]/i);
+    if (match && match[1]) {
+      const list = match[1]
+        .replace(/\"/g, '"')
+        .split(/\s*,\s*/)
+        .map(s => s.replace(/^\"|\"$/g, '').trim())
+        .filter(s => s.length > 0);
+      if (list.length > 0) {
+        return `Duplicate chassis numbers found: ${list.join(', ')}`;
+      }
+    }
+    if (/duplicate\s+chassis/i.test(text)) {
+      return 'Duplicate chassis numbers found';
+    }
+    return null;
   }
 }

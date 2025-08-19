@@ -9,8 +9,7 @@ import { OrderModel } from "../models/order.model";
 })
 export class OrderService {
 
-    //private baseUrl = 'http://fleet-manager-prd.us-east-2.elasticbeanstalk.com/api/orders';
-    // private baseUrl = 'http://localhost:8080/api/orders';
+    // private baseUrl = 'http://localhost:8081/api/orders';
     private baseUrl = 'https://fleet-manager.in/api/orders';
 
     constructor(private http: HttpClient) { }
@@ -28,7 +27,8 @@ export class OrderService {
     }
 
     deleteOrder(id: number) {
-        return this.http.delete(`${this.baseUrl}/${id}`);
+        // Backend endpoint: /api/orders/delete/{id}
+        return this.http.delete(`${this.baseUrl}/delete/${id}`);
     }
 
     getOrdersByVehicleId(id : String): Observable<OrderModel>{

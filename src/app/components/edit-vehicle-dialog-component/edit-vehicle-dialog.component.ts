@@ -9,6 +9,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { OrderService } from '../../services/OrderService';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 import { OrderModel } from '../../models/order.model';
@@ -39,7 +40,8 @@ export const MY_DATE_FORMATS = {
     MatIconModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatTooltipModule
   ],
   providers: [
     OrderService,
@@ -59,6 +61,7 @@ export class EditVehicleDialogComponent {
   successMessage = '';
   editOrderData: any = {};
   orderId: number | null = null;
+  isAdmin = false;
 
   teamLeaders = ['John Doe', 'Jane Smith', 'Mike Johnson'];
   salesOfficers = ['Alice Brown', 'Bob Wilson', 'Carol White'];
@@ -73,14 +76,14 @@ export class EditVehicleDialogComponent {
     this.vehicleForm = this.fb.group({
       orderId: [''],
       vehicleId: [''],
-      customerName: ['', [Validators.required]],
-      leadName: ['', [Validators.required]],
-      salesPersonName: ['', [Validators.required]],
-      deliveryDate: ['', [Validators.required]],
+      customerName: [''],
+      leadName: [''],
+      salesPersonName: [''],
+      deliveryDate: [''],
       financerName: [''],
       financeType: [''],
-      phoneNumber: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
-      orderStatus: ['', [Validators.required]],
+      phoneNumber: ['', [Validators.pattern('^[0-9]{10}$')]],
+      orderStatus: [''],
       remarks: [''],
       dealAmount: [''],
       dmsStatus: [''],
@@ -89,6 +92,11 @@ export class EditVehicleDialogComponent {
   }
 
   ngOnInit(): void {
+    // derive admin role
+    const storedUser = localStorage.getItem('user');
+    const roles = storedUser ? (JSON.parse(storedUser).roles || []) : [];
+    this.isAdmin = Array.isArray(roles) && roles.includes('ADMIN');
+
     if (this.data) {
       const vehicleId = this.data.vehicleId;
       if (vehicleId) {
@@ -161,8 +169,58 @@ private resetForm(vehicleId: string): void {
     event.target.value = input.substring(0, 10);
   }
 
+  // Returns true if at least one field has a non-empty value (excluding ids)
+  hasAnyValue(): boolean {
+    if (!this.vehicleForm) return false;
+    const raw = this.vehicleForm.getRawValue();
+    const keys = Object.keys(raw);
+    for (const key of keys) {
+      if (key === 'orderId' || key === 'vehicleId') continue;
+      const val = raw[key as keyof typeof raw];
+      if (val instanceof Date) return true;
+      if (val !== null && val !== undefined && String(val).toString().trim() !== '') {
+        return true;
+      }
+    }
+    return false;
+  }
+
   onCancel(): void {
     this.dialogRef.close();
+  }
+
+  get canDelete(): boolean {
+    return !!this.orderId; 
+  }
+
+  deleteOrder(): void {
+    if (!this.orderId) return;
+    // Allow only admins to delete order details
+    const storedUser = localStorage.getItem('user');
+    const roles = storedUser ? (JSON.parse(storedUser).roles || []) : [];
+    const isAdmin = Array.isArray(roles) && roles.includes('ADMIN');
+    if (!isAdmin) {
+      alert('Only admins can delete order details.');
+      return;
+    }
+
+    const confirmed = confirm('Are you sure you want to delete this order? This action cannot be undone.');
+    if (!confirmed) return;
+
+    this.isSaving = true;
+    this.orderService.deleteOrder(this.orderId).subscribe({
+      next: () => {
+        this.isSaving = false;
+        this.successMessage = 'Order deleted successfully';
+        // Close dialog and signal deletion
+        this.dialogRef.close({ deleted: true, orderId: this.orderId });
+      },
+      error: (err) => {
+        console.error('Failed to delete order', err);
+        this.isSaving = false;
+        alert('Failed to delete order. Please try again.');
+      }
+    });
   }
 
   getOrderByVehicleId(id: String): Observable<OrderModel> {

@@ -149,7 +149,7 @@
         <div class="stats-container">
           <!-- Enhanced Total Stats -->
           <div class="total-stats">
-            <div class="stat-card primary">
+                         <div class="stat-card primary clickable" (click)="onTotalVehiclesClick()">
               <div class="stat-background">
                 <div class="floating-icon">
                   <i class="fas fa-car-alt"></i>
@@ -165,12 +165,26 @@
               </div>
               <div class="stat-content">
                 <h3>Total Active Vehicles</h3>
-                                 <div class="stat-value-container">
-                   <span class="stat-value counter">{{ getTotalCarsAvailable() }}</span>
-                   <div class="stat-progress">
-                     <div class="progress-bar" style="width: 100%;"></div>
-                   </div>
-                 </div>
+                <div class="stat-value-container">
+                  <span class="stat-value counter">{{ getTotalCarsAvailable() }}</span>
+                  <div class="stat-progress">
+                    <div class="progress-bar" style="width: 100%;"></div>
+                  </div>
+                </div>
+
+                <!-- Quick menu for makes -->
+                <div class="total-menu" *ngIf="totalMenuOpen && hasRole('ADMIN')"
+                     #totalMenuRef
+                     role="menu"
+                     aria-label="Select make"
+                     (click)="$event.stopPropagation()"
+                     (keydown)="onTotalMenuKeydown($event)"
+                     (keydown.escape)="totalMenuOpen=false">
+                  <button class="menu-item" #firstMakeBtn type="button" role="menuitem" (click)="goToMake('Tata')">TATA</button>
+                  <button class="menu-item" type="button" role="menuitem" (click)="goToMake('Toyota')">TOYOTA</button>
+                  <button class="menu-item" type="button" role="menuitem" (click)="goToMake('Eicher')">EICHER</button>
+                </div>
+
                 <div class="stat-footer">
                   <span class="trend-indicator positive" *ngIf="getTotalCarsAvailable() > 0">
                     <i class="fas fa-arrow-up"></i>
@@ -235,7 +249,7 @@
             <div class="search-input-container">
               <i class="fas fa-search search-icon"></i>
               <input type="text" 
-                     placeholder="Search by make, model, city, or any detail..." 
+                     placeholder="Search by make and model" 
                      [(ngModel)]="searchTerm"
                      (input)="filterStocks()" 
                      class="search-input enhanced" 
@@ -293,7 +307,7 @@
               </div>
               <div class="brand-info">
                 <h3>{{ stock.make | uppercase }}</h3>
-                <span class="model-name">{{ stock.model }}</span>
+                <span class="model-name">{{ (stock['normalizedModel'] || stock.model) }}</span>
               </div>
               <div class="total-badge">
                 {{ getModelCount(stock.model) }}
@@ -308,8 +322,8 @@
                 </span>
                 <a [routerLink]="['/vehicle-page', stock.model]" 
                    class="model-link"
-                   [attr.aria-label]="'View details for ' + stock.model">
-                  {{ stock.model }}
+                   [attr.aria-label]="'View details for ' + (stock['normalizedModel'] || stock.model)">
+                  {{ (stock['normalizedModel'] || stock.model) }}
                   <i class="fas fa-external-link-alt"></i>
                 </a>
               </div>
@@ -319,7 +333,7 @@
                   <i class="fas fa-calculator"></i>
                   Total Units
                 </span>
-                <span class="count-badge animated">{{ getModelCount(stock.model) }}</span>
+                <span class="count-badge animated">{{ getModelCount((stock['normalizedModel'] || stock.model) + '') }}</span>
               </div>
 
               <!-- Enhanced Age Distribution -->
@@ -336,10 +350,10 @@
                     <span class="age-label">&lt;30 days</span>
                     <span class="age-badge new"
                           [ngClass]="{
-                            'has-count': parseToNumber(stock.lessThan30DaysCount) > 0,
-                            'no-count': parseToNumber(stock.lessThan30DaysCount) === 0
+                            'has-count': getAgeCountForModel((stock['normalizedModel'] || stock.model) + '', 'lt30') > 0,
+                            'no-count': getAgeCountForModel((stock['normalizedModel'] || stock.model) + '', 'lt30') === 0
                           }">
-                      {{ stock.lessThan30DaysCount }}
+                      {{ getAgeCountForModel((stock['normalizedModel'] || stock.model) + '', 'lt30') }}
                     </span>
                   </div>
                   
@@ -348,10 +362,10 @@
                     <span class="age-label">30-60 days</span>
                     <span class="age-badge medium"
                           [ngClass]="{
-                            'has-count': parseToNumber(stock.between30And60DaysCount) > 0,
-                            'no-count': parseToNumber(stock.between30And60DaysCount) === 0
+                            'has-count': getAgeCountForModel((stock['normalizedModel'] || stock.model) + '', 'b3060') > 0,
+                            'no-count': getAgeCountForModel((stock['normalizedModel'] || stock.model) + '', 'b3060') === 0
                           }">
-                      {{ stock.between30And60DaysCount }}
+                      {{ getAgeCountForModel((stock['normalizedModel'] || stock.model) + '', 'b3060') }}
                     </span>
                   </div>
                   
@@ -360,10 +374,10 @@
                     <span class="age-label">&gt;60 days</span>
                     <span class="age-badge old"
                           [ngClass]="{
-                            'has-count': parseToNumber(stock.greaterThan60DaysCount) > 0,
-                            'no-count': parseToNumber(stock.greaterThan60DaysCount) === 0
+                            'has-count': getAgeCountForModel((stock['normalizedModel'] || stock.model) + '', 'gt60') > 0,
+                            'no-count': getAgeCountForModel((stock['normalizedModel'] || stock.model) + '', 'gt60') === 0
                           }">
-                      {{ stock.greaterThan60DaysCount }}
+                      {{ getAgeCountForModel((stock['normalizedModel'] || stock.model) + '', 'gt60') }}
                     </span>
                   </div>
                 </div>
@@ -462,7 +476,7 @@
               <ng-container matColumnDef="status">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
                 <td mat-cell *matCellDef="let vehicle">
-                  <span class="status-badge modern" [class.active]="vehicle.vehicleStatus === 'Active'">
+                  <span class="status-badge modern" [class.active]="vehicle.vehicleStatus === 'Active'" *ngIf="vehicle.vehicleStatus">
                     {{vehicle.vehicleStatus}}
                   </span>
                 </td>

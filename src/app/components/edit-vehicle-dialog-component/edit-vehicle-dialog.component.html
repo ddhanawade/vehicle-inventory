@@ -23,9 +23,7 @@
           <mat-label>Customer Name</mat-label>
           <input matInput formControlName="customerName" placeholder="Enter customer name">
           <mat-icon matSuffix>person</mat-icon>
-          <mat-error *ngIf="vehicleForm.get('customerName')?.hasError('required')">
-            Customer name is required
-          </mat-error>
+          
         </mat-form-field>
 
         <mat-form-field appearance="outline">
@@ -33,8 +31,8 @@
           <input matInput formControlName="phoneNumber" placeholder="Enter mobile number" 
                  [maxlength]="10" (input)="formatPhoneNumber($event)">
           <mat-icon matSuffix>phone</mat-icon>
-          <mat-error *ngIf="vehicleForm.get('phoneNumber')?.hasError('pattern')">
-            Please enter a valid mobile number
+                     <mat-error *ngIf="vehicleForm.get('phoneNumber')?.hasError('pattern')">
+            Please enter a valid 10-digit mobile number
           </mat-error>
         </mat-form-field>
       </div>
@@ -70,9 +68,7 @@
           <mat-hint>MM/DD/YYYY</mat-hint>
           <mat-datepicker-toggle matIconSuffix [for]="deliveryDatePicker"></mat-datepicker-toggle>
           <mat-datepicker #deliveryDatePicker></mat-datepicker>
-          <mat-error *ngIf="vehicleForm.get('deliveryDate')?.hasError('required')">
-            Delivery date is required
-          </mat-error>
+          
         </mat-form-field>
 
         <mat-form-field appearance="outline">
@@ -105,9 +101,7 @@
             <mat-option value="DELIVERED">Delivered</mat-option>
           </mat-select>
           <mat-icon matSuffix>info</mat-icon>
-          <mat-error *ngIf="vehicleForm.get('orderStatus')?.hasError('required')">
-            Status is required
-          </mat-error>
+          
         </mat-form-field>
       </div>
       <div class="form-row">
@@ -123,25 +117,24 @@
             <mat-option value="FRESH">Fresh</mat-option>
           </mat-select>
           <mat-icon matSuffix>info</mat-icon>
-          <mat-error *ngIf="vehicleForm.get('dmsStatus')?.hasError('required')">
-            Status is required
-          </mat-error>
+          
         </mat-form-field>
         </div>
         <mat-form-field appearance="outline">
           <mat-label>Vehicle Status</mat-label>
           <mat-select formControlName="vehicleStatus">
+            <mat-option value="TRANSIT">TRANSIT</mat-option>
+            <mat-option value="STOCK">STOCK</mat-option>
             <mat-option value="AVAILABLE">AVAILABLE</mat-option>
             <mat-option value="SOLD">SOLD</mat-option>
-            <mat-option value="BOOKED">BOOKED</mat-option>
-            <mat-option value="IN_TRANSIT">IN_TRANSIT</mat-option>
+            <mat-option value="BILLED">BILLED</mat-option>
+            <mat-option value="WATER">WATER</mat-option>
+            <mat-option value="FRESH">FRESH</mat-option>
             <mat-option value="FREE">FREE</mat-option>
-            <mat-option value="STOCK">STOCK</mat-option>
+            
           </mat-select>
           <mat-icon matSuffix>info</mat-icon>
-          <mat-error *ngIf="vehicleForm.get('vehicleStatus')?.hasError('required')">
-            Status is required
-          </mat-error>
+          
         </mat-form-field>
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Remarks</mat-label>
@@ -155,10 +148,15 @@
 
   <mat-dialog-actions align="end">
     <button mat-button (click)="onCancel()">Cancel</button>
+
+    <button mat-stroked-button color="warn" *ngIf="isAdmin" [disabled]="isSaving || !orderId" (click)="deleteOrder()" matTooltip="Delete this order">
+      <mat-icon>delete</mat-icon>
+      Delete
+    </button>
     
     <button mat-raised-button color="primary" 
             *ngIf="!isSaved" 
-            [disabled]="!vehicleForm.valid || isSaving"
+            [disabled]="isSaving || !hasAnyValue()"
             (click)="onSave(vehicleForm.get('vehicleId')?.value)">
       {{ isSaving ? 'Saving...' : 'Save' }}
     </button>

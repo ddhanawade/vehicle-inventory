@@ -49,6 +49,11 @@ export const routes: Routes = [
         canActivate: [AuthGuard]
     },
     {
+        path: "vehicle-by-make/:make",
+        component: VehicleDetailsComponent,
+        canActivate: [AuthGuard]
+    },
+    {
         path: "add-vehicle",
         component: AddVehicleComponent,
         canActivate: [AuthGuard]

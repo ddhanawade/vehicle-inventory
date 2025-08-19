@@ -69,7 +69,7 @@ body, .dashboard-bg {
   font-weight: 600;
   color: $gray-800;
   margin-bottom: 20px;
-  
+
   i {
     color: $primary;
     font-size: 1.1rem;
@@ -78,7 +78,7 @@ body, .dashboard-bg {
 
 // Enhanced Modern Welcome Section - Ultra Compact & Attractive
 .welcome-section {
-  background: linear-gradient(135deg, 
+  background: linear-gradient(135deg,
     rgba(255, 255, 255, 0.98) 0%,
     rgba(249, 250, 251, 0.95) 20%,
     rgba(240, 249, 255, 0.96) 50%,
@@ -86,7 +86,7 @@ body, .dashboard-bg {
     rgba(255, 255, 255, 0.98) 100%);
   padding: 18px 24px;
   border-radius: 16px;
-  box-shadow: 
+  box-shadow:
     0 16px 32px -8px rgba(33, 147, 176, 0.08),
     0 12px 20px -4px rgba(109, 213, 237, 0.06),
     0 8px 16px -4px rgba(0, 0, 0, 0.04),
@@ -102,7 +102,7 @@ body, .dashboard-bg {
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 
+    box-shadow:
       0 20px 35px -8px rgba(33, 147, 176, 0.12),
       0 15px 25px -5px rgba(109, 213, 237, 0.08),
       0 12px 20px -4px rgba(0, 0, 0, 0.06),
@@ -121,12 +121,12 @@ body, .dashboard-bg {
 
     .floating-shape {
       position: absolute;
-      background: linear-gradient(135deg, 
-        rgba(33, 147, 176, 0.12) 0%, 
+      background: linear-gradient(135deg,
+        rgba(33, 147, 176, 0.12) 0%,
         rgba(109, 213, 237, 0.08) 100%);
       border-radius: 50%;
       animation: float 8s ease-in-out infinite;
-      box-shadow: 
+      box-shadow:
         0 6px 24px rgba(33, 147, 176, 0.08),
         inset 0 1px 0 rgba(255, 255, 255, 0.2);
 
@@ -136,8 +136,8 @@ body, .dashboard-bg {
         top: -35px;
         right: -20px;
         animation-delay: 0s;
-        background: linear-gradient(135deg, 
-          rgba(33, 147, 176, 0.18) 0%, 
+        background: linear-gradient(135deg,
+          rgba(33, 147, 176, 0.18) 0%,
           rgba(109, 213, 237, 0.12) 100%);
       }
 
@@ -147,8 +147,8 @@ body, .dashboard-bg {
         top: 45%;
         right: 10%;
         animation-delay: 2.5s;
-        background: linear-gradient(135deg, 
-          rgba(109, 213, 237, 0.15) 0%, 
+        background: linear-gradient(135deg,
+          rgba(109, 213, 237, 0.15) 0%,
           rgba(33, 147, 176, 0.10) 100%);
       }
 
@@ -158,18 +158,18 @@ body, .dashboard-bg {
         bottom: -20px;
         left: 12%;
         animation-delay: 5s;
-        background: linear-gradient(135deg, 
-          rgba(33, 147, 176, 0.12) 0%, 
+        background: linear-gradient(135deg,
+          rgba(33, 147, 176, 0.12) 0%,
           rgba(109, 213, 237, 0.18) 100%);
       }
     }
 
     .gradient-orb {
       position: absolute;
-      background: radial-gradient(circle, 
-        rgba(33, 147, 176, 0.16) 0%, 
-        rgba(109, 213, 237, 0.10) 30%, 
-        rgba(33, 147, 176, 0.05) 60%, 
+      background: radial-gradient(circle,
+        rgba(33, 147, 176, 0.16) 0%,
+        rgba(109, 213, 237, 0.10) 30%,
+        rgba(33, 147, 176, 0.05) 60%,
         transparent 80%);
       border-radius: 50%;
       animation: pulse 6s ease-in-out infinite;
@@ -200,7 +200,7 @@ body, .dashboard-bg {
     position: relative;
     z-index: 2;
     gap: 20px;
-    
+
     @media (max-width: 968px) {
       flex-direction: column;
       gap: 14px;
@@ -230,15 +230,15 @@ body, .dashboard-bg {
          .user-avatar {
            width: 55px;
            height: 55px;
-           background: linear-gradient(135deg, 
-             #2193b0 0%, 
-             #6dd5ed 50%, 
+           background: linear-gradient(135deg,
+             #2193b0 0%,
+             #6dd5ed 50%,
              #2193b0 100%);
            border-radius: 50%;
            display: flex;
            align-items: center;
            justify-content: center;
-           box-shadow: 
+           box-shadow:
              0 10px 20px rgba(33, 147, 176, 0.35),
              0 5px 10px rgba(109, 213, 237, 0.25),
              inset 0 2px 4px rgba(255, 255, 255, 0.4),
@@ -255,9 +255,9 @@ body, .dashboard-bg {
              left: -2px;
              right: -2px;
              bottom: -2px;
-             background: linear-gradient(45deg, 
-               rgba(33, 147, 176, 0.6), 
-               rgba(109, 213, 237, 0.4), 
+             background: linear-gradient(45deg,
+               rgba(33, 147, 176, 0.6),
+               rgba(109, 213, 237, 0.4),
                rgba(33, 147, 176, 0.6));
              border-radius: 50%;
              z-index: -1;
@@ -266,7 +266,7 @@ body, .dashboard-bg {
 
            &:hover {
              transform: scale(1.05);
-             box-shadow: 
+             box-shadow:
                0 15px 35px rgba(33, 147, 176, 0.5),
                0 8px 15px rgba(109, 213, 237, 0.3),
                inset 0 2px 4px rgba(255, 255, 255, 0.4);
@@ -290,7 +290,7 @@ body, .dashboard-bg {
            border: 2px solid white;
            border-radius: 50%;
            animation: pulse 2.5s infinite;
-           box-shadow: 
+           box-shadow:
              0 2px 6px rgba(16, 185, 129, 0.4),
              inset 0 1px 2px rgba(255, 255, 255, 0.3);
 
@@ -316,7 +316,7 @@ body, .dashboard-bg {
              margin: 0 0 8px 0;
              line-height: 1.1;
              text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-             
+
              @media (max-width: 968px) {
                font-size: 1.5rem;
              }
@@ -333,11 +333,11 @@ body, .dashboard-bg {
              }
 
              .username-highlight {
-               background: linear-gradient(135deg, 
-                 #2193b0 0%, 
-                 #6dd5ed 25%, 
-                 #2193b0 50%, 
-                 #6dd5ed 75%, 
+               background: linear-gradient(135deg,
+                 #2193b0 0%,
+                 #6dd5ed 25%,
+                 #2193b0 50%,
+                 #6dd5ed 75%,
                  #2193b0 100%);
                background-size: 300% 300%;
                background-clip: text;
@@ -397,8 +397,8 @@ body, .dashboard-bg {
              }
 
              .tag {
-               background: linear-gradient(135deg, 
-                 rgba(33, 147, 176, 0.12) 0%, 
+               background: linear-gradient(135deg,
+                 rgba(33, 147, 176, 0.12) 0%,
                  rgba(109, 213, 237, 0.08) 100%);
                color: $primary;
                padding: 6px 16px;
@@ -407,7 +407,7 @@ body, .dashboard-bg {
                font-weight: 700;
                border: 2px solid rgba(33, 147, 176, 0.25);
                backdrop-filter: blur(15px);
-               box-shadow: 
+               box-shadow:
                  0 3px 12px rgba(33, 147, 176, 0.15),
                  inset 0 1px 0 rgba(255, 255, 255, 0.2);
                animation: fadeInUp 0.8s ease-out;
@@ -424,7 +424,7 @@ body, .dashboard-bg {
 
                &:hover {
                  transform: translateY(-1px) scale(1.02);
-                 box-shadow: 
+                 box-shadow:
                    0 4px 16px rgba(33, 147, 176, 0.25),
                    inset 0 1px 0 rgba(255, 255, 255, 0.3);
                  border-color: rgba(33, 147, 176, 0.4);
@@ -516,8 +516,8 @@ body, .dashboard-bg {
   }
 
   .filter-card {
-    background: linear-gradient(135deg, 
-      rgba(255, 255, 255, 0.9) 0%, 
+    background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.9) 0%,
       rgba(249, 250, 251, 0.8) 100%);
     border: 1.5px solid rgba(33, 147, 176, 0.15);
     border-radius: 25px;
@@ -529,7 +529,7 @@ body, .dashboard-bg {
     display: flex;
     align-items: center;
     gap: 8px;
-    box-shadow: 
+    box-shadow:
       0 2px 8px rgba(0, 0, 0, 0.04),
       0 1px 3px rgba(0, 0, 0, 0.06);
     backdrop-filter: blur(10px);
@@ -544,9 +544,9 @@ body, .dashboard-bg {
       left: -100%;
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, 
-        transparent, 
-        rgba(33, 147, 176, 0.1), 
+      background: linear-gradient(90deg,
+        transparent,
+        rgba(33, 147, 176, 0.1),
         transparent);
       transition: left 0.6s ease;
       z-index: 0;
@@ -611,7 +611,7 @@ body, .dashboard-bg {
     &:hover {
       transform: translateY(-2px);
       border-color: rgba(33, 147, 176, 0.3);
-      box-shadow: 
+      box-shadow:
         0 8px 25px rgba(33, 147, 176, 0.15),
         0 4px 10px rgba(0, 0, 0, 0.1);
 
@@ -645,7 +645,7 @@ body, .dashboard-bg {
       border-color: $primary;
       color: $white;
       transform: translateY(-1px);
-      box-shadow: 
+      box-shadow:
         0 6px 20px rgba(33, 147, 176, 0.3),
         0 3px 8px rgba(0, 0, 0, 0.15);
 
@@ -746,6 +746,49 @@ body, .dashboard-bg {
   }
 
   .total-stats {
+  .stat-card.clickable {
+    cursor: pointer;
+    position: relative;
+  }
+
+  .total-menu {
+    position: absolute;
+    top: 80px;
+    right: 16px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    padding: 8px;
+    display: flex;
+    gap: 8px;
+    z-index: 5;
+
+    .menu-item {
+      border: none;
+      background: #f3f4f6;
+      color: #111827;
+      padding: 8px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 800;
+      letter-spacing: .5px;
+      outline: none;
+      border: 2px solid transparent;
+      transition: all .15s ease;
+    }
+
+    .menu-item:hover,
+    .menu-item:focus {
+      background: #e6f2ff;
+      border-color: #c3dcff;
+      color: #0f172a;
+    }
+
+    .menu-item:active {
+      transform: scale(0.98);
+    }
+  }
+}
     .stat-card.primary {
       background: $primary-gradient;
       color: $white;
@@ -880,13 +923,13 @@ body, .dashboard-bg {
   // Enhanced City Stats Slider - Compact & Attractive
   .city-stats {
     position: relative;
-    background: linear-gradient(135deg, 
+    background: linear-gradient(135deg,
       rgba(255, 255, 255, 0.95) 0%,
       rgba(240, 249, 255, 0.9) 30%,
       rgba(255, 255, 255, 0.85) 100%);
     border-radius: 14px;
     padding: 16px;
-    box-shadow: 
+    box-shadow:
       0 12px 24px -6px rgba(33, 147, 176, 0.08),
       0 8px 16px -4px rgba(109, 213, 237, 0.06),
       inset 0 1px 0 rgba(255, 255, 255, 0.8);
@@ -1038,12 +1081,12 @@ body, .dashboard-bg {
       // Enhanced location cards - Ultra Compact
       .location-card {
         flex: 0 0 200px;
-        background: linear-gradient(135deg, 
+        background: linear-gradient(135deg,
           rgba(255, 255, 255, 0.98) 0%,
           rgba(240, 249, 255, 0.95) 100%);
         padding: 18px;
         border-radius: 12px;
-        box-shadow: 
+        box-shadow:
           0 8px 16px -4px rgba(33, 147, 176, 0.08),
           0 4px 8px -2px rgba(109, 213, 237, 0.06);
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1062,7 +1105,7 @@ body, .dashboard-bg {
         // Enhanced hover effects - Compact
         &:hover {
           transform: translateY(-6px) scale(1.02);
-          box-shadow: 
+          box-shadow:
             0 16px 32px -8px rgba(33, 147, 176, 0.12),
             0 8px 16px -4px rgba(109, 213, 237, 0.08);
 
@@ -1137,7 +1180,7 @@ body, .dashboard-bg {
           }
 
           .interactive-btn {
-            background: linear-gradient(135deg, 
+            background: linear-gradient(135deg,
               rgba(249, 250, 251, 0.9) 0%,
               rgba(240, 249, 255, 0.8) 100%);
             border: 2px solid rgba(33, 147, 176, 0.12);
@@ -1281,7 +1324,6 @@ body, .dashboard-bg {
       }
     }
   }
-}
 
 // Enhanced Search Section
 .search-section {
@@ -1887,7 +1929,7 @@ body, .dashboard-bg {
   justify-content: center;
   padding: 20px;
   animation: modalBackdropFadeIn 0.1s ease-out forwards;
-  
+
   // Instant close - no exit animations
   &.ng-leave {
     animation: none !important;
@@ -1906,7 +1948,7 @@ body, .dashboard-bg {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, 
+    background: linear-gradient(135deg,
       rgba(0, 0, 0, 0.6) 0%,
       rgba(33, 147, 176, 0.1) 50%,
       rgba(0, 0, 0, 0.6) 100%);
@@ -1922,7 +1964,7 @@ body, .dashboard-bg {
 
   .location-modal.enhanced {
     position: relative;
-    background: linear-gradient(135deg, 
+    background: linear-gradient(135deg,
       rgba(255, 255, 255, 0.98) 0%,
       rgba(249, 250, 251, 0.95) 30%,
       rgba(240, 249, 255, 0.96) 70%,
@@ -1932,7 +1974,7 @@ body, .dashboard-bg {
     max-width: 1300px;
     max-height: 90vh;
     overflow: hidden;
-    box-shadow: 
+    box-shadow:
       0 32px 64px -12px rgba(33, 147, 176, 0.15),
       0 20px 40px -8px rgba(109, 213, 237, 0.10),
       0 12px 24px -6px rgba(0, 0, 0, 0.08),
@@ -1952,7 +1994,7 @@ body, .dashboard-bg {
 
     &:hover {
       transform: scale(1.001);
-      box-shadow: 
+      box-shadow:
         0 40px 80px -12px rgba(33, 147, 176, 0.18),
         0 25px 50px -8px rgba(109, 213, 237, 0.12),
         0 15px 30px -6px rgba(0, 0, 0, 0.10),
@@ -1961,7 +2003,7 @@ body, .dashboard-bg {
 
     .modal-header {
       padding: 28px;
-      background: linear-gradient(135deg, 
+      background: linear-gradient(135deg,
         rgba(255, 255, 255, 0.95) 0%,
         rgba(240, 249, 255, 0.9) 50%,
         rgba(249, 250, 251, 0.95) 100%);
@@ -1986,9 +2028,9 @@ body, .dashboard-bg {
         left: 0;
         right: 0;
         height: 3px;
-        background: linear-gradient(90deg, 
-          #2193b0 0%, 
-          #6dd5ed 50%, 
+        background: linear-gradient(90deg,
+          #2193b0 0%,
+          #6dd5ed 50%,
           #2193b0 100%);
         animation: shimmer 3s ease-in-out infinite;
       }
@@ -2007,7 +2049,7 @@ body, .dashboard-bg {
         .location-icon {
           width: 60px;
           height: 60px;
-          background: linear-gradient(135deg, 
+          background: linear-gradient(135deg,
             rgba(33, 147, 176, 0.12) 0%,
             rgba(109, 213, 237, 0.08) 100%);
           border-radius: 16px;
@@ -2016,7 +2058,7 @@ body, .dashboard-bg {
           justify-content: center;
           position: relative;
           transition: all 0.3s ease;
-          box-shadow: 
+          box-shadow:
             0 8px 16px rgba(33, 147, 176, 0.1),
             inset 0 1px 0 rgba(255, 255, 255, 0.5);
 
@@ -2045,7 +2087,7 @@ body, .dashboard-bg {
 
           &:hover {
             transform: scale(1.1) rotate(5deg);
-            
+
             &::before {
               width: 100%;
               height: 100%;
@@ -2060,7 +2102,7 @@ body, .dashboard-bg {
           @media (max-width: 768px) {
             width: 50px;
             height: 50px;
-            
+
             i {
               font-size: 1.3rem;
             }
@@ -2073,9 +2115,9 @@ body, .dashboard-bg {
             color: $gray-900;
             font-size: 1.8rem;
             font-weight: 700;
-            background: linear-gradient(135deg, 
-              #2193b0 0%, 
-              #6dd5ed 50%, 
+            background: linear-gradient(135deg,
+              #2193b0 0%,
+              #6dd5ed 50%,
               #2193b0 100%);
             background-size: 200% 200%;
             background-clip: text;
@@ -2093,7 +2135,7 @@ body, .dashboard-bg {
             font-size: 1rem;
             font-weight: 600;
             padding: 6px 14px;
-            background: linear-gradient(135deg, 
+            background: linear-gradient(135deg,
               rgba(33, 147, 176, 0.08) 0%,
               rgba(109, 213, 237, 0.05) 100%);
             border-radius: 20px;
@@ -2109,7 +2151,7 @@ body, .dashboard-bg {
             }
 
             &:hover {
-              background: linear-gradient(135deg, 
+              background: linear-gradient(135deg,
                 rgba(33, 147, 176, 0.12) 0%,
                 rgba(109, 213, 237, 0.08) 100%);
               transform: translateY(-1px);
@@ -2124,7 +2166,7 @@ body, .dashboard-bg {
       }
 
       .close-button.modern {
-        background: linear-gradient(135deg, 
+        background: linear-gradient(135deg,
           rgba(239, 68, 68, 0.1) 0%,
           rgba(220, 38, 38, 0.05) 100%);
         border: 2px solid rgba(239, 68, 68, 0.2);
@@ -2185,7 +2227,7 @@ body, .dashboard-bg {
         @media (max-width: 768px) {
           width: 40px;
           height: 40px;
-          
+
           i {
             font-size: 1rem;
           }
@@ -2207,12 +2249,12 @@ body, .dashboard-bg {
       .responsive-table.enhanced {
         flex: 1;
         overflow: auto;
-        background: linear-gradient(135deg, 
+        background: linear-gradient(135deg,
           rgba(255, 255, 255, 0.98) 0%,
           rgba(249, 250, 251, 0.95) 100%);
         border-radius: 12px;
         margin: 0 28px 20px;
-        box-shadow: 
+        box-shadow:
           0 8px 16px rgba(33, 147, 176, 0.06),
           inset 0 1px 0 rgba(255, 255, 255, 0.8);
         border: 1px solid rgba(33, 147, 176, 0.08);
@@ -2250,7 +2292,7 @@ body, .dashboard-bg {
           animation: fadeInUp 0.1s ease-out 0.08s forwards;
 
           th {
-            background: linear-gradient(135deg, 
+            background: linear-gradient(135deg,
               rgba(33, 147, 176, 0.08) 0%,
               rgba(109, 213, 237, 0.05) 100%);
             color: $gray-800;
@@ -2276,7 +2318,7 @@ body, .dashboard-bg {
             }
 
             &:hover {
-              background: linear-gradient(135deg, 
+              background: linear-gradient(135deg,
                 rgba(33, 147, 176, 0.12) 0%,
                 rgba(109, 213, 237, 0.08) 100%);
             }
@@ -2284,11 +2326,11 @@ body, .dashboard-bg {
             @media (max-width: 768px) {
               padding: 12px 8px;
               font-size: 0.85rem;
-              
+
               &:first-child {
                 padding-left: 12px;
               }
-              
+
               &:last-child {
                 padding-right: 12px;
               }
@@ -2317,11 +2359,11 @@ body, .dashboard-bg {
             @media (max-width: 768px) {
               padding: 12px 8px;
               font-size: 0.8rem;
-              
+
               &:first-child {
                 padding-left: 12px;
               }
-              
+
               &:last-child {
                 padding-right: 12px;
               }
@@ -2381,9 +2423,9 @@ body, .dashboard-bg {
                   opacity: 0.7;
                 }
 
-                &:hover {
-                  background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
-                  transform: translateY(-1px);
+                // When there is no visible text content (empty status), suppress icon entirely
+                &:empty::after {
+                  content: '';
                 }
               }
 
@@ -2407,7 +2449,7 @@ body, .dashboard-bg {
               &.new {
                 background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
                 color: white;
-                
+
                 &::before {
                   content: '🆕';
                   font-size: 0.7rem;
@@ -2417,7 +2459,7 @@ body, .dashboard-bg {
               &.medium {
                 background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
                 color: white;
-                
+
                 &::before {
                   content: '⏰';
                   font-size: 0.7rem;
@@ -2427,7 +2469,7 @@ body, .dashboard-bg {
               &.old {
                 background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
                 color: white;
-                
+
                 &::before {
                   content: '⚠️';
                   font-size: 0.7rem;
@@ -2451,7 +2493,7 @@ body, .dashboard-bg {
             position: relative;
 
             &:hover {
-              background: linear-gradient(135deg, 
+              background: linear-gradient(135deg,
                 rgba(33, 147, 176, 0.03) 0%,
                 rgba(109, 213, 237, 0.02) 100%);
               transform: translateX(4px);
@@ -2476,7 +2518,7 @@ body, .dashboard-bg {
               padding: 60px 40px;
               text-align: center;
               color: $gray-500;
-              background: linear-gradient(135deg, 
+              background: linear-gradient(135deg,
                 rgba(249, 250, 251, 0.8) 0%,
                 rgba(243, 244, 246, 0.6) 100%);
 
@@ -2506,11 +2548,11 @@ body, .dashboard-bg {
 
                 @media (max-width: 768px) {
                   gap: 12px;
-                  
+
                   i {
                     font-size: 2.5rem;
                   }
-                  
+
                   span {
                     font-size: 1rem;
                   }
@@ -2527,12 +2569,12 @@ body, .dashboard-bg {
 
       mat-paginator {
         border-top: 2px solid rgba(33, 147, 176, 0.08);
-        background: linear-gradient(135deg, 
+        background: linear-gradient(135deg,
           rgba(249, 250, 251, 0.95) 0%,
           rgba(240, 249, 255, 0.9) 100%);
         margin: 0 28px 28px;
         border-radius: 0 0 12px 12px;
-        box-shadow: 
+        box-shadow:
           0 -4px 8px rgba(33, 147, 176, 0.04),
           inset 0 1px 0 rgba(255, 255, 255, 0.8);
         animation: slideInUp 0.1s ease-out 0.08s forwards;
@@ -2547,7 +2589,7 @@ body, .dashboard-bg {
         ::ng-deep .mat-paginator-navigation-previous,
         ::ng-deep .mat-paginator-page-size-select {
           transition: all 0.3s ease;
-          
+
           &:hover {
             background: rgba(33, 147, 176, 0.1);
             transform: scale(1.05);

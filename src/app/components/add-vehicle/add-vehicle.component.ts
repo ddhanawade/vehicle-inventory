@@ -18,8 +18,8 @@ export class AddVehicleComponent implements OnInit{
   currentTab: number = 0;
   models: any[] = [];
   makes: any[] = [];
-  fuelTypes = ['PETROL', 'DISEL', 'ELECTRIC', 'HYBRID'];
-  statuses = ['AVAILABLE', 'SOLD', 'IN_TRANSIT', 'BOOKED', 'FREE', 'STOCK'];
+  fuelTypes = ['PETROL', 'DIESEL', 'ELECTRIC', 'HYBRID', 'CNG'];
+  statuses = ['TRANSIT', 'STOCK', 'AVAILABLE', 'SOLD', 'BILLED', 'WATER', 'FRESH', 'FREE'];
   filteredModels: { make: string; model: string }[] = [];
   selectedMake: string = '';
   user: UserModel | null = null;
@@ -45,20 +45,20 @@ export class AddVehicleComponent implements OnInit{
       model: ['', Validators.required],
       grade: ['', Validators.required],
       fuelType: ['', Validators.required],
-      exteriorColor: ['', Validators.required],
-      interiorColor: ['', Validators.required],
+      exteriorColor: [''],
+      interiorColor: [''],
       chassisNumber: ['', Validators.required],
       engineNumber: ['', Validators.required],
-      keyNumber: ['', Validators.required],
+      keyNumber: [''],
       location: ['', Validators.required],
       status: ['', Validators.required],
-      receivedDate: ['', Validators.required],
-      invoiceDate: [''],
+      receivedDate: [''],
+      invoiceDate: ['', Validators.required],
       invoiceNumber: [''],
       purchaseDealer: [''],
       manufactureDate: [''],
       suffix: [''],
-      invoiceValue: [''],
+      invoiceValue: ['', Validators.required],
       interest: [''],
       remarks: ['']
     });
@@ -73,20 +73,20 @@ export class AddVehicleComponent implements OnInit{
       model: ['', Validators.required],
       grade: ['', Validators.required],
       fuelType: ['', Validators.required],
-      exteriorColor: ['', Validators.required],
-      interiorColor: ['', Validators.required],
+      exteriorColor: [''],
+      interiorColor: [''],
       chassisNumber: ['', Validators.required],
       engineNumber: ['', Validators.required],
-      keyNumber: ['', Validators.required],
+      keyNumber: [''],
       location: ['', Validators.required],
       status: ['', Validators.required],
-      receivedDate: ['', Validators.required],
-      invoiceDate: [''],
+      receivedDate: [''],
+      invoiceDate: ['', Validators.required],
       invoiceNumber: [''],
       purchaseDealer: [''],
       manufactureDate: [''],
       suffix: [''],
-      invoiceValue: [''],
+      invoiceValue: ['', Validators.required],
       interest: [''],
       remarks: ['']
     });

@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, Subject } from 'rxjs';
 import { VehicleModel } from '../models/VehicleModel';
 import { MonthlySalesRequest } from '../models/MonthlySalesRequest';
+import { MonthlyPurchaseRequest } from '../models/MonthlyPurchaseRequest';
 import { TestVehicleModel, TestVehicleRequest, TestVehicleResponse } from '../models/TestVehicleModel';
 
 @Injectable({
@@ -10,7 +11,7 @@ import { TestVehicleModel, TestVehicleRequest, TestVehicleResponse } from '../mo
 })
 export class ReportingService {
 
-  //private baseUrl = 'http://localhost:8081/api';
+  // private baseUrl = 'http://localhost:8081/api';
   private baseUrl = 'https://fleet-manager.in/api'; // Production URL
 
   constructor(private http: HttpClient) {}
@@ -21,6 +22,10 @@ export class ReportingService {
 
   getMonthlySalesReport(request: MonthlySalesRequest): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/analytics/monthly-sales`, request);
+  }
+
+  getMonthlyPurchaseReport(request: MonthlyPurchaseRequest): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/analytics/monthly-vehicle-purchased`, request);
   }
 
   // Test Vehicle Report Methods

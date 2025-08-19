@@ -9,6 +9,7 @@ import { Injectable } from "@angular/core";
 export class userService {
 
   private baseUrl = 'https://fleet-manager.in/api/users';
+  // private baseUrl = 'http://localhost:8081/api/users';
 
   constructor(private http: HttpClient) { }
 

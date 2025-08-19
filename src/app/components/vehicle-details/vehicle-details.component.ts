@@ -4,6 +4,7 @@ import * as XLSX from 'xlsx';
 import { VehicleModel } from '../../models/VehicleModel';
 import { DataService } from '../../services/DataService';
 import { CommonModule, DatePipe } from '@angular/common';
+import { AuthService } from '../../services/AuthService';
 import { ActivatedRoute } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
@@ -87,7 +88,7 @@ export class VehicleDetailsComponent implements OnInit {
   currentFilter: string = 'available'; // Track current filter state
 
   constructor(private route: ActivatedRoute, private vehicleService: DataService, private cdr: ChangeDetectorRef, private dialog: MatDialog,
-    private orderService: OrderService, private renderer: Renderer2
+    private orderService: OrderService, private renderer: Renderer2, private authService: AuthService
   ) {
 
   }
@@ -100,28 +101,57 @@ export class VehicleDetailsComponent implements OnInit {
     }
   }
 
+  hasRole(role: string): boolean {
+    const storedUser = localStorage.getItem('user');
+    const roles = storedUser ? (JSON.parse(storedUser).roles || []) : [];
+    if (roles.includes('ADMIN')) return true;
+    return roles.includes(role);
+  }
+
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
       const modelName = params.get('modelName');
+      const make = params.get('make');
+      this.isLoading = true;
       if (modelName) {
-        this.isLoading = true;
         this.getCarDetails(modelName);
+      } else if (make) {
+        this.getCarDetailsByMake(make);
+      } else {
+        // Fallback: show all vehicles
+        this.getAllVehicles();
       }
+      // Apply default filter: All Active (not SOLD)
+      setTimeout(() => {
+        const selectEl = document.querySelector('.filter-dropdown') as HTMLSelectElement | null;
+        if (selectEl) {
+          selectEl.value = 'all-active';
+        }
+        this.onStatusFilterChange({ target: { value: 'all-active' } } as any);
+      }, 0);
     });
   }
 
   editVehicle(vehicle: any): void {
-    console.log("Editing vehicle:", JSON.stringify(vehicle));
     const dialogRef = this.dialog.open(EditVehicleDialogComponent, {
       width: '600px',
       data: { ...vehicle }
     });
+
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        // Update the vehicle in your data source
+      if (!result) return;
+
+      // If an order was deleted, just refresh data from the server
+      if (result.deleted) {
+        this.refreshData();
+        return;
+      }
+
+      // If we got an updated vehicle object, merge it into the table
+      if (result.id) {
         const index = this.dataSource.data.findIndex(item => item.id === result.id);
         if (index > -1) {
-          this.dataSource.data[index] = result;
+          this.dataSource.data[index] = { ...this.dataSource.data[index], ...result };
           this.dataSource._updateChangeSubscription();
         }
       }
@@ -288,28 +318,23 @@ export class VehicleDetailsComponent implements OnInit {
   }
   
   onStatusFilterChange(event: Event): void {
-    const selectedStatus = (event.target as HTMLSelectElement).value.toLowerCase();
-    this.currentFilter = selectedStatus;
-  
-    if (selectedStatus === 'sold') {
-      // Show only sold vehicles
-      this.dataSource.data = this.originalCarDetailsList.filter(vehicle => 
-        vehicle.vehicleStatus && vehicle.vehicleStatus.toLowerCase() === 'sold'
-      );
-    } else if (selectedStatus === 'available') {
-      // Show only available vehicles (not sold)
-      this.dataSource.data = this.originalCarDetailsList.filter(vehicle => 
-        !vehicle.vehicleStatus || vehicle.vehicleStatus.toLowerCase() !== 'sold'
-      );
-    } else if (selectedStatus === 'all') {
-      // Show all vehicles
-      this.dataSource.data = [...this.originalCarDetailsList];
+    const selectedStatus = (event.target as HTMLSelectElement).value;
+    this.currentFilter = selectedStatus.toLowerCase();
+
+    if (selectedStatus === 'all-active') {
+      // Active = not SOLD
+      this.dataSource.data = this.originalCarDetailsList.filter(vehicle => !vehicle.vehicleStatus || vehicle.vehicleStatus.toUpperCase() !== 'SOLD');
+    } else if (selectedStatus === 'AVAILABLE') {
+      // not sold
+      this.dataSource.data = this.originalCarDetailsList.filter(vehicle => !vehicle.vehicleStatus || vehicle.vehicleStatus.toUpperCase() !== 'SOLD');
+    } else if (selectedStatus === 'SOLD') {
+      this.dataSource.data = this.originalCarDetailsList.filter(vehicle => vehicle.vehicleStatus?.toUpperCase() === 'SOLD');
+    } else {
+      // Other explicit statuses
+      this.dataSource.data = this.originalCarDetailsList.filter(vehicle => vehicle.vehicleStatus?.toUpperCase() === selectedStatus);
     }
-  
-    // Update the total vehicle count
+
     this.totalVehicles = this.dataSource.data.length;
-  
-    // Trigger change detection
     this.cdr.detectChanges();
   }
   
@@ -327,9 +352,11 @@ export class VehicleDetailsComponent implements OnInit {
   }
 
   onDelete(vehicle: any): void {
-    console.log("deleting vehicle " + JSON.stringify(vehicle))
+    if (!(this as any).hasRole || !(this as any)['hasRole']('ADMIN')) {
+      alert('Only admins can delete vehicles.');
+      return;
+    }
     const dialogRef = this.dialog.open(ConfirmationDialogComponent);
-    id : vehicle.vehicleId;
     dialogRef.afterClosed().subscribe((confirmed) => {
       if (confirmed) {
         this.vehicleService.deleteVehicleDetails(vehicle.vehicleId).subscribe(
@@ -342,12 +369,8 @@ export class VehicleDetailsComponent implements OnInit {
           },
           (error) => console.error('Error deleting vehicle:', error)
         );
-        console.log(`Entry deleted:`, vehicle.id);
-      } else {
-        console.log('Delete operation canceled.');
       }
     });
-    
   }
 
   getColumnHeader(column: string): string {
@@ -364,6 +387,12 @@ export class VehicleDetailsComponent implements OnInit {
     return value.toString().toUpperCase();
   }
 
+  if (column === 'chassisNumber' && value) {
+    const raw = value.toString();
+    const trimmed = raw.split('~')[0].split('\n')[0].split('\r')[0].split(' ')[0];
+    return trimmed.toUpperCase();
+  }
+
   if (column === 'manufactureDate' && value) {
     // If value is a year (e.g., "2024"), just return it
     if (/^\d{4}$/.test(value.toString())) {
@@ -374,15 +403,19 @@ export class VehicleDetailsComponent implements OnInit {
   }
 
   if (column.includes('Date') && value) {
-    return new Date(value).toLocaleDateString();
+    const d = new Date(value);
+    if (!isNaN(d.getTime())) {
+      return d.toLocaleDateString();
+    }
+    return value.toString();
   }
 
   return value?.toString() || '';
 }
 
   shouldTruncate(column: string): boolean {
-    // Add columns that should be truncated
-    const truncateColumns = ['chassisNumber', 'engineNumber', 'keyNumber'];
+    // Do not truncate VIN-like identifiers; show full strings
+    const truncateColumns: string[] = [];
     return truncateColumns.includes(column);
   }
 
@@ -425,14 +458,14 @@ export class VehicleDetailsComponent implements OnInit {
   }
 
   getStatusClass(status: string | undefined): string {
-    if (!status || typeof status !== 'string') return 'available';
+    if (!status || typeof status !== 'string' || status.trim() === '') return '';
     switch (status.toLowerCase()) {
       case 'sold':
         return 'sold';
       case 'available':
         return 'available';
       default:
-        return 'available';
+        return '';
     }
   }
 
@@ -454,6 +487,68 @@ export class VehicleDetailsComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
+  getModelCount(model: string): number {
+    return this.carDetailsList.filter(car => car.model === model).length;
+  }
+
+  // New: Load all vehicles and show in table
+  private getAllVehicles(): void {
+    this.isLoad = true;
+    this.vehicleService.getData().subscribe({
+      next: (result: VehicleModel[]) => {
+        this.originalCarDetailsList = result;
+        this.carDetailsList = result.filter(vehicle => !vehicle.vehicleStatus || vehicle.vehicleStatus.toLowerCase() !== 'sold');
+        this.dataSource = new MatTableDataSource<VehicleModel>(this.carDetailsList);
+        this.currentFilter = 'available';
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
+        this.totalVehicles = this.carDetailsList.length;
+        this.isLoading = false;
+        this.isLoad = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.isLoading = false;
+        this.isLoad = false;
+      }
+    });
+  }
+
+  // New: Load by make regardless of model
+  private getCarDetailsByMake(make: string): void {
+    this.isLoad = true;
+    this.vehicleService.getData().subscribe({
+      next: (result: VehicleModel[]) => {
+        const lowerMake = (make || '').toLowerCase();
+        const filtered = result.filter(v => (v.make || '').toLowerCase() === lowerMake);
+
+        // Transform manufactureDate to year where applicable
+        filtered.forEach(vehicle => {
+          if (vehicle.manufactureDate) {
+            const date = new Date(vehicle.manufactureDate);
+            if (!isNaN(date.getTime())) {
+              vehicle.manufactureDate = date.getFullYear().toString();
+            }
+          }
+        });
+
+        this.originalCarDetailsList = filtered;
+        this.carDetailsList = filtered.filter(vehicle => !vehicle.vehicleStatus || vehicle.vehicleStatus.toLowerCase() !== 'sold');
+        this.dataSource = new MatTableDataSource<VehicleModel>(this.carDetailsList);
+        this.currentFilter = 'available';
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
+        this.totalVehicles = this.carDetailsList.length;
+        this.isLoading = false;
+        this.isLoad = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.isLoading = false;
+        this.isLoad = false;
+      }
+    });
+  }
 }
 function html2canvas(table: HTMLElement, p0: { scale: number; useCORS: boolean; }): Promise<HTMLCanvasElement> {
   return new Promise((resolve, reject) => {

@@ -665,15 +665,16 @@ $transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             color: $gray-700;
             font-size: 0.95rem;
             font-weight: 500;
+            white-space: nowrap;
           }
 
           &.truncate {
-            max-width: 150px;
+            max-width: none;
             
             .cell-content {
               white-space: nowrap;
-              overflow: hidden;
-              text-overflow: ellipsis;
+              overflow: visible;
+              text-overflow: clip;
             }
           }
         }
