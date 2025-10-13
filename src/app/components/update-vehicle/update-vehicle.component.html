@@ -15,13 +15,13 @@
                 <h2><i class="fas fa-plus-circle"></i> Update Vehicle Details</h2>
             </div>
             <div *ngIf="isLoading" class="loading-overlay">
-                <div class="loading-indicator">
-                  <div class="spinner"></div>
-                  <p>Updating Details...</p>
+                <div class="loading-content">
+                    <mat-spinner diameter="50"></mat-spinner>
+                    <p class="loading-text">Updating Details...</p>
                 </div>
-              </div>
+            </div>
             <form [formGroup]="vehicleForm" (ngSubmit)="onUpdate()">
-                <div class="tab-container">
+                <div class="tab-container" [class.disabled]="isLoading">
                     <!-- Tab Navigation -->
                     <div class="tab-header">
                         <button type="button" class="tab-button" [class.active]="currentTab === 0" (click)="setTab(0)">
@@ -44,7 +44,7 @@
                     <div class="tab-content" *ngIf="currentTab === 0">
                         <div class="form-group">
                             <label for="make">Make <span class="required">*</span></label>
-                            <select id="make" formControlName="make">
+                            <select id="make" formControlName="make" (change)="onMakeChange($event)">
                                 <option value="" disabled>Select Make</option>
                                 <option *ngFor="let make of makes" [value]="make">{{ make | uppercase }}</option>
                             </select>
@@ -77,9 +77,18 @@
                     <!-- Specifications Tab -->
                     <div class="tab-content" *ngIf="currentTab === 1">
                         <div class="form-group">
+                            <label for="colorCode">Color Code </label>
+                            <select *ngIf="!showCustomColorCode" id="colorCode" formControlName="colorCode" (change)="onColorCodeChange($event)">
+                                <option value="" disabled>Select Color Code</option>
+                                <option *ngFor="let color of colorCodes" [value]="color.code">{{ color.code }} - {{ color.name }}</option>
+                                <option value="OTHERS">Others (Enter Manually)</option>
+                            </select>
+                            <input *ngIf="showCustomColorCode" type="text" id="colorCodeCustom" formControlName="colorCode" placeholder="Enter custom color code" />
+                        </div>
+                        <div class="form-group">
                             <label for="exteriorColor">Exterior Color </label>
                             <input type="text" id="exteriorColor" formControlName="exteriorColor"
-                                placeholder="Enter Exterior Color" />
+                                placeholder="Auto-filled from color code or enter manually" />
                         </div>
                         <div class="form-group">
                             <label for="interiorColor">Interior Color </label>
@@ -108,7 +117,12 @@
                     <div class="tab-content" *ngIf="currentTab === 2">
                         <div class="form-group">
                             <label for="location">Location <span class="required">*</span></label>
-                            <input type="text" id="location" formControlName="location" placeholder="Enter Location" />
+                            <select *ngIf="!showCustomLocation" id="location" formControlName="location" (change)="onLocationChange($event)">
+                                <option value="" disabled>Select Location</option>
+                                <option *ngFor="let location of filteredLocations" [value]="location">{{ location }}</option>
+                                <option value="OTHERS">Others (Enter Manually)</option>
+                            </select>
+                            <input *ngIf="showCustomLocation" type="text" id="locationCustom" formControlName="location" placeholder="Enter custom location" />
                         </div>
                         <div class="form-group">
                             <label for="status">Status <span class="required">*</span></label>

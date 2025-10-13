@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import jsPDF from 'jspdf';
 import * as XLSX from 'xlsx';
 import { VehicleModel } from '../../models/VehicleModel';
@@ -19,6 +19,7 @@ import { OrderService } from '../../services/OrderService';
 import { UpdateVehicleComponent } from '../update-vehicle/update-vehicle.component';
 import { MatIcon } from '@angular/material/icon';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+
 @Component({
   selector: 'app-vehicle-details',
   imports: [
@@ -39,43 +40,52 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
 export class VehicleDetailsComponent implements OnInit {
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild('statusFilter') statusFilter!: ElementRef<HTMLSelectElement>;
+  @ViewChild('ageFilter') ageFilter!: ElementRef<HTMLSelectElement>;
+  @ViewChild('financerFilter') financerFilter!: ElementRef<HTMLSelectElement>;
 
 
   dataSource!: MatTableDataSource<VehicleModel>;
   isLoading = false;
   totalVehicles = 0;
   isLoad: boolean = false;
-  displayedColumns: string[] = [
-    'invoiceDate',
-    'invoiceNumber',
-    'purchaseDealer',
-    'receivedDate',
-    'manufactureDate',
-    'model',
-    'grade',
-    'fuelType',
-    'suffix',
-    'exteriorColor',
-    'interiorColor',
-    'chassisNumber',
-    'engineNumber',
-    'keyNumber',
-    'location',
-    'invoiceValue',
-    'age',
-    'interest',
-    'vehicleStatus',
-    'make',
-    'customerName',
-    'orderDate',
-    'deliveryDate',
-    'orderStatus',
-    'salesPersonName',
-    'leadName',
-    'dmsStatus',
-    'dealAmount',
-    'actions'
+  // Define all available columns with their properties
+  allColumns = [
+    { name: 'make', label: 'Make', visible: true, mandatory: true },
+    { name: 'model', label: 'Model', visible: true, mandatory: true },
+    { name: 'chassisNumber', label: 'Chassis Number', visible: true, mandatory: true },
+    { name: 'vehicleStatus', label: 'Vehicle Status', visible: true, mandatory: true },
+    { name: 'age', label: 'Age', visible: true, mandatory: true },
+    { name: 'invoiceDate', label: 'Invoice Date', visible: true, mandatory: false },
+    { name: 'invoiceNumber', label: 'Invoice Number', visible: true, mandatory: false },
+    { name: 'purchaseDealer', label: 'Purchase Dealer', visible: true, mandatory: false },
+    { name: 'receivedDate', label: 'Received Date', visible: true, mandatory: false },
+    { name: 'manufactureDate', label: 'Manufacture Date', visible: true, mandatory: false },
+    { name: 'grade', label: 'Grade', visible: true, mandatory: false },
+    { name: 'fuelType', label: 'Fuel Type', visible: true, mandatory: false },
+    { name: 'suffix', label: 'Suffix', visible: false, mandatory: false },
+    { name: 'exteriorColor', label: 'Exterior Color', visible: true, mandatory: false },
+    { name: 'interiorColor', label: 'Interior Color', visible: false, mandatory: false },
+    { name: 'colorCode', label: 'Color Code', visible: true, mandatory: false },
+    { name: 'engineNumber', label: 'Engine Number', visible: true, mandatory: false },
+    { name: 'keyNumber', label: 'Key Number', visible: false, mandatory: false },
+    { name: 'location', label: 'Location', visible: true, mandatory: false },
+    { name: 'invoiceValue', label: 'Invoice Value', visible: true, mandatory: false },
+    { name: 'interest', label: 'Interest', visible: false, mandatory: false },
+    { name: 'customerName', label: 'Customer Name', visible: true, mandatory: false },
+    { name: 'orderDate', label: 'Order Date', visible: true, mandatory: false },
+    { name: 'deliveryDate', label: 'Delivery Date', visible: true, mandatory: false },
+    { name: 'orderStatus', label: 'Order Status', visible: true, mandatory: false },
+    { name: 'salesPersonName', label: 'Sales Person', visible: false, mandatory: false },
+    { name: 'leadName', label: 'Lead Name', visible: false, mandatory: false },
+    { name: 'dmsStatus', label: 'DMS Status', visible: true, mandatory: false },
+    { name: 'dealAmount', label: 'Deal Amount', visible: true, mandatory: false },
+    { name: 'financerName', label: 'Financer Name', visible: true, mandatory: false },
+    { name: 'financeType', label: 'Finance Type', visible: false, mandatory: false }
   ];
+
+  displayedColumns: string[] = [];
+  showColumnSelector = false;
 
   carDetailsList: VehicleModel[] = [];
   filteredCarDetailsList: VehicleModel[] = [];
@@ -86,6 +96,35 @@ export class VehicleDetailsComponent implements OnInit {
   viewMode: 'table' | 'card' = 'table';
   selectedRow: VehicleModel | null = null;
   currentFilter: string = 'available'; // Track current filter state
+  currentAgeFilter: string = 'all'; // Track current age filter
+  currentFinancerFilter: string = 'all'; // Track current financer filter
+  
+  // Financer names list
+  financerNames = [
+    'BANK OF MAHARASHTRA',
+    'TOYOTA FINANCIAL SERVICES INDIA LTD',
+    'HDFC BANK LTD',
+    'CANARA BANK',
+    'PUNJAB NATIONAL BANK',
+    'CHOLAMANDALAM',
+    'AXIS BANK',
+    'ICICI BANK',
+    'STATE BANK OF INDIA',
+    'KOTAK MAHINDRA BANK',
+    'INDUSIND BANK',
+    'YES BANK',
+    'IDFC FIRST BANK',
+    'RBL BANK',
+    'FEDERAL BANK',
+    'BANDHAN BANK',
+    'AU SMALL FINANCE BANK',
+    'BAJAJ FINANCE',
+    'MAHINDRA FINANCE',
+    'TATA CAPITAL',
+    'L&T FINANCE',
+    'SUNDARAM FINANCE',
+    'SHRIRAM FINANCE'
+  ];
 
   constructor(private route: ActivatedRoute, private vehicleService: DataService, private cdr: ChangeDetectorRef, private dialog: MatDialog,
     private orderService: OrderService, private renderer: Renderer2, private authService: AuthService
@@ -109,6 +148,11 @@ export class VehicleDetailsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Load column preferences from localStorage
+    this.loadColumnPreferences();
+    // Update displayed columns
+    this.updateDisplayedColumns();
+
     this.route.paramMap.subscribe((params) => {
       const modelName = params.get('modelName');
       const make = params.get('make');
@@ -130,6 +174,73 @@ export class VehicleDetailsComponent implements OnInit {
         this.onStatusFilterChange({ target: { value: 'all-active' } } as any);
       }, 0);
     });
+  }
+
+  // Load column preferences from localStorage
+  loadColumnPreferences(): void {
+    const savedPreferences = localStorage.getItem('vehicleDetailsColumnPreferences');
+    if (savedPreferences) {
+      try {
+        const preferences = JSON.parse(savedPreferences);
+        this.allColumns.forEach(column => {
+          const savedColumn = preferences.find((p: any) => p.name === column.name);
+          if (savedColumn && !column.mandatory) {
+            column.visible = savedColumn.visible;
+          }
+        });
+      } catch (error) {
+        console.error('Error loading column preferences:', error);
+      }
+    }
+  }
+
+  // Save column preferences to localStorage
+  saveColumnPreferences(): void {
+    const preferences = this.allColumns.map(col => ({
+      name: col.name,
+      visible: col.visible
+    }));
+    localStorage.setItem('vehicleDetailsColumnPreferences', JSON.stringify(preferences));
+  }
+
+  // Update displayed columns based on visibility
+  updateDisplayedColumns(): void {
+    this.displayedColumns = [
+      ...this.allColumns.filter(col => col.visible).map(col => col.name),
+      'actions'
+    ];
+  }
+
+  // Toggle column visibility
+  toggleColumn(columnName: string): void {
+    const column = this.allColumns.find(col => col.name === columnName);
+    if (column && !column.mandatory) {
+      column.visible = !column.visible;
+      this.updateDisplayedColumns();
+      this.saveColumnPreferences();
+    }
+  }
+
+  // Toggle column selector panel
+  toggleColumnSelector(): void {
+    this.showColumnSelector = !this.showColumnSelector;
+  }
+
+  // Reset columns to default
+  resetColumns(): void {
+    this.allColumns.forEach(column => {
+      if (column.mandatory) {
+        column.visible = true;
+      } else {
+        // Set default visibility
+        column.visible = ['invoiceDate', 'invoiceNumber', 'purchaseDealer', 'receivedDate', 
+          'manufactureDate', 'grade', 'fuelType', 'exteriorColor', 'colorCode', 'engineNumber', 
+          'location', 'invoiceValue', 'customerName', 'orderDate', 'deliveryDate', 
+          'orderStatus', 'dmsStatus', 'dealAmount', 'financerName'].includes(column.name);
+      }
+    });
+    this.updateDisplayedColumns();
+    this.saveColumnPreferences();
   }
 
   editVehicle(vehicle: any): void {
@@ -194,61 +305,40 @@ export class VehicleDetailsComponent implements OnInit {
   }
 
   exportToExcel(): void {
-    // Define the columns you want to include in the Excel file
-    const columnsToInclude = [
-      'invoiceDate',
-    'invoiceNumber',
-    'purchaseDealer',
-    'receivedDate',
-    'manufactureDate',
-    'model',
-    'grade',
-    'fuelType',
-    'suffix',
-    'exteriorColor',
-    'interiorColor',
-    'chassisNumber',
-    'engineNumber',
-    'keyNumber',
-    'location',
-    'invoiceValue',
-    'age',
-    'interest',
-    'vehicleStatus',
-    'make',
-    'customerName',
-    'orderDate',
-    'deliveryDate',
-    'orderStatus',
-    'dmsStatus',
-    'dealAmount'
-    ];
+    // Get only the visible columns from the allColumns array
+    const columnsToInclude = this.allColumns
+      .filter(col => col.visible)
+      .map(col => col.name);
   
-    // Map the data to include only the selected columns and format date columns
-  const excelData = this.dataSource.data.map((vehicle) => {
-    const row: { [key: string]: any } = {};
-    columnsToInclude.forEach((column) => {
-      if (['invoiceDate', 'receivedDate', 'orderDate', 'deliveryDate'].includes(column)) {
-        row[column] = vehicle[column as keyof VehicleModel]
-          ? new Date(vehicle[column as keyof VehicleModel]).toLocaleDateString() // Format as date
-          : ''; // Handle empty or null values
-      } else {
-        row[column] = vehicle[column as keyof VehicleModel];
-      }
+    // Map the data to include only the visible columns and format date columns
+    const excelData = this.dataSource.data.map((vehicle) => {
+      const row: { [key: string]: any } = {};
+      columnsToInclude.forEach((column) => {
+        // Get the column label for better header names
+        const columnConfig = this.allColumns.find(col => col.name === column);
+        const columnLabel = columnConfig ? columnConfig.label : column;
+        
+        if (['invoiceDate', 'receivedDate', 'orderDate', 'deliveryDate', 'manufactureDate'].includes(column)) {
+          const value = vehicle[column as keyof VehicleModel];
+          row[columnLabel] = value
+            ? new Date(value as string | number).toLocaleDateString() // Format as date
+            : ''; // Handle empty or null values
+        } else {
+          row[columnLabel] = vehicle[column as keyof VehicleModel];
+        }
+      });
+      return row;
     });
-    return row;
-  });
 
-  // Create a worksheet from the filtered data
-  const worksheet = XLSX.utils.json_to_sheet(excelData);
+    // Create a worksheet from the filtered data
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
 
-  // Create a workbook and append the worksheet
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, 'Vehicle Details');
+    // Create a workbook and append the worksheet
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Vehicle Details');
 
-  // Write the workbook to a file
-  XLSX.writeFile(workbook, 'vehicle-details.xlsx');
-
+    // Write the workbook to a file
+    XLSX.writeFile(workbook, 'vehicle-details.xlsx');
   }
 
   toggleFilter(column: string): void {
@@ -267,8 +357,11 @@ export class VehicleDetailsComponent implements OnInit {
     this.isLoad = true; // Start loading
     this.vehicleService.getVehicleAndOrderDetailsByModel(modelName).subscribe({
       next: (result: VehicleModel[]) => {
+        // Flatten order data from nested orders array
+        let processedResult = this.flattenOrderData(result);
+
         // Transform manufactureDate to extract only the year
-        result.forEach(vehicle => {
+        processedResult.forEach(vehicle => {
           if (vehicle.manufactureDate) {
             const date = new Date(vehicle.manufactureDate);
             vehicle.manufactureDate = date.getFullYear().toString(); // Extract year as string
@@ -276,10 +369,10 @@ export class VehicleDetailsComponent implements OnInit {
         });
   
         // Store the original unfiltered data
-        this.originalCarDetailsList = result;
+        this.originalCarDetailsList = processedResult;
   
                 // Filter out vehicles with status "sold" (default to available)
-        this.carDetailsList = result.filter(vehicle => !vehicle.vehicleStatus || vehicle.vehicleStatus.toLowerCase() !== 'sold');
+        this.carDetailsList = processedResult.filter(vehicle => !vehicle.vehicleStatus || vehicle.vehicleStatus.toLowerCase() !== 'sold');
         console.log("Filtered Vehicle Details: " + JSON.stringify(this.carDetailsList));
 
         this.dataSource = new MatTableDataSource<VehicleModel>(this.carDetailsList);
@@ -313,6 +406,7 @@ export class VehicleDetailsComponent implements OnInit {
       error: (error) => {
         console.error('Error fetching data:', error);
         this.isLoading = false;
+        this.isLoad = false;
       }
     });
   }
@@ -320,21 +414,63 @@ export class VehicleDetailsComponent implements OnInit {
   onStatusFilterChange(event: Event): void {
     const selectedStatus = (event.target as HTMLSelectElement).value;
     this.currentFilter = selectedStatus.toLowerCase();
+    this.applyAllFilters();
+  }
 
-    if (selectedStatus === 'all-active') {
+  onAgeFilterChange(event: Event): void {
+    const selectedAge = (event.target as HTMLSelectElement).value;
+    this.currentAgeFilter = selectedAge;
+    this.applyAllFilters();
+  }
+
+  onFinancerFilterChange(event: Event): void {
+    const selectedFinancer = (event.target as HTMLSelectElement).value;
+    this.currentFinancerFilter = selectedFinancer;
+    this.applyAllFilters();
+  }
+
+  applyAllFilters(): void {
+    let filteredData = [...this.originalCarDetailsList];
+
+    // Apply status filter
+    if (this.currentFilter === 'all-active' || this.currentFilter === 'available') {
       // Active = not SOLD
-      this.dataSource.data = this.originalCarDetailsList.filter(vehicle => !vehicle.vehicleStatus || vehicle.vehicleStatus.toUpperCase() !== 'SOLD');
-    } else if (selectedStatus === 'AVAILABLE') {
-      // not sold
-      this.dataSource.data = this.originalCarDetailsList.filter(vehicle => !vehicle.vehicleStatus || vehicle.vehicleStatus.toUpperCase() !== 'SOLD');
-    } else if (selectedStatus === 'SOLD') {
-      this.dataSource.data = this.originalCarDetailsList.filter(vehicle => vehicle.vehicleStatus?.toUpperCase() === 'SOLD');
-    } else {
+      filteredData = filteredData.filter(vehicle => !vehicle.vehicleStatus || vehicle.vehicleStatus.toUpperCase() !== 'SOLD');
+    } else if (this.currentFilter === 'sold') {
+      filteredData = filteredData.filter(vehicle => vehicle.vehicleStatus?.toUpperCase() === 'SOLD');
+    } else if (this.currentFilter !== 'all-active') {
       // Other explicit statuses
-      this.dataSource.data = this.originalCarDetailsList.filter(vehicle => vehicle.vehicleStatus?.toUpperCase() === selectedStatus);
+      filteredData = filteredData.filter(vehicle => vehicle.vehicleStatus?.toUpperCase() === this.currentFilter.toUpperCase());
     }
 
-    this.totalVehicles = this.dataSource.data.length;
+    // Apply age filter
+    if (this.currentAgeFilter !== 'all') {
+      filteredData = filteredData.filter(vehicle => {
+        const age = typeof vehicle.age === 'number' ? vehicle.age : Number(vehicle.age || 0);
+        
+        switch (this.currentAgeFilter) {
+          case 'lt30':
+            return age < 30;
+          case '30-60':
+            return age >= 30 && age <= 60;
+          case 'gt60':
+            return age > 60;
+          default:
+            return true;
+        }
+      });
+    }
+
+    // Apply financer filter
+    if (this.currentFinancerFilter !== 'all') {
+      filteredData = filteredData.filter(vehicle => {
+        const financerName = vehicle.financerName?.toUpperCase() || '';
+        return financerName === this.currentFinancerFilter.toUpperCase();
+      });
+    }
+
+    this.dataSource.data = filteredData;
+    this.totalVehicles = filteredData.length;
     this.cdr.detectChanges();
   }
   
@@ -441,10 +577,19 @@ export class VehicleDetailsComponent implements OnInit {
 
   refreshData(): void {
     this.isLoading = true;
-    this.route.params.subscribe(params => {
-      const modelName = params['modelName'];
+    this.isLoad = true;
+    
+    this.route.paramMap.subscribe((params) => {
+      const modelName = params.get('modelName');
+      const make = params.get('make');
+      
       if (modelName) {
         this.getCarDetails(modelName);
+      } else if (make) {
+        this.getCarDetailsByMake(make);
+      } else {
+        // Fallback: show all vehicles
+        this.getAllVehicles();
       }
     });
   }
@@ -477,31 +622,96 @@ export class VehicleDetailsComponent implements OnInit {
     this.filters = {};
     this.activeFilter = null;
     this.currentFilter = 'available';
+    this.currentAgeFilter = 'all';
+    this.currentFinancerFilter = 'all';
     this.dataSource.filter = '';
     
-    // Reset to show only available vehicles (default state)
-    this.dataSource.data = this.originalCarDetailsList.filter(vehicle => 
-      !vehicle.vehicleStatus || vehicle.vehicleStatus.toLowerCase() !== 'sold'
-    );
-    this.totalVehicles = this.dataSource.data.length;
-    this.cdr.detectChanges();
+    // Reset dropdown values in the UI using ViewChild references
+    if (this.statusFilter) {
+      this.statusFilter.nativeElement.value = 'all-active';
+    }
+    if (this.ageFilter) {
+      this.ageFilter.nativeElement.value = 'all';
+    }
+    if (this.financerFilter) {
+      this.financerFilter.nativeElement.value = 'all';
+    }
+    
+    // Apply the combined filters (will show only available vehicles by default)
+    this.applyAllFilters();
   }
 
   getModelCount(model: string): number {
     return this.carDetailsList.filter(car => car.model === model).length;
   }
 
+  // Helper method to flatten order data from orders array
+  private flattenOrderData(vehicles: VehicleModel[]): VehicleModel[] {
+    return vehicles.map(vehicle => {
+      // If vehicle has orders array with at least one order, flatten the first order's data
+      if ((vehicle as any).orders && Array.isArray((vehicle as any).orders) && (vehicle as any).orders.length > 0) {
+        const firstOrder = (vehicle as any).orders[0];
+        return {
+          ...vehicle,
+          customerName: firstOrder.customerName || '',
+          orderDate: firstOrder.orderDate || '',
+          deliveryDate: firstOrder.deliveryDate || '',
+          orderStatus: firstOrder.orderStatus || '',
+          salesPersonName: firstOrder.salesPersonName || '',
+          leadName: firstOrder.leadName || '',
+          dmsStatus: firstOrder.dmsStatus || '',
+          dealAmount: firstOrder.dealAmount || '',
+          financerName: firstOrder.financerName || '',
+          financeType: firstOrder.financeType || ''
+        };
+      }
+      return vehicle;
+    });
+  }
+
   // New: Load all vehicles and show in table
   private getAllVehicles(): void {
     this.isLoad = true;
-    this.vehicleService.getData().subscribe({
+    this.vehicleService.getAllVehiclesWithOrders().subscribe({
       next: (result: VehicleModel[]) => {
-        this.originalCarDetailsList = result;
-        this.carDetailsList = result.filter(vehicle => !vehicle.vehicleStatus || vehicle.vehicleStatus.toLowerCase() !== 'sold');
+        // Flatten order data from nested orders array
+        let processedResult = this.flattenOrderData(result);
+
+        // Transform manufactureDate to extract only the year
+        processedResult.forEach(vehicle => {
+          if (vehicle.manufactureDate) {
+            const date = new Date(vehicle.manufactureDate);
+            if (!isNaN(date.getTime())) {
+              vehicle.manufactureDate = date.getFullYear().toString();
+            }
+          }
+        });
+
+        this.originalCarDetailsList = processedResult;
+        this.carDetailsList = processedResult.filter(vehicle => !vehicle.vehicleStatus || vehicle.vehicleStatus.toLowerCase() !== 'sold');
         this.dataSource = new MatTableDataSource<VehicleModel>(this.carDetailsList);
         this.currentFilter = 'available';
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
+
+        // Configure custom sorting
+        this.dataSource.sortingDataAccessor = (item: VehicleModel, property: string) => {
+          switch (property) {
+            case 'receivedDate':
+            case 'invoiceDate':
+            case 'orderDate':
+            case 'deliveryDate':
+              return new Date(item[property] || '').getTime();
+            case 'manufactureDate':
+              return item.manufactureDate || '';
+            case 'age':
+            case 'invoiceValue':
+              return typeof item[property] === 'number' ? item[property] : 0;
+            default:
+              return item[property]?.toString() || '';
+          }
+        };
+
         this.totalVehicles = this.carDetailsList.length;
         this.isLoading = false;
         this.isLoad = false;
@@ -517,13 +727,16 @@ export class VehicleDetailsComponent implements OnInit {
   // New: Load by make regardless of model
   private getCarDetailsByMake(make: string): void {
     this.isLoad = true;
-    this.vehicleService.getData().subscribe({
+    this.vehicleService.getAllVehiclesWithOrders().subscribe({
       next: (result: VehicleModel[]) => {
         const lowerMake = (make || '').toLowerCase();
         const filtered = result.filter(v => (v.make || '').toLowerCase() === lowerMake);
 
+        // Flatten order data from nested orders array
+        let processedResult = this.flattenOrderData(filtered);
+
         // Transform manufactureDate to year where applicable
-        filtered.forEach(vehicle => {
+        processedResult.forEach(vehicle => {
           if (vehicle.manufactureDate) {
             const date = new Date(vehicle.manufactureDate);
             if (!isNaN(date.getTime())) {
@@ -532,12 +745,31 @@ export class VehicleDetailsComponent implements OnInit {
           }
         });
 
-        this.originalCarDetailsList = filtered;
-        this.carDetailsList = filtered.filter(vehicle => !vehicle.vehicleStatus || vehicle.vehicleStatus.toLowerCase() !== 'sold');
+        this.originalCarDetailsList = processedResult;
+        this.carDetailsList = processedResult.filter(vehicle => !vehicle.vehicleStatus || vehicle.vehicleStatus.toLowerCase() !== 'sold');
         this.dataSource = new MatTableDataSource<VehicleModel>(this.carDetailsList);
         this.currentFilter = 'available';
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
+
+        // Configure custom sorting
+        this.dataSource.sortingDataAccessor = (item: VehicleModel, property: string) => {
+          switch (property) {
+            case 'receivedDate':
+            case 'invoiceDate':
+            case 'orderDate':
+            case 'deliveryDate':
+              return new Date(item[property] || '').getTime();
+            case 'manufactureDate':
+              return item.manufactureDate || '';
+            case 'age':
+            case 'invoiceValue':
+              return typeof item[property] === 'number' ? item[property] : 0;
+            default:
+              return item[property]?.toString() || '';
+          }
+        };
+
         this.totalVehicles = this.carDetailsList.length;
         this.isLoading = false;
         this.isLoad = false;

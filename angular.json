@@ -49,10 +49,25 @@
                 }
               ],
               "outputHashing": "all",
-              "aot": true
+              "aot": true,
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                },
+                "fonts": false
+              }
             },
             "development": {
-              "optimization": true,
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                },
+                "fonts": false
+              },
               "extractLicenses": false,
               "sourceMap": true
             }

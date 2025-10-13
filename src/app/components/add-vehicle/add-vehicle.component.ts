@@ -25,6 +25,85 @@ export class AddVehicleComponent implements OnInit{
   user: UserModel | null = null;
   holdModel: any[] = [];
   
+  // Location arrays
+  tataLocations = [
+    'GKM YARD',
+    'SKC YARD',
+    'TOYOTA YARD',
+    'DABRA EMO',
+    'DATIA EMO',
+    'BHIND EMO',
+    'SHEOPUR EMO',
+    'SKC SHOWROOM',
+    'GKM SHOWROOM',
+    'WORKSHOP',
+    'BODYSHOP'
+  ];
+  
+  toyotaLocations = [
+    'STOCK YARD PANDIT JI',
+    'TOYOTA SLR',
+    'DATIA',
+    'BHIND',
+    'MORENA',
+    'SHIVPURI',
+    'SHEOPUR',
+    'INDORE',
+    'KHANDWA',
+    'DEWAS KHATEGAON'
+  ];
+  
+  filteredLocations: string[] = [];
+  
+  // Color codes mapping
+  colorCodes = [
+    { code: 'ZHJ', name: 'CAFE WHITE' },
+    { code: 'WBE', name: 'ENTICING SILVER' },
+    { code: 'Z1Q', name: 'INSTA BLUE' },
+    { code: 'WBG', name: 'SPORTIN RED' },
+    { code: '2QY', name: 'SILVER METALLIC & A.BLACK' },
+    { code: '2UE', name: 'SUPERWHITE & A.BLACK' },
+    { code: '2PS', name: 'WHITEPEARL & A.BLACK' },
+    { code: '218', name: 'ATTITUDE BLACK' },
+    { code: '4W8', name: 'AVANT GARDE BRONZE' },
+    { code: '4W9', name: 'PHANTOM BROWN' },
+    { code: '089', name: 'PLATINUM WHITE PEARL' },
+    { code: '1D6', name: 'SILVER METALLIC' },
+    { code: '220', name: 'SPARKLING BLACK PEARL CS' },
+    { code: '040', name: 'SUPER WHITE' },
+    { code: '3U5', name: 'EMOTIONAL RED' },
+    { code: '1G3', name: 'GREY METALLIC' },
+    { code: '1L0', name: 'SILVER METALLIC' },
+    { code: '221', name: 'BLUISH AGEHA GF' },
+    { code: '222', name: 'BURNING BLACK' },
+    { code: '4X7', name: 'GRAPHITE ME' },
+    { code: '1K0', name: 'METAL STREAM ME' },
+    { code: '3T3', name: 'RED MC' },
+    { code: '1D4', name: 'SILVER METALLIC' },
+    { code: 'Z7Q', name: 'ICONIC GREY' },
+    { code: 'ZQK', name: 'RUSTIC BROWN' },
+    { code: 'ZYA', name: 'SPUNKY BLUE' },
+    { code: 'C8J', name: 'CAFE WHITE & MIDNIGHT BLACK' },
+    { code: 'ZQD', name: 'CAVE BLACK' },
+    { code: 'ERD', name: 'ENTICING SILVERMIDNIGHT BLACK' },
+    { code: 'WAJ', name: 'SPEEDY BLUE' },
+    { code: 'E3Y', name: 'SPEEDY BLUE & MIDNIGHT BLACK' },
+    { code: 'ESL', name: 'SPORTIN RED & MIDNIGHT BLACK' },
+    { code: '2YE', name: 'LUCENT ORANGE' },
+    { code: 'E86', name: 'WHITE' },
+    { code: 'E85', name: 'SILVER DT' },
+    { code: 'E5G', name: 'WHITE DT' },
+    { code: '202', name: 'BLACK' },
+    { code: '1L5', name: 'PRECIOUS METAL' },
+    { code: '8X8', name: 'DARK BLUE METALLIC' },
+    { code: '1H5', name: 'CEMENT GREY' },
+    { code: '090', name: 'PRECIOUS PEARL WHITE' },
+    { code: '083', name: 'WHITE' }
+  ];
+  
+  showCustomColorCode: boolean = false;
+  showCustomLocation: boolean = false;
+  
   // Enhanced UI state properties
   focusedField: string | null = null;
   isSubmitting: boolean = false;
@@ -47,6 +126,7 @@ export class AddVehicleComponent implements OnInit{
       fuelType: ['', Validators.required],
       exteriorColor: [''],
       interiorColor: [''],
+      colorCode: [''],
       chassisNumber: ['', Validators.required],
       engineNumber: ['', Validators.required],
       keyNumber: [''],
@@ -65,6 +145,24 @@ export class AddVehicleComponent implements OnInit{
 
     this.getModelInfo();
     this.getVehicleMake();
+    this.initializeLocations();
+  }
+  
+  // Initialize locations based on user role
+  initializeLocations(): void {
+    if (this.hasRole('ADMIN')) {
+      // Admin can see all locations from both TATA and TOYOTA
+      this.filteredLocations = [...this.tataLocations, ...this.toyotaLocations];
+    } else if (this.hasRole('TATA')) {
+      // TATA role can only see TATA locations
+      this.filteredLocations = [...this.tataLocations];
+    } else if (this.hasRole('TOYOTA')) {
+      // TOYOTA role can only see TOYOTA locations
+      this.filteredLocations = [...this.toyotaLocations];
+    } else {
+      // Default: show all locations
+      this.filteredLocations = [...this.tataLocations, ...this.toyotaLocations];
+    }
   }
 
   constructor(private fb: FormBuilder, private vehicleService: DataService, private authService: AuthService, private datePipe: DatePipe) {
@@ -75,6 +173,7 @@ export class AddVehicleComponent implements OnInit{
       fuelType: ['', Validators.required],
       exteriorColor: [''],
       interiorColor: [''],
+      colorCode: [''],
       chassisNumber: ['', Validators.required],
       engineNumber: ['', Validators.required],
       keyNumber: [''],
@@ -186,15 +285,13 @@ console.log
   }
 
   setTab(index: number): void {
-    // Only allow moving to the next tab if current tab is valid
-    // Or allow moving to previous tabs (backwards navigation)
-    if (index <= this.currentTab || this.isCurrentTabValid()) {
-      this.currentTab = index;
-    }
+    // Allow navigation to any tab without validation
+    this.currentTab = index;
   }
 
   nextTab() {
-    if (this.currentTab < 2 && this.isCurrentTabValid()) {
+    // Allow moving to next tab without validation
+    if (this.currentTab < 2) {
       this.currentTab++;
     }
   }
@@ -248,6 +345,64 @@ console.log
     const selectedMake = target?.value;
     if (selectedMake) {
       this.filteredModels = this.models.filter((model) => model.make === selectedMake);
+      
+      // Update filtered locations based on selected make
+      if (this.hasRole('ADMIN')) {
+        // Admin can see locations based on the selected make
+        if (selectedMake.toUpperCase() === 'TATA') {
+          this.filteredLocations = [...this.tataLocations];
+        } else if (selectedMake.toUpperCase() === 'TOYOTA') {
+          this.filteredLocations = [...this.toyotaLocations];
+        } else {
+          // For other makes, show all locations
+          this.filteredLocations = [...this.tataLocations, ...this.toyotaLocations];
+        }
+      } else {
+        // Non-admin users don't need to update locations (they only see their role's locations)
+        // Locations are already set in initializeLocations()
+      }
+      
+      // Reset location field when make changes
+      this.vehicleForm.patchValue({ location: '' });
+    }
+  }
+
+  onColorCodeChange(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    const selectedColorCode = target?.value;
+    
+    if (selectedColorCode === 'OTHERS') {
+      // Show custom color code input field
+      this.showCustomColorCode = true;
+      // Clear the color code and exterior color for manual entry
+      this.vehicleForm.patchValue({
+        colorCode: '',
+        exteriorColor: ''
+      });
+    } else if (selectedColorCode) {
+      this.showCustomColorCode = false;
+      const colorInfo = this.colorCodes.find((color) => color.code === selectedColorCode);
+      if (colorInfo) {
+        this.vehicleForm.patchValue({
+          exteriorColor: colorInfo.name
+        });
+      }
+    }
+  }
+
+  onLocationChange(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    const selectedLocation = target?.value;
+    
+    if (selectedLocation === 'OTHERS') {
+      // Show custom location input field
+      this.showCustomLocation = true;
+      // Clear the location for manual entry
+      this.vehicleForm.patchValue({
+        location: ''
+      });
+    } else {
+      this.showCustomLocation = false;
     }
   }
 
