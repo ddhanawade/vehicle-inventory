@@ -6,6 +6,7 @@ export interface VehicleModel {
     fuelType: string;
     exteriorColor: string;
     interiorColor: string;
+    colorCode: string;
     chassisNumber: string;
     engineNumber: string;
     keyNumber: string;
@@ -24,5 +25,16 @@ export interface VehicleModel {
     between30And60DaysCount: string;
     greaterThan60DaysCount : string;
     remarks: string;
-    [key: string]: string | number; // Index signature for dynamic access
+    // Order related fields
+    customerName?: string;
+    orderDate?: string;
+    deliveryDate?: string;
+    orderStatus?: string;
+    salesPersonName?: string;
+    leadName?: string;
+    dmsStatus?: string;
+    dealAmount?: string;
+    financerName?: string;
+    financeType?: string;
+    [key: string]: string | number | undefined; // Index signature for dynamic access
   }

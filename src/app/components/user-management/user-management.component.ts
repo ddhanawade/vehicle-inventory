@@ -28,7 +28,7 @@ export class UserManagementComponent implements OnInit {
   roleSearchTerm: string = '';
   filteredRoles: string[] = [];
 
-  constructor(private userService : userService, private fb: FormBuilder, private authService : AuthService) { 
+  constructor(private userService : userService, private fb: FormBuilder, private authService : AuthService) {
     this.userForm = this.fb.group({
       username: ['', Validators.required],
       email: ['', Validators.required],
@@ -53,7 +53,7 @@ export class UserManagementComponent implements OnInit {
     })
   }
 
-  availableRoles = ['ADMIN', 'USER', 'TATA', 'TOYOTA', 'EICHER']; // Dynamic roles
+  availableRoles = ['ADMIN', 'TATA', 'TOYOTA', 'EICHER']; // Dynamic roles
 
   ngOnInit() {
     this.getUsers();
@@ -97,7 +97,7 @@ export class UserManagementComponent implements OnInit {
   getPasswordStrength(): string {
     const password = this.userData.password;
     if (!password) return 'weak';
-    
+
     let score = 0;
     if (password.length >= 8) score++;
     if (/[A-Z]/.test(password)) score++;
@@ -185,19 +185,19 @@ export class UserManagementComponent implements OnInit {
 //     if (typeof this.userData.roles === 'string') {
 //       this.userData.roles = [this.userData.roles]; // Convert single role to an array
 //     }
-  
+
 //     console.log('User data being sent:', this.userData); // Log the user data
-  
+
 //     this.authService.registerUser(this.userData).subscribe(
 //       (response:any) => {
 //         console.log('Full Response from backend:', response); // Log the full response
 //         this.successMessage = response; // Safely extract the message
 //         console.log('Extracted successMessage:', this.successMessage); // Log the extracted message
-  
+
 //         setTimeout(() => {
 //           this.successMessage = '';
 //         }, 3000);
-  
+
 //         // Reset the userData object after successful submission
 //         this.userData = {
 //           username: '',
@@ -218,7 +218,7 @@ export class UserManagementComponent implements OnInit {
 
 onCreateUser(): void {
   this.isCreatingUser = true;
-  
+
   // Ensure roles are in the correct format (array of strings)
   if (typeof this.userData.roles === 'string') {
     this.userData.roles = [this.userData.roles]; // Convert single role to an array
@@ -230,7 +230,7 @@ onCreateUser(): void {
     password?: string;
     roles: string[];
   };
-  
+
   delete userDataForLogging.password;
 
   this.authService.registerUser(this.userData).subscribe(
@@ -250,7 +250,7 @@ onCreateUser(): void {
         password: '',
         roles: [] as string[]
       };
-      
+
       // Refresh user list
       this.getUsers();
     },

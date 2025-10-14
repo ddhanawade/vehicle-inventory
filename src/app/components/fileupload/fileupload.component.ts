@@ -171,7 +171,7 @@ export class FileuploadComponent {
       this.testErrorMessage = null;
     }
 
-    // Normalize CSV (uppercase MAKE/MODEL/LOCATION) when applicable
+    // Normalize CSV (uppercase MAKE/MODEL/LOCATION) and validate dates
     this.normalizeCsvFile(selectedFile)
       .then((normalizedFile) => {
         const formData = new FormData();
@@ -204,6 +204,20 @@ export class FileuploadComponent {
         }
       })
       .catch((err) => {
+        // Check if this is a date validation error
+        if (err instanceof Error && err.message.includes('Date Format Validation Failed')) {
+          if (type === 'fleet') {
+            this.fleetIsLoading = false;
+            this.fleetErrorMessage = err.message;
+            this.fleetSuccessMessage = null;
+          } else {
+            this.testIsLoading = false;
+            this.testErrorMessage = err.message;
+            this.testSuccessMessage = null;
+          }
+          return; // Don't proceed with upload
+        }
+        
         console.warn('CSV normalization skipped due to error:', err);
         const fallbackForm = new FormData();
         fallbackForm.append('file', selectedFile as File);
@@ -255,14 +269,37 @@ export class FileuploadComponent {
       const makeIdx = indexByLower['make'];
       const modelIdx = indexByLower['model'];
       const locationIdx = indexByLower['location'];
+      
+      // Find date column indices for validation
+      const dateColumns = ['invoicedate', 'registrationdate', 'purchasedate', 'saledate'];
+      const dateIndices: { name: string; index: number }[] = [];
+      dateColumns.forEach(col => {
+        if (indexByLower[col] !== undefined) {
+          dateIndices.push({ name: col, index: indexByLower[col] });
+        }
+      });
 
       const out: string[] = [];
       // Preserve original header exactly to avoid backend header mismatches
       out.push(headerRaw);
+      
+      // Track date validation errors
+      const dateErrors: string[] = [];
 
       for (let i = 1; i < lines.length; i++) {
         const rowVals = this.parseCsvLine(lines[i]);
         const nextVals = [...rowVals];
+        
+        // Validate date formats
+        for (const dateCol of dateIndices) {
+          const dateValue = nextVals[dateCol.index];
+          if (dateValue && dateValue.trim() !== '') {
+            if (!this.isValidDateFormat(dateValue.trim())) {
+              dateErrors.push(`Row ${i + 1}, Column "${dateCol.name}": Invalid date format "${dateValue}". Expected DD/MM/YY format.`);
+            }
+          }
+        }
+        
         if (makeIdx !== undefined && nextVals[makeIdx] !== undefined) nextVals[makeIdx] = (nextVals[makeIdx] || '').toString().toUpperCase().trim();
         if (modelIdx !== undefined && nextVals[modelIdx] !== undefined) nextVals[modelIdx] = (nextVals[modelIdx] || '').toString().toUpperCase().trim();
         if (locationIdx !== undefined && nextVals[locationIdx] !== undefined) nextVals[locationIdx] = (nextVals[locationIdx] || '').toString().toUpperCase().trim();
@@ -270,13 +307,30 @@ export class FileuploadComponent {
         const serialized = nextVals.map(v => this.escapeCsv(v ?? ''));
         out.push(serialized.join(','));
       }
+      
+      // If there are date validation errors, throw an error with details
+      if (dateErrors.length > 0) {
+        const errorMessage = `❌ Date Format Validation Failed:\n\n${dateErrors.slice(0, 10).join('\n')}${dateErrors.length > 10 ? `\n\n...and ${dateErrors.length - 10} more errors` : ''}`;
+        throw new Error(errorMessage);
+      }
 
       const normalized = out.join(eol);
       return new File([normalized], name, { type: 'text/csv' });
     } catch (e) {
-      // On any parsing error, fall back to original file
+      // Re-throw validation errors
+      if (e instanceof Error && e.message.includes('Date Format Validation Failed')) {
+        throw e;
+      }
+      // On any other parsing error, fall back to original file
       return file;
     }
+  }
+  
+  // Validate date format is DD/MM/YY
+  private isValidDateFormat(dateStr: string): boolean {
+    // Regular expression for DD/MM/YY format
+    const datePattern = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{2}$/;
+    return datePattern.test(dateStr);
   }
 
   private readFileAsText(file: File): Promise<string> {

@@ -18,6 +18,10 @@ export class DataService {
     return this.http.get<VehicleModel[]>(this.baseUrl);
   }
 
+  getAllVehiclesWithOrders(): Observable<VehicleModel[]> {
+    return this.http.get<VehicleModel[]>(`${this.baseUrl}/with-orders`);
+  }
+
   addVehicle(vehicle: any): Observable<any> {
     const payload = {
       ...vehicle,

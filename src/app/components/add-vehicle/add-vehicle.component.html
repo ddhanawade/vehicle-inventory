@@ -246,6 +246,41 @@
         <!-- Specifications Tab -->
         <div class="tab-content" *ngIf="currentTab === 1">
           <div class="form-grid">
+            <div class="form-group" [class.filled]="vehicleForm.get('colorCode')?.value" [class.error]="vehicleForm.get('colorCode')?.invalid && (vehicleForm.get('colorCode')?.dirty || vehicleForm.get('colorCode')?.touched)">
+              <label for="colorCode" class="form-label">
+                <i class="fas fa-barcode label-icon"></i>
+                <span>Color Code</span>
+                
+              </label>
+              <div class="input-wrapper" *ngIf="!showCustomColorCode">
+                <select id="colorCode" formControlName="colorCode" class="form-select" (change)="onColorCodeChange($event)" (focus)="onFieldFocus('colorCode')" (blur)="onFieldBlur('colorCode')">
+                  <option value="" disabled>Select Color Code</option>
+                  <option *ngFor="let color of colorCodes" [value]="color.code">{{ color.code }} - {{ color.name }}</option>
+                  <option value="OTHERS">Others (Enter Manually)</option>
+                </select>
+                <div class="select-arrow">
+                  <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="input-border"></div>
+                <div class="validation-icon">
+                  <i class="fas fa-check" *ngIf="vehicleForm.get('colorCode')?.valid && vehicleForm.get('colorCode')?.value"></i>
+                  <i class="fas fa-exclamation-triangle" *ngIf="vehicleForm.get('colorCode')?.invalid && (vehicleForm.get('colorCode')?.dirty || vehicleForm.get('colorCode')?.touched)"></i>
+                </div>
+              </div>
+              <div class="input-wrapper" *ngIf="showCustomColorCode">
+                <input type="text" id="colorCodeCustom" formControlName="colorCode" class="form-input" placeholder="Enter custom color code" (focus)="onFieldFocus('colorCode')" (blur)="onFieldBlur('colorCode')">
+                <div class="input-border"></div>
+                <div class="validation-icon">
+                  <i class="fas fa-check" *ngIf="vehicleForm.get('colorCode')?.valid && vehicleForm.get('colorCode')?.value"></i>
+                  <i class="fas fa-exclamation-triangle" *ngIf="vehicleForm.get('colorCode')?.invalid && (vehicleForm.get('colorCode')?.dirty || vehicleForm.get('colorCode')?.touched)"></i>
+                </div>
+              </div>
+              <div class="field-hint">
+                <span *ngIf="!vehicleForm.get('colorCode')?.invalid || (!vehicleForm.get('colorCode')?.dirty && !vehicleForm.get('colorCode')?.touched)">{{ showCustomColorCode ? 'Enter custom color code manually' : 'Select the color code or choose Others' }}</span>
+                <span *ngIf="vehicleForm.get('colorCode')?.invalid && (vehicleForm.get('colorCode')?.dirty || vehicleForm.get('colorCode')?.touched)" class="error-text">Color code is required</span>
+              </div>
+            </div>
+
             <div class="form-group" [class.filled]="vehicleForm.get('exteriorColor')?.value" [class.error]="vehicleForm.get('exteriorColor')?.invalid && (vehicleForm.get('exteriorColor')?.dirty || vehicleForm.get('exteriorColor')?.touched)">
               <label for="exteriorColor" class="form-label">
                 <i class="fas fa-palette label-icon"></i>
@@ -253,7 +288,7 @@
                 
               </label>
               <div class="input-wrapper">
-                <input type="text" id="exteriorColor" formControlName="exteriorColor" class="form-input" placeholder="Enter exterior color" (focus)="onFieldFocus('exteriorColor')" (blur)="onFieldBlur('exteriorColor')">
+                <input type="text" id="exteriorColor" formControlName="exteriorColor" class="form-input" placeholder="Auto-filled from color code or enter manually" (focus)="onFieldFocus('exteriorColor')" (blur)="onFieldBlur('exteriorColor')">
                 <div class="input-border"></div>
                 <div class="validation-icon">
                   <i class="fas fa-check" *ngIf="vehicleForm.get('exteriorColor')?.valid && vehicleForm.get('exteriorColor')?.value"></i>
@@ -261,7 +296,7 @@
                 </div>
               </div>
               <div class="field-hint">
-                <span *ngIf="!vehicleForm.get('exteriorColor')?.invalid || (!vehicleForm.get('exteriorColor')?.dirty && !vehicleForm.get('exteriorColor')?.touched)">Enter the exterior color</span>
+                <span *ngIf="!vehicleForm.get('exteriorColor')?.invalid || (!vehicleForm.get('exteriorColor')?.dirty && !vehicleForm.get('exteriorColor')?.touched)">Auto-filled from color code, but you can edit it</span>
                 <span *ngIf="vehicleForm.get('exteriorColor')?.invalid && (vehicleForm.get('exteriorColor')?.dirty || vehicleForm.get('exteriorColor')?.touched)" class="error-text">Exterior color is required</span>
               </div>
             </div>
@@ -357,8 +392,23 @@
                 <span>Location</span>
                 <span class="required">*</span>
               </label>
-              <div class="input-wrapper">
-                <input type="text" id="location" formControlName="location" class="form-input" placeholder="Enter location" (focus)="onFieldFocus('location')" (blur)="onFieldBlur('location')">
+              <div class="input-wrapper" *ngIf="!showCustomLocation">
+                <select id="location" formControlName="location" class="form-select" (change)="onLocationChange($event)" (focus)="onFieldFocus('location')" (blur)="onFieldBlur('location')">
+                  <option value="" disabled>Select Location</option>
+                  <option *ngFor="let location of filteredLocations" [value]="location">{{ location }}</option>
+                  <option value="OTHERS">Others (Enter Manually)</option>
+                </select>
+                <div class="select-arrow">
+                  <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="input-border"></div>
+                <div class="validation-icon">
+                  <i class="fas fa-check" *ngIf="vehicleForm.get('location')?.valid && vehicleForm.get('location')?.value"></i>
+                  <i class="fas fa-exclamation-triangle" *ngIf="vehicleForm.get('location')?.invalid && (vehicleForm.get('location')?.dirty || vehicleForm.get('location')?.touched)"></i>
+                </div>
+              </div>
+              <div class="input-wrapper" *ngIf="showCustomLocation">
+                <input type="text" id="locationCustom" formControlName="location" class="form-input" placeholder="Enter custom location" (focus)="onFieldFocus('location')" (blur)="onFieldBlur('location')">
                 <div class="input-border"></div>
                 <div class="validation-icon">
                   <i class="fas fa-check" *ngIf="vehicleForm.get('location')?.valid && vehicleForm.get('location')?.value"></i>
@@ -366,7 +416,7 @@
                 </div>
               </div>
               <div class="field-hint">
-                <span *ngIf="!vehicleForm.get('location')?.invalid || (!vehicleForm.get('location')?.dirty && !vehicleForm.get('location')?.touched)">Enter the vehicle location</span>
+                <span *ngIf="!vehicleForm.get('location')?.invalid || (!vehicleForm.get('location')?.dirty && !vehicleForm.get('location')?.touched)">{{ showCustomLocation ? 'Enter custom location manually' : 'Select the vehicle location or choose Others' }}</span>
                 <span *ngIf="vehicleForm.get('location')?.invalid && (vehicleForm.get('location')?.dirty || vehicleForm.get('location')?.touched)" class="error-text">Location is required</span>
               </div>
             </div>

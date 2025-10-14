@@ -65,7 +65,39 @@ export class EditVehicleDialogComponent {
 
   teamLeaders = ['John Doe', 'Jane Smith', 'Mike Johnson'];
   salesOfficers = ['Alice Brown', 'Bob Wilson', 'Carol White'];
-  financers = ['BANK OF MAHARASHTRA', 'TOYOTA FINANCIAL SERVICES INDIA LTD', 'HDFC BANK LTD', 'CANARA BANK', 'PUNJAB NATIONAL BANK', 'CHOLAMANDALAM INVESTMENT AND FINANCE CO LTD', 'STATE BANK OF INDIA', 'SHRI TIRUPATI NAGARI SAH.PATSANSTHA MAYADIT', 'UNION BANK OF INDIA', 'MAHINDRA AND MAHINDRA FINANCIAL SERVICES LTD', 'Not Applicable', 'AU SMALL FINANCE BANK LIMITED', 'KOTAK MAHINDRA BANK LTD', 'ICICI BANK LTD', 'HDB FINANCIAL SERVICES LTD', 'BANK OF INDIA', 'SUNDARAM FINANCE LTD', 'AXIS BANK LTD', 'MADHYA PRADESH GRAMIN BANK', 'THE ANAND MERCANTILE CO-OPERATIVE BANK LIMITED', 'INDIAN OVERSEAS BANK', 'CENTRAL BANK OF INDIA', 'BANK OF BARODA', 'SHRIRAM TRANSPORT FINANCE COMPANY LTD', 'IDBI BANK LTD'];
+  financers = [
+    'BANK OF MAHARASHTRA',
+    'TOYOTA FINANCIAL SERVICES INDIA LTD',
+    'HDFC BANK LTD',
+    'CANARA BANK',
+    'PUNJAB NATIONAL BANK',
+    'CHOLAMANDALAM',
+    'AXIS BANK',
+    'ICICI BANK',
+    'STATE BANK OF INDIA',
+    'KOTAK MAHINDRA BANK',
+    'INDUSIND BANK',
+    'YES BANK',
+    'IDFC FIRST BANK',
+    'RBL BANK',
+    'FEDERAL BANK',
+    'BANDHAN BANK',
+    'AU SMALL FINANCE BANK',
+    'BAJAJ FINANCE',
+    'MAHINDRA FINANCE',
+    'TATA CAPITAL',
+    'L&T FINANCE',
+    'SUNDARAM FINANCE',
+    'SHRIRAM FINANCE',
+    'UNION BANK OF INDIA',
+    'BANK OF INDIA',
+    'BANK OF BARODA',
+    'CENTRAL BANK OF INDIA',
+    'INDIAN OVERSEAS BANK',
+    'IDBI BANK',
+    'HDB FINANCIAL SERVICES',
+    'Not Applicable'
+  ];
 
   constructor(
     private dialogRef: MatDialogRef<EditVehicleDialogComponent>,
@@ -98,7 +130,8 @@ export class EditVehicleDialogComponent {
     this.isAdmin = Array.isArray(roles) && roles.includes('ADMIN');
 
     if (this.data) {
-      const vehicleId = this.data.vehicleId;
+      // Handle both 'id' and 'vehicleId' field names
+      const vehicleId = this.data.vehicleId || this.data.id;
       if (vehicleId) {
         this.orderService.getOrdersByVehicleId(vehicleId).subscribe({
           next: (response) => {
@@ -112,12 +145,12 @@ export class EditVehicleDialogComponent {
                 vehicleId: vehicleId
               });
             } else {
-              this.resetForm(vehicleId);
+              this.resetForm(vehicleId.toString());
             }
           },
           error: (error) => {
             console.error('Error fetching order data:', error);
-            this.resetForm(vehicleId);
+            this.resetForm(vehicleId.toString());
           }
         });
       }
@@ -248,11 +281,33 @@ private resetForm(vehicleId: string): void {
     );
   }
 
+  // Helper method to clean form data before sending to backend
+  private cleanFormData(formData: any): any {
+    const cleanedData = { ...formData };
+    
+    // Convert empty strings to null for enum fields
+    const enumFields = ['orderStatus', 'dmsStatus', 'vehicleStatus', 'financeType'];
+    
+    enumFields.forEach(field => {
+      if (cleanedData[field] === '' || cleanedData[field] === undefined) {
+        cleanedData[field] = null;
+      }
+    });
+    
+    // Also handle other fields that should be null instead of empty string
+    Object.keys(cleanedData).forEach(key => {
+      if (cleanedData[key] === '') {
+        cleanedData[key] = null;
+      }
+    });
+    
+    return cleanedData;
+  }
 
  onSave(vehicleId: string): void {
     if (this.vehicleForm.valid) {
       this.isSaving = true;
-      const formData = this.vehicleForm.value;
+      const formData = this.cleanFormData(this.vehicleForm.value);
       this.orderService.createOrder(formData).subscribe({
         next: (response) => {
           setTimeout(() => {
@@ -283,7 +338,7 @@ onUpdate(): void {
     if (this.vehicleForm.valid && this.orderId) {
       this.isSaving = true;
       const formData = {
-        ...this.vehicleForm.value,
+        ...this.cleanFormData(this.vehicleForm.value),
         orderId: this.orderId,
         deliveryDate: this.vehicleForm.get('deliveryDate')?.value
           ? new Date(this.vehicleForm.get('deliveryDate')?.value).toISOString()

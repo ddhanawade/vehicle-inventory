@@ -49,54 +49,118 @@
 
     <!-- Enhanced Search and Filter Section -->
     <div class="search-filter-section">
-      <div class="search-container">
-        <div class="search-input-wrapper">
-          <i class="fas fa-search search-icon"></i>
-          <input 
-            type="text" 
-            placeholder="Search vehicles by any field..." 
-            (keyup)="applyFilter($event)" 
-            #input
-            class="search-input"
-            [class.has-value]="input.value"
-          >
-          <button 
-            *ngIf="input.value" 
-            class="clear-search" 
-            (click)="clearSearch(input)"
-            title="Clear search"
-          >
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        
-        <div class="filter-wrapper">
-          <i class="fas fa-filter filter-icon"></i>
-          <select class="filter-dropdown" (change)="onStatusFilterChange($event)">
-            <option value="all-active">All Active Vehicle Status</option>
-            <option value="TRANSIT">TRANSIT</option>
-            <option value="STOCK">STOCK</option>
-            <option value="AVAILABLE">AVAILABLE</option>
-            <option value="SOLD">SOLD</option>
-            <option value="BILLED">BILLED</option>
-            <option value="WATER">WATER</option>
-            <option value="FRESH">FRESH</option>
-            <option value="FREE">FREE</option>
-          </select>
-        </div>
+      <!-- Search Bar - Left Side -->
+      <div class="search-input-wrapper">
+        <i class="fas fa-search search-icon"></i>
+        <input 
+          type="text" 
+          placeholder="Search vehicles by any field..." 
+          (keyup)="applyFilter($event)" 
+          #input
+          class="search-input"
+          [class.has-value]="input.value"
+        >
+        <button 
+          *ngIf="input.value" 
+          class="clear-search" 
+          (click)="clearSearch(input)"
+          title="Clear search"
+        >
+          <i class="fas fa-times"></i>
+        </button>
       </div>
 
-      <!-- Action Buttons -->
-      <div class="action-buttons">
-        <button class="action-btn refresh-btn" (click)="refreshData()" title="Refresh Data">
-          <i class="fas fa-sync-alt" [class.spinning]="isLoading"></i>
-          <span>Refresh</span>
-        </button>
-        
-        <button class="action-btn export-btn" (click)="exportToExcel()" title="Export to Excel">
-          <i class="fas fa-file-excel"></i>
-          <span>Export</span>
-        </button>
+      <!-- Filters and Actions - Right Side -->
+      <div class="filters-actions-container">
+        <div class="filters-group">
+          <div class="filter-wrapper">
+            <i class="fas fa-filter filter-icon"></i>
+            <select class="filter-dropdown" (change)="onStatusFilterChange($event)" #statusFilter>
+              <option value="all-active">All Active Vehicle Status</option>
+              <option value="TRANSIT">TRANSIT</option>
+              <option value="STOCK">STOCK</option>
+              <option value="AVAILABLE">AVAILABLE</option>
+              <option value="SOLD">SOLD</option>
+              <option value="BILLED">BILLED</option>
+              <option value="WATER">WATER</option>
+              <option value="FRESH">FRESH</option>
+              <option value="FREE">FREE</option>
+            </select>
+          </div>
+
+          <div class="filter-wrapper">
+            <i class="fas fa-clock filter-icon"></i>
+            <select class="filter-dropdown" (change)="onAgeFilterChange($event)" #ageFilter>
+              <option value="all">All Ages</option>
+              <option value="lt30">Less than 30 days</option>
+              <option value="30-60">30-60 days</option>
+              <option value="gt60">Greater than 60 days</option>
+            </select>
+          </div>
+
+            <div class="filter-wrapper">
+              <i class="fas fa-university filter-icon"></i>
+              <select class="filter-dropdown" (change)="onFinancerFilterChange($event)" #financerFilter>
+                <option value="all">All Financer Names</option>
+                <option *ngFor="let financer of financerNames" [value]="financer">{{ financer }}</option>
+              </select>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <div class="column-selector-wrapper">
+            <button class="action-btn columns-btn" (click)="toggleColumnSelector()" title="Manage Columns">
+              <i class="fas fa-columns"></i>
+              <span>Columns</span>
+            </button>
+            
+            <!-- Column Selector Dropdown -->
+            <div class="column-selector-panel" *ngIf="showColumnSelector">
+              <div class="panel-header">
+                <h3>Manage Columns</h3>
+                <button class="close-btn" (click)="toggleColumnSelector()">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              
+              <div class="panel-content">
+                <div class="columns-grid">
+                  <div *ngFor="let column of allColumns" class="column-item">
+                    <label class="column-checkbox" [class.disabled]="column.mandatory">
+                      <input 
+                        type="checkbox" 
+                        [checked]="column.visible" 
+                        [disabled]="column.mandatory"
+                        (change)="toggleColumn(column.name)"
+                      >
+                      <span class="checkbox-custom"></span>
+                      <span class="column-label">{{ column.label }}</span>
+                      <span class="mandatory-badge" *ngIf="column.mandatory">Required</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="panel-footer">
+                <button class="reset-btn" (click)="resetColumns()">
+                  <i class="fas fa-undo"></i>
+                  Reset to Default
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <button class="action-btn refresh-btn" (click)="refreshData()" title="Refresh Data">
+            <i class="fas fa-sync-alt" [class.spinning]="isLoading"></i>
+            <span>Refresh</span>
+          </button>
+          
+          <button class="action-btn export-btn" (click)="exportToExcel()" title="Export to Excel">
+            <i class="fas fa-file-excel"></i>
+            <span>Export</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
