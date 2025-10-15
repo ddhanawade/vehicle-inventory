@@ -270,19 +270,20 @@ export class VehicleDetailsComponent implements OnInit {
   }
 
   updateVehicle(vehicle: any): void {
-    // Map vehicle object to replace vehicleId with id
-     // invoiceDate: this.formatDate(new Date(vehicle.invoiceDate)); // Format the startDate
-     // receivedDate: this.formatDate(new Date(vehicle.receivedDate));   // Format the endDate
-
-      const updatedVehicle = { ...vehicle, id: vehicle.vehicleId, invoiceDate: this.formatDate(new Date(vehicle.invoiceDate)),  receivedDate: this.formatDate(new Date(vehicle.receivedDate)) };
-      delete updatedVehicle.vehicleId; // Remove vehicleId if not needed
+    // Prepare vehicle data for update
+      const updatedVehicle = { 
+        ...vehicle, 
+        id: vehicle.id, // Use vehicle.id, not vehicle.vehicleId
+        invoiceDate: this.formatDate(new Date(vehicle.invoiceDate)),  
+        receivedDate: this.formatDate(new Date(vehicle.receivedDate)) 
+      };
   
     console.log("Update vehicle:", JSON.stringify(updatedVehicle));
     const dialogRef = this.dialog.open(UpdateVehicleComponent, {
       width: '80%', // Adjust width for responsiveness
       maxWidth: '600px', // Set a maximum width
       height: 'auto', // Adjust height dynamically
-      data: { ...updatedVehicle }
+      data: updatedVehicle
     });
   
     dialogRef.afterClosed().subscribe(result => {

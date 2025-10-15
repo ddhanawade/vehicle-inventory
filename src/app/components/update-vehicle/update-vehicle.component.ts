@@ -305,34 +305,41 @@ export class UpdateVehicleComponent implements OnInit {
 
   onUpdate(): void {
     if (this.vehicleForm.valid) {
-    this.isLoading = true; // Start loading
-    const updatedVehicle = this.vehicleForm.value;
+      this.isLoading = true; // Start loading
+      const updatedVehicle = this.vehicleForm.value;
 
-    const updateVehicle = { ...updatedVehicle, id: updatedVehicle.id, invoiceDate: this.formatDate(new Date(updatedVehicle.invoiceDate))};
-    delete updateVehicle.vehicleId; // Remove vehicleId if not needed
+      const updateVehicle = { 
+        ...updatedVehicle, 
+        id: updatedVehicle.id, 
+        invoiceDate: updatedVehicle.invoiceDate ? this.formatDate(new Date(updatedVehicle.invoiceDate)) : null,
+        receivedDate: updatedVehicle.receivedDate ? this.formatDate(new Date(updatedVehicle.receivedDate)) : null
+      };
 
-    console.log("Sending updated data to backend:", updateVehicle); // Debugging log
+      console.log("Sending updated data to backend:", updateVehicle); // Debugging log
+      console.log("Vehicle ID being sent:", updateVehicle.id); // Debug ID
 
-    this.vehicleService.updateVehicleDetails(updateVehicle).subscribe(
-      (response: any) => {
-      setTimeout(() => {
-        this.successMessage = 'Vehicle details updated successfully!';
-        this.isLoading = false; // Stop loading
-        setTimeout(() => {
-          this.successMessage = '';
-          this.dialogRef.close(true);
-          window.location.reload();
-        }, 2000);
-        }, 1500);
-      },
-      (error: any) => {
-        console.error('Error updating vehicle:', error); // Debugging log
-      }
-    );
-  }else {
-    console.warn('Form is invalid');
-    this.successMessage = 'Please fill in all required fields.';
-  }
+      this.vehicleService.updateVehicleDetails(updateVehicle).subscribe(
+        (response: any) => {
+          setTimeout(() => {
+            this.successMessage = 'Vehicle details updated successfully!';
+            this.isLoading = false; // Stop loading
+            setTimeout(() => {
+              this.successMessage = '';
+              this.dialogRef.close(true);
+              window.location.reload();
+            }, 2000);
+          }, 1500);
+        },
+        (error: any) => {
+          console.error('Error updating vehicle:', error); // Debugging log
+          this.isLoading = false; // Stop loading on error
+          this.successMessage = 'Error updating vehicle. Please try again.';
+        }
+      );
+    } else {
+      console.warn('Form is invalid');
+      this.successMessage = 'Please fill in all required fields.';
+    }
   }
 
   private formatDate(date: Date): string {
